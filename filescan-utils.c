@@ -22,10 +22,6 @@
 #include <sys/prctl.h>
 #include <dirent.h>
 
-#include "audio-common.h"
-
-
-
 // List Avaliable Configuration Files
 PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *pre, const char *ext) {
     json_object *responseJ;
