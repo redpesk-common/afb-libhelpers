@@ -13,14 +13,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
- * reference: 
+ *
+ * reference:
  *   amixer contents; amixer controls;
- *   http://www.tldp.org/HOWTO/Alsa-sound-6.html 
+ *   http://www.tldp.org/HOWTO/Alsa-sound-6.html
  */
 
 #ifndef FILESCAN_UTILS_H
 #define FILESCAN_UTILS_H
+
+#define AFB_BINDING_VERSION 2
+#include <afb/afb-binding.h>
+#include <json-c/json.h>
 
 #ifndef PUBLIC
   #define PUBLIC
@@ -29,7 +33,7 @@
 
 // ctl-misc.c
 typedef enum {
-  CTL_SCAN_FLAT=0,        
+  CTL_SCAN_FLAT=0,
   CTL_SCAN_RECURSIVE=1,
 } CtlScanDirModeT;
 

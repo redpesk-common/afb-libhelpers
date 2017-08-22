@@ -22,13 +22,15 @@
 #include <sys/prctl.h>
 #include <dirent.h>
 
+#include "filescan-utils.h"
+
 // List Avaliable Configuration Files
 PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *pre, const char *ext) {
     json_object *responseJ;
     char *dirPath;
     char* dirList= strdup(searchPath);
-    size_t extLen=0;        
-    
+    size_t extLen=0;
+
     void ScanDir (char *searchPath) {
     DIR  *dirHandle;
         struct dirent *dirEnt;
@@ -36,31 +38,31 @@ PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode,
         if (!dirHandle) {
             AFB_DEBUG ("CONFIG-SCANNING dir=%s not readable", searchPath);
             return;
-        } 
-        
+        }
+
         //AFB_NOTICE ("CONFIG-SCANNING:ctl_listconfig scanning: %s", searchPath);
         while ((dirEnt = readdir(dirHandle)) != NULL) {
-            
+
             // recursively search embedded directories ignoring any directory starting by '.' or '_'
             if (dirEnt->d_type == DT_DIR && mode == CTL_SCAN_RECURSIVE) {
                 char newpath[CONTROL_MAXPATH_LEN];
                 if (dirEnt->d_name[0]=='.' || dirEnt->d_name[0]=='_') continue;
-                
-                strncpy(newpath, searchPath, sizeof(newpath)); 
-                strncat(newpath, "/", sizeof(newpath)); 
-                strncat(newpath, dirEnt->d_name, sizeof(newpath)); 
+
+                strncpy(newpath, searchPath, sizeof(newpath));
+                strncat(newpath, "/", sizeof(newpath));
+                strncat(newpath, dirEnt->d_name, sizeof(newpath));
                 ScanDir(newpath);
                 continue;
             }
-            
+
             // Unknown type is accepted to support dump filesystems
             if (dirEnt->d_type == DT_REG || dirEnt->d_type == DT_UNKNOWN) {
 
                 // check prefix and extention
                 size_t extIdx=strlen(dirEnt->d_name)-extLen;
-                if (extIdx <= 0) continue; 
-                if (pre && !strcasestr (dirEnt->d_name, pre)) continue;    
-                if (ext && strcasecmp (ext, &dirEnt->d_name[extIdx])) continue;    
+                if (extIdx <= 0) continue;
+                if (pre && !strcasestr (dirEnt->d_name, pre)) continue;
+                if (ext && strcasecmp (ext, &dirEnt->d_name[extIdx])) continue;
 
                 struct json_object *pathJ = json_object_new_object();
                 json_object_object_add(pathJ, "fullpath", json_object_new_string(searchPath));
@@ -73,13 +75,13 @@ PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode,
 
     if (ext) extLen=strlen(ext);
     responseJ = json_object_new_array();
-    
+
     // loop recursively on dir
     for (dirPath= strtok(dirList, ":"); dirPath && *dirPath; dirPath=strtok(NULL,":")) {
          ScanDir (dirPath);
     }
-    
-    free (dirList);    
+
+    free (dirList);
     return (responseJ);
 }
 
@@ -106,15 +108,15 @@ PUBLIC const char *GetMidleName(const char*name) {
 PUBLIC const char *GetBinderName() {
     char psName[17];
     static char *binderName=NULL;
-    
+
     if (binderName) return binderName;
-    
+
     binderName= getenv("AFB_BINDER_NAME");
     if (!binderName) {
         // retrieve binder name from process name afb-name-trailer
         prctl(PR_GET_NAME, psName,NULL,NULL,NULL);
         binderName=(char*)GetMidleName(psName);
     }
-    
+
     return binderName;
 }
