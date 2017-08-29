@@ -31,6 +31,10 @@
 #endif
 #define STATIC static
 
+#ifndef MAXPATH_LEN
+  #define MAXPATH_LEN 255
+#endif
+
 // ctl-misc.c
 typedef enum {
   CTL_SCAN_FLAT=0,
