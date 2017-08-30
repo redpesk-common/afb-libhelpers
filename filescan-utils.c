@@ -45,7 +45,7 @@ PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode,
 
             // recursively search embedded directories ignoring any directory starting by '.' or '_'
             if (dirEnt->d_type == DT_DIR && mode == CTL_SCAN_RECURSIVE) {
-                char newpath[MAXPATH_LEN];
+                char newpath[CONTROL_MAXPATH_LEN];
                 if (dirEnt->d_name[0]=='.' || dirEnt->d_name[0]=='_') continue;
 
                 strncpy(newpath, searchPath, sizeof(newpath));

@@ -31,8 +31,8 @@
 #endif
 #define STATIC static
 
-#ifndef MAXPATH_LEN
-  #define MAXPATH_LEN 255
+#ifndef CONTROL_MAXPATH_LEN
+  #define CONTROL_MAXPATH_LEN 255
 #endif
 
 // ctl-misc.c
