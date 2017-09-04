@@ -17,6 +17,8 @@
 
 #define _GNU_SOURCE
 #include <stdio.h>
+#include <unistd.h>
+#include <sys/stat.h>
 #include <string.h>
 #include <time.h>
 #include <sys/prctl.h>
@@ -119,4 +121,39 @@ PUBLIC const char *GetBinderName() {
     }
 
     return binderName;
+}
+
+PUBLIC BPaths GetBindingDirsPath()
+{
+    BPaths BindingPaths;
+
+    void initBindingPaths(char* bdir, const char* dir)
+    {
+        strcpy(bdir, BindingPaths.rootdir);
+        strcat(bdir, dir);
+    }
+
+    // A file description should not be greater than 999.999.999
+    char fd[10];
+    sprintf(fd, "%d", afb_daemon_rootdir_get_fd());
+    char* fd_link = malloc(strlen("/proc/self/fd/") + strlen(&fd));
+    strcpy(fd_link, "/proc/self/fd/");
+    strcat(fd_link, &fd);
+
+    ssize_t len;
+    if((len = readlink(fd_link, &BindingPaths.rootdir, sizeof(BindingPaths)-1)) == -1)
+    {
+        perror("lstat");
+        AFB_ERROR("Error reading stat of link: %s", fd_link);
+        return BindingPaths;
+    }
+    BindingPaths.rootdir[len] = '\0';
+    free(fd_link);
+    initBindingPaths(BindingPaths.bindir, "/bin");
+    initBindingPaths(BindingPaths.etcdir, "/etc");
+    initBindingPaths(BindingPaths.libdir, "/lib");
+    initBindingPaths(BindingPaths.datadir, "/data");
+    initBindingPaths(BindingPaths.httpdir, "/http");
+
+    return BindingPaths;
 }

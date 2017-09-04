@@ -39,15 +39,25 @@
   #define CONTROL_MAXPATH_LEN 255
 #endif
 
-// ctl-misc.c
 typedef enum {
   CTL_SCAN_FLAT=0,
   CTL_SCAN_RECURSIVE=1,
 } CtlScanDirModeT;
 
+typedef struct bpath {
+  char rootdir[CONTROL_MAXPATH_LEN];
+  char bindir[CONTROL_MAXPATH_LEN];
+  char etcdir[CONTROL_MAXPATH_LEN];
+  char datadir[CONTROL_MAXPATH_LEN];
+  char libdir[CONTROL_MAXPATH_LEN];
+  char httpdir[CONTROL_MAXPATH_LEN];
+} BPaths;
+
 PUBLIC const char *GetMidleName(const char*name);
 PUBLIC const char *GetBinderName();
 PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *pre, const char *ext);
+PUBLIC BPaths GetBindingDirsPath();
+
 
 #ifdef __cplusplus
     }
