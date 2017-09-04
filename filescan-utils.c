@@ -89,8 +89,8 @@ PUBLIC const char *GetMidleName(const char*name) {
     char *fullname = strdup(name);
 
     for (int idx = 0; fullname[idx] != '\0'; idx++) {
-        int start;
         if (fullname[idx] == '-') {
+            int start;
             start = idx + 1;
             for (int jdx = start; ; jdx++) {
                 if (fullname[jdx] == '-' || fullname[jdx] == '.' || fullname[jdx] == '\0') {
@@ -106,13 +106,13 @@ PUBLIC const char *GetMidleName(const char*name) {
 }
 
 PUBLIC const char *GetBinderName() {
-    char psName[17];
     static char *binderName=NULL;
 
     if (binderName) return binderName;
 
     binderName= getenv("AFB_BINDER_NAME");
     if (!binderName) {
+        char psName[17];
         // retrieve binder name from process name afb-name-trailer
         prctl(PR_GET_NAME, psName,NULL,NULL,NULL);
         binderName=(char*)GetMidleName(psName);
