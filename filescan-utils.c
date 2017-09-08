@@ -123,37 +123,45 @@ PUBLIC const char *GetBinderName() {
     return binderName;
 }
 
-PUBLIC BPaths GetBindingDirsPath()
+PUBLIC const char *GetBindingDirPath(BindingDirsT dir)
 {
-    BPaths BindingPaths;
-
-    void initBindingPaths(char* bdir, const char* dir)
-    {
-        strcpy(bdir, BindingPaths.rootdir);
-        strcat(bdir, dir);
-    }
-
     // A file description should not be greater than 999.999.999
     char fd[10];
+    static char retdir[CONTROL_MAXPATH_LEN];
     sprintf(fd, "%d", afb_daemon_rootdir_get_fd());
-    char* fd_link = malloc(strlen("/proc/self/fd/") + strlen(&fd));
+    char* fd_link = malloc(strlen("/proc/self/fd/") + strlen(fd));
     strcpy(fd_link, "/proc/self/fd/");
-    strcat(fd_link, &fd);
+    strcat(fd_link, fd);
 
     ssize_t len;
-    if((len = readlink(fd_link, &BindingPaths.rootdir, sizeof(BindingPaths)-1)) == -1)
+    if((len = readlink(fd_link, retdir, sizeof(retdir)-1)) == -1)
     {
         perror("lstat");
         AFB_ERROR("Error reading stat of link: %s", fd_link);
-        return BindingPaths;
+        strcpy(retdir, "/tmp");
     }
-    BindingPaths.rootdir[len] = '\0';
-    free(fd_link);
-    initBindingPaths(BindingPaths.bindir, "/bin");
-    initBindingPaths(BindingPaths.etcdir, "/etc");
-    initBindingPaths(BindingPaths.libdir, "/lib");
-    initBindingPaths(BindingPaths.datadir, "/data");
-    initBindingPaths(BindingPaths.httpdir, "/http");
+    else
+    {
+        retdir[len] = '\0';
+        switch (dir) {
+            case BIN_DIR:
+                strcat(retdir, "/bin");
+                break;
+            case ETC_DIR:
+                strcat(retdir, "/etc");
+                break;
+            case LIB_DIR:
+                strcat(retdir, "/lib");
+                break;
+            case DATA_DIR:
+                strcat(retdir, "/data");
+                break;
+            case HTTP_DIR:
+                strcat(retdir, "/http");
+                break;
+        }
+    }
 
-    return BindingPaths;
+    free(fd_link);
+    return retdir;
 }
