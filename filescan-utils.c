@@ -126,42 +126,21 @@ PUBLIC const char *GetBinderName() {
 PUBLIC const char *GetBindingDirPath(BindingDirsT dir)
 {
     // A file description should not be greater than 999.999.999
-    char fd[10];
-    static char retdir[CONTROL_MAXPATH_LEN];
-    sprintf(fd, "%d", afb_daemon_rootdir_get_fd());
-    char* fd_link = malloc(strlen("/proc/self/fd/") + strlen(fd));
-    strcpy(fd_link, "/proc/self/fd/");
-    strcat(fd_link, fd);
+    char fd_link[CONTROL_MAXPATH_LEN];
+    char retdir[CONTROL_MAXPATH_LEN];
+    sprintf(fd_link, "/proc/self/fd/%d", afb_daemon_rootdir_get_fd());
 
     ssize_t len;
     if((len = readlink(fd_link, retdir, sizeof(retdir)-1)) == -1)
     {
         perror("lstat");
         AFB_ERROR("Error reading stat of link: %s", fd_link);
-        strcpy(retdir, "/tmp");
+        strncpy(retdir, "/tmp", 4);
     }
     else
     {
         retdir[len] = '\0';
-        switch (dir) {
-            case BIN_DIR:
-                strcat(retdir, "/bin");
-                break;
-            case ETC_DIR:
-                strcat(retdir, "/etc");
-                break;
-            case LIB_DIR:
-                strcat(retdir, "/lib");
-                break;
-            case DATA_DIR:
-                strcat(retdir, "/data");
-                break;
-            case HTTP_DIR:
-                strcat(retdir, "/http");
-                break;
-        }
     }
 
-    free(fd_link);
-    return retdir;
+    return strndup(retdir, sizeof(retdir));
 }

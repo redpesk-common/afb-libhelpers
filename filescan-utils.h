@@ -44,19 +44,10 @@ typedef enum {
   CTL_SCAN_RECURSIVE=1,
 } CtlScanDirModeT;
 
-typedef enum {
-  ROOT_DIR=0,
-  BIN_DIR=1,
-  ETC_DIR=2,
-  DATA_DIR=3,
-  LIB_DIR=4,
-  HTTP_DIR=5
-} BindingDirsT
-
 PUBLIC const char *GetMidleName(const char*name);
 PUBLIC const char *GetBinderName();
 PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *pre, const char *ext);
-PUBLIC const char *GetBindingDirPath(BindingDirsT dir);
+PUBLIC const char *GetBindingDirPath();
 
 
 #ifdef __cplusplus
