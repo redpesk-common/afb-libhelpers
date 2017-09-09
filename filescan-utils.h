@@ -47,7 +47,7 @@ typedef enum {
 PUBLIC const char *GetMidleName(const char*name);
 PUBLIC const char *GetBinderName();
 PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *pre, const char *ext);
-PUBLIC const char *GetBindingDirPath();
+PUBLIC char *GetBindingDirPath();
 
 
 #ifdef __cplusplus
