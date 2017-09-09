@@ -123,7 +123,7 @@ PUBLIC const char *GetBinderName() {
     return binderName;
 }
 
-PUBLIC const char *GetBindingDirPath(BindingDirsT dir)
+PUBLIC const char *GetBindingDirPath()
 {
     // A file description should not be greater than 999.999.999
     char fd_link[CONTROL_MAXPATH_LEN];
