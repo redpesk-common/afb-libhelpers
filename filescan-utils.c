@@ -61,7 +61,7 @@ PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode,
             if (dirEnt->d_type == DT_REG || dirEnt->d_type == DT_UNKNOWN) {
 
                 // check prefix and extention
-                size_t extIdx=strlen(dirEnt->d_name)-extLen;
+                ssize_t extIdx=strlen(dirEnt->d_name)-extLen;
                 if (extIdx <= 0) continue;
                 if (pre && !strcasestr (dirEnt->d_name, pre)) continue;
                 if (ext && strcasecmp (ext, &dirEnt->d_name[extIdx])) continue;
@@ -83,7 +83,6 @@ PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode,
          ScanDir (dirPath);
     }
 
-    free (dirList);
     return (responseJ);
 }
 
@@ -98,7 +97,6 @@ PUBLIC const char *GetMidleName(const char*name) {
                 if (fullname[jdx] == '-' || fullname[jdx] == '.' || fullname[jdx] == '\0') {
                     fullname[jdx] = '\0';
                     return &fullname[start];
-                    break;
                 }
             }
             break;
