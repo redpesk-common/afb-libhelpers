@@ -121,6 +121,7 @@ PUBLIC const char *GetBinderName() {
     return binderName;
 }
 
+#ifndef USE_API_DYN
 PUBLIC char *GetBindingDirPath()
 {
     // A file description should not be greater than 999.999.999
@@ -142,3 +143,4 @@ PUBLIC char *GetBindingDirPath()
 
     return strndup(retdir, sizeof(retdir));
 }
+#endif
