@@ -32,14 +32,16 @@ PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode,
     char *dirPath;
     char* dirList= strdup(searchPath);
     size_t extLen=0;
+    int count=0;
 
-    void ScanDir (char *searchPath) {
-    DIR  *dirHandle;
+    int ScanDir (char *searchPath) {
+        int found=0;
+        DIR  *dirHandle;
         struct dirent *dirEnt;
         dirHandle = opendir (searchPath);
         if (!dirHandle) {
             AFB_DEBUG ("CONFIG-SCANNING dir=%s not readable", searchPath);
-            return;
+            return 0;
         }
 
         //AFB_NOTICE ("CONFIG-SCANNING:ctl_listconfig scanning: %s", searchPath);
@@ -53,7 +55,7 @@ PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode,
                 strncpy(newpath, searchPath, sizeof(newpath));
                 strncat(newpath, "/", sizeof(newpath)-strlen(newpath)-1);
                 strncat(newpath, dirEnt->d_name, sizeof(newpath)-strlen(newpath)-1);
-                ScanDir(newpath);
+                found += ScanDir(newpath);
                 continue;
             }
 
@@ -70,9 +72,11 @@ PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode,
                 json_object_object_add(pathJ, "fullpath", json_object_new_string(searchPath));
                 json_object_object_add(pathJ, "filename", json_object_new_string(dirEnt->d_name));
                 json_object_array_add(responseJ, pathJ);
+                found ++;
             }
         }
         closedir(dirHandle);
+        return found;
     }
 
     if (ext) extLen=strlen(ext);
@@ -80,9 +84,13 @@ PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode,
 
     // loop recursively on dir
     for (dirPath= strtok(dirList, ":"); dirPath && *dirPath; dirPath=strtok(NULL,":")) {
-         ScanDir (dirPath);
+         count += ScanDir (dirPath);
     }
-
+    if (count == 0) {
+        json_object_put (responseJ);
+        return NULL;
+    }
+    
     return (responseJ);
 }
 
