@@ -120,7 +120,7 @@ PUBLIC const char *GetBinderName() {
 
     binderName= getenv("AFB_BINDER_NAME");
     if (!binderName) {
-        char psName[17];
+        static char psName[17];
         // retrieve binder name from process name afb-name-trailer
         prctl(PR_GET_NAME, psName,NULL,NULL,NULL);
         binderName=(char*)GetMidleName(psName);
