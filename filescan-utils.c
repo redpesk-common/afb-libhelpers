@@ -88,9 +88,10 @@ PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode,
     }
     if (count == 0) {
         json_object_put (responseJ);
+        free(dirList);
         return NULL;
     }
-    
+    free(dirList);
     return (responseJ);
 }
 
