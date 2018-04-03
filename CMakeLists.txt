@@ -23,7 +23,7 @@
 PROJECT_TARGET_ADD(afb-utilities)
 
     # Define targets
-    ADD_LIBRARY(${TARGET_NAME} STATIC wrap-json.c filescan-utils.c)
+    ADD_LIBRARY(${TARGET_NAME} STATIC curl-wrap.c escape.c wrap-json.c filescan-utils.c)
 
     # Library properties
     SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
