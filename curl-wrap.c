@@ -33,6 +33,50 @@ struct buffer {
 	char *data;
 };
 
+static const char* curl_concatenate_args(const char * const *args, const char *sep, size_t *length)
+{
+	int i;
+	size_t lq, l;
+	const char *null;
+	char *result, *front;
+
+	/* ensure args */
+	if (!args) {
+		null = NULL;
+		args = &null;
+	}
+	if (!sep)
+		sep = "";
+
+	/* compute lengths */
+	lq = 0;
+	i = 0;
+	while (args[i]) {
+		lq += strlen(args[i]);
+		i++;
+	}
+
+	/* allocation */
+	result = malloc(1 + lq + (i ? i - 1 : 0) * strlen(sep));
+	if (result) {
+		/* make the resulting args string contenated */
+		i = 0;
+		front = result;
+		l = 0;
+		while (args[i]) {
+			if (i) {
+				front = stpcpy(front, sep);
+			}
+			front = stpcpy(front, args[i]);
+			i++;
+		}
+		*front = 0;
+		if (length)
+			*length = (size_t)(front - result);
+	}
+	return result;
+}
+
 /* write callback for filling buffers with the response */
 static size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
@@ -50,7 +94,7 @@ static size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdat
 	return sz;
 }
 
-/* 
+/*
  * Perform the CURL operation for 'curl' and put the result in
  * memory. If 'result' isn't NULL it receives the returned content
  * that then must be freed. If 'size' isn't NULL, it receives the
@@ -69,15 +113,15 @@ int curl_wrap_perform(CURL *curl, char **result, size_t *size)
 	buffer.size = 0;
 	buffer.data = NULL;
 
-	/* Perform the request, res will get the return code */ 
+	/* Perform the request, res will get the return code */
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
 
-	/* Perform the request, res will get the return code */ 
+	/* Perform the request, res will get the return code */
 	code = curl_easy_perform(curl);
 	rc = code == CURLE_OK;
 
-	/* Check for no errors */ 
+	/* Check for no errors */
 	if (rc) {
 		/* no error */
 		if (size)
@@ -184,27 +228,58 @@ CURL *curl_wrap_prepare_post_url_data(const char *url, const char *datatype, con
 
 	curl = curl_easy_init();
 	if (curl
-	 && CURLE_OK == curl_easy_setopt(curl, CURLOPT_URL, url)
-	 && (!szdata || CURLE_OK == curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, szdata))
-	 && CURLE_OK == curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data)
-	 && (!datatype || curl_wrap_add_header_value(curl, "content-type", datatype)))
+	&& CURLE_OK == curl_easy_setopt(curl, CURLOPT_URL, url)
+	&& (!szdata || CURLE_OK == curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, szdata))
+	&& CURLE_OK == curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data)
+	&& (!datatype || curl_wrap_add_header_value(curl, "content-type", datatype)))
 		return curl;
 	curl_easy_cleanup(curl);
 	return NULL;
 }
 
-CURL *curl_wrap_prepare_post(const char *base, const char *path, const char * const *args)
+static CURL *curl_wrap_prepare_post(const char *base, const char *path, int unescape_flag, const char *separator, const char * const *args, const char *simple_args)
 {
 	CURL *res;
 	char *url;
-	char *data;
-	size_t szdata;
+	const char *data = NULL;
+	size_t szdata = 0;
 
 	url = escape_url(base, path, NULL, NULL);
-	data = escape_args(args, &szdata);
+	if(args) {
+		data = unescape_flag ?
+			curl_concatenate_args(args, separator, &szdata) :
+			escape_args(args, &szdata);
+	}
+	else {
+		data = unescape_flag ?
+			escape_str(simple_args, &szdata) :
+			simple_args;
+	}
+	szdata = szdata ? szdata : strlen(data);
+
 	res = url ? curl_wrap_prepare_post_url_data(url, NULL, data, szdata) : NULL;
 	free(url);
 	return res;
+}
+
+CURL *curl_wrap_prepare_post_simple_unescaped(const char *base, const char *path, const char *args)
+{
+	return curl_wrap_prepare_post(base, path, 1, NULL, NULL, args);
+}
+
+CURL *curl_wrap_prepare_post_simple_escaped(const char *base, const char *path, char *args)
+{
+	return curl_wrap_prepare_post(base, path, 0, NULL, NULL, args);
+}
+
+CURL *curl_wrap_prepare_post_unescaped(const char *base, const char *path, const char *separator, const char * const *args)
+{
+	return curl_wrap_prepare_post(base, path, 1, separator, args, NULL);
+}
+
+CURL *curl_wrap_prepare_post_escaped(const char *base, const char *path, const char * const *args)
+{
+	return curl_wrap_prepare_post(base, path, 0, NULL, args, NULL);
 }
 
 /* vim: set colorcolumn=80: */
