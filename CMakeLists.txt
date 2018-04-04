@@ -20,7 +20,7 @@
 # app using app-templates subdmodules
 
 # Add target to project dependency list
-PROJECT_TARGET_ADD(afb-utilities)
+PROJECT_TARGET_ADD(afb-helpers)
 
     # Define targets
     ADD_LIBRARY(${TARGET_NAME} STATIC curl-wrap.c escape.c wrap-json.c filescan-utils.c)
