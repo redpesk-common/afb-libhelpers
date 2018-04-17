@@ -21,9 +21,27 @@
 
 # Add target to project dependency list
 PROJECT_TARGET_ADD(afb-helpers)
+set(CMAKE_AUTOMOC ON)
+
+	set(AFB_HELPERS_SRCS curl-wrap.c escape.c wrap-json.c filescan-utils.c)
+
+	option(AFB_HELPERS_QTWSCLIENT "Enable the Qt's websocket client to Application Framework Binders" OFF)
+
+	if (AFB_HELPERS_QTWSCLIENT)
+		message(STATUS "Qt's WebSocket AFB Client: Enabled!")
+		set(AFB_HELPERS_SRCS ${AFB_HELPERS_SRCS} qafbwebsocketclient.cpp qafbwebsocketclient.h)
+		find_package(Qt5WebSockets REQUIRED)
+	else()
+		message(STATUS "Qt's WebSocket AFB Client: Disabled!")
+	endif()
 
     # Define targets
-    ADD_LIBRARY(${TARGET_NAME} STATIC curl-wrap.c escape.c wrap-json.c filescan-utils.c)
+	ADD_LIBRARY(${TARGET_NAME} STATIC ${AFB_HELPERS_SRCS})
+
+	if (AFB_HELPERS_QTWSCLIENT)
+		target_link_libraries(${TARGET_NAME} Qt5::WebSockets)
+		qt5_use_modules(${TARGET_NAME} WebSockets)
+	endif()
 
     # Library properties
     SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
