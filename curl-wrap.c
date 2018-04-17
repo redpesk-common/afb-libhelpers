@@ -171,6 +171,15 @@ int curl_wrap_content_type_is(CURL *curl, const char *value)
 	return !strncasecmp(actual, value, strcspn(actual, "; "));
 }
 
+long curl_wrap_response_code_get(CURL *curl)
+{
+	long rc;
+	CURLcode code;
+
+	code = curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &rc);
+	return (code == CURLE_OK) ? rc : 0;
+}
+
 CURL *curl_wrap_prepare_get_url(const char *url)
 {
 	CURL *curl;

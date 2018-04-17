@@ -29,6 +29,8 @@ extern void curl_wrap_do(CURL *curl, void (*callback)(void *closure, int status,
 
 extern int curl_wrap_content_type_is (CURL * curl, const char *value);
 
+extern long curl_wrap_response_code_get(CURL *curl);
+
 extern CURL *curl_wrap_prepare_get_url(const char *url);
 
 extern CURL *curl_wrap_prepare_get(const char *base, const char *path, const char * const *args);
