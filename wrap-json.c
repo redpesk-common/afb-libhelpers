@@ -103,8 +103,8 @@ static int encode_base64(
 		int pad,
 		int url)
 {
-	uint16_t u16;
-	uint8_t u8;
+	uint16_t u16 = 0;
+	uint8_t u8 = 0;
 	size_t in, out, rlen, n3, r3, iout, nout;
 	int iw;
 	char *result, c;
