@@ -23,9 +23,10 @@
 PROJECT_TARGET_ADD(afb-helpers)
 set(CMAKE_AUTOMOC ON)
 
-	set(AFB_HELPERS_SRCS curl-wrap.c escape.c wrap-json.c filescan-utils.c)
+	set(AFB_HELPERS_SRCS wrap-json.c filescan-utils.c escape.c)
 
 	option(AFB_HELPERS_QTWSCLIENT "Enable the Qt's websocket client to Application Framework Binders" OFF)
+	find_package(CURL)
 
 	if (AFB_HELPERS_QTWSCLIENT)
 		message(STATUS "Qt's WebSocket AFB Client: Enabled!")
@@ -35,7 +36,14 @@ set(CMAKE_AUTOMOC ON)
 		message(STATUS "Qt's WebSocket AFB Client: Disabled!")
 	endif()
 
-    # Define targets
+	if (CURL_FOUND)
+		message(STATUS "CURL wrapping helpers: Enabled!")
+		set(AFB_HELPERS_SRCS ${AFB_HELPERS_SRCS} curl-wrap.c)
+	else()
+		message(STATUS "CURL wrapping helpers: Disabled!")
+	endif()
+
+	# Define targets
 	ADD_LIBRARY(${TARGET_NAME} STATIC ${AFB_HELPERS_SRCS})
 
 	if (AFB_HELPERS_QTWSCLIENT)
@@ -43,13 +51,17 @@ set(CMAKE_AUTOMOC ON)
 		qt5_use_modules(${TARGET_NAME} WebSockets)
 	endif()
 
-    # Library properties
-    SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
-        OUTPUT_NAME ${TARGET_NAME}
-    )
+	if (CURL_FOUND)
+		target_link_libraries(${TARGET_NAME} curl)
+	endif()
 
-    # Define target includes
-    TARGET_INCLUDE_DIRECTORIES(${TARGET_NAME}
-        PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}
-    )
+	# Library properties
+	SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
+		OUTPUT_NAME ${TARGET_NAME}
+	)
+
+	# Define target includes
+	TARGET_INCLUDE_DIRECTORIES(${TARGET_NAME}
+		PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}
+	)
 
