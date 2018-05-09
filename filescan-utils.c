@@ -130,19 +130,21 @@ const char *GetBinderName() {
     return binderName;
 }
 
-#ifndef USE_API_DYN
-char *GetBindingDirPath()
+char *GetBindingDirPath(struct afb_dynapi *dynapi)
 {
     // A file description should not be greater than 999.999.999
     char fd_link[CONTROL_MAXPATH_LEN];
     char retdir[CONTROL_MAXPATH_LEN];
-    sprintf(fd_link, "/proc/self/fd/%d", afb_daemon_rootdir_get_fd());
-
     ssize_t len;
+
+    if(dynapi)
+        sprintf(fd_link, "/proc/self/fd/%d", afb_dynapi_rootdir_get_fd(dynapi));
+    else
+        sprintf(fd_link, "/proc/self/fd/%d", afb_daemon_rootdir_get_fd_v2());
+
     if((len = readlink(fd_link, retdir, sizeof(retdir)-1)) == -1)
     {
         perror("lstat");
-        AFB_ERROR("Error reading stat of link: %s", fd_link);
         strncpy(retdir, "/tmp", 4);
     }
     else
@@ -152,4 +154,3 @@ char *GetBindingDirPath()
 
     return strndup(retdir, sizeof(retdir));
 }
-#endif

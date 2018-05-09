@@ -51,8 +51,8 @@ typedef enum {
 const char *GetMidleName(const char*name);
 const char *GetBinderName();
 json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *pre, const char *ext);
-char *GetBindingDirPath();
 
+char *GetBindingDirPath(struct afb_dynapi *dynapi);
 
 #ifdef __cplusplus
     }
