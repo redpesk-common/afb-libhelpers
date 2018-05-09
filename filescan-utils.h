@@ -32,17 +32,12 @@
     #include <afb/afb-binding.h>
     extern  afb_dynapi *AFB_default;
     #define AFB_DEBUG(...) AFB_DYNAPI_DEBUG(AFB_default, __VA_ARGS__)
-#else        
+#else
     #define AFB_BINDING_VERSION 2
     #include <afb/afb-binding.h>
 #endif
-        
-#include <json-c/json.h>
 
-#ifndef PUBLIC
-  #define PUBLIC
-#endif
-#define STATIC static
+#include <json-c/json.h>
 
 #ifndef CONTROL_MAXPATH_LEN
   #define CONTROL_MAXPATH_LEN 255
@@ -53,10 +48,10 @@ typedef enum {
   CTL_SCAN_RECURSIVE=1,
 } CtlScanDirModeT;
 
-PUBLIC const char *GetMidleName(const char*name);
-PUBLIC const char *GetBinderName();
-PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *pre, const char *ext);
-PUBLIC char *GetBindingDirPath();
+const char *GetMidleName(const char*name);
+const char *GetBinderName();
+json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *pre, const char *ext);
+char *GetBindingDirPath();
 
 
 #ifdef __cplusplus

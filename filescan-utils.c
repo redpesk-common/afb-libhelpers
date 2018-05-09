@@ -27,7 +27,7 @@
 #include "filescan-utils.h"
 
 // List Avaliable Configuration Files
-PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *pre, const char *ext) {
+json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *pre, const char *ext) {
     json_object *responseJ;
     char *dirPath;
     char* dirList= strdup(searchPath);
@@ -95,7 +95,7 @@ PUBLIC json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode,
     return (responseJ);
 }
 
-PUBLIC const char *GetMidleName(const char*name) {
+const char *GetMidleName(const char*name) {
     char *fullname = strdup(name);
 
     for (int idx = 0; fullname[idx] != '\0'; idx++) {
@@ -114,7 +114,7 @@ PUBLIC const char *GetMidleName(const char*name) {
     return "";
 }
 
-PUBLIC const char *GetBinderName() {
+const char *GetBinderName() {
     static char *binderName=NULL;
 
     if (binderName) return binderName;
@@ -131,7 +131,7 @@ PUBLIC const char *GetBinderName() {
 }
 
 #ifndef USE_API_DYN
-PUBLIC char *GetBindingDirPath()
+char *GetBindingDirPath()
 {
     // A file description should not be greater than 999.999.999
     char fd_link[CONTROL_MAXPATH_LEN];
