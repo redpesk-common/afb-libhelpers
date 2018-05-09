@@ -43,15 +43,53 @@
   #define CONTROL_MAXPATH_LEN 255
 #endif
 
+/**
+ * @brief enum describing which mode to use in ScanForConfig function
+ *
+ */
 typedef enum {
-  CTL_SCAN_FLAT=0,
-  CTL_SCAN_RECURSIVE=1,
+  CTL_SCAN_FLAT=0, /**< Simple flat search */
+  CTL_SCAN_RECURSIVE=1, /**< Recursive search */
 } CtlScanDirModeT;
 
-const char *GetMidleName(const char*name);
-const char *GetBinderName();
-json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *pre, const char *ext);
+/**
+ * @brief Get rid of the binder name prefix 'afbd-'
+ *
+ * @param name will be typically the full binder name
+ *
+ * @return const char*
+ */
+const char *GetMidleName(const char *name);
 
+/**
+ * @brief Get the Binder Name without the prefix set by the AGL appfw 'afbd-'
+ *
+ * @return const char* the Binder name without the prefix.
+ */
+const char *GetBinderName();
+
+/**
+ * @brief Scan a directory searching all files matching pattern:
+ * 'prefix*extention'.
+ *
+ * @param searchPath directory where to begin the searching
+ * @param mode either or not the search will be recursive.
+ * @param prefix file prefix that will be looking for
+ * @param extention file extention that will be looking for
+ *
+ * @return json_object* a json_object array of object with 2 parts a 'fullpath'
+ * describing the fullpath to reach the file and 'filename' containing the
+ * matched files.
+ */
+json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *prefix, const char *extension);
+
+/**
+ * @brief Get the Binding root directory file descriptor object
+ *
+ * @param dynapi : Could be NULL if you don't use dynamic api
+ *
+ * @return char* string representing the path to binding root directory.
+ */
 char *GetBindingDirPath(struct afb_dynapi *dynapi);
 
 #ifdef __cplusplus

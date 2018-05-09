@@ -27,11 +27,11 @@
 #include "filescan-utils.h"
 
 // List Avaliable Configuration Files
-json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *pre, const char *ext) {
+json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *prefix, const char *extention) {
     json_object *responseJ;
     char *dirPath;
     char* dirList= strdup(searchPath);
-    size_t extLen=0;
+    size_t extentionLen=0;
     int count=0;
 
     int ScanDir (char *searchPath) {
@@ -40,7 +40,7 @@ json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const 
         struct dirent *dirEnt;
         dirHandle = opendir (searchPath);
         if (!dirHandle) {
-            AFB_DEBUG ("CONFIG-SCANNING dir=%s not readable", searchPath);
+            AFB_DEBUG("CONFIG-SCANNING dir=%s not readable", searchPath);
             return 0;
         }
 
@@ -63,10 +63,10 @@ json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const 
             if (dirEnt->d_type == DT_REG || dirEnt->d_type == DT_UNKNOWN) {
 
                 // check prefix and extention
-                ssize_t extIdx=strlen(dirEnt->d_name)-extLen;
-                if (extIdx <= 0) continue;
-                if (pre && !strcasestr (dirEnt->d_name, pre)) continue;
-                if (ext && strcasecmp (ext, &dirEnt->d_name[extIdx])) continue;
+                ssize_t extentionIdx=strlen(dirEnt->d_name)-extentionLen;
+                if (extentionIdx <= 0) continue;
+                if (prefix && !strcasestr (dirEnt->d_name, prefix)) continue;
+                if (extention && strcasecmp (extention, &dirEnt->d_name[extentionIdx])) continue;
 
                 struct json_object *pathJ = json_object_new_object();
                 json_object_object_add(pathJ, "fullpath", json_object_new_string(searchPath));
@@ -79,7 +79,7 @@ json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const 
         return found;
     }
 
-    if (ext) extLen=strlen(ext);
+    if (extention) extentionLen=strlen(extention);
     responseJ = json_object_new_array();
 
     // loop recursively on dir

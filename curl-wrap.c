@@ -36,7 +36,7 @@ struct buffer {
 static const char* curl_concatenate_args(const char * const *args, const char *sep, size_t *length)
 {
 	int i;
-	size_t lq, l;
+	size_t lq;
 	const char *null;
 	char *result, *front;
 
@@ -62,7 +62,6 @@ static const char* curl_concatenate_args(const char * const *args, const char *s
 		/* make the resulting args string contenated */
 		i = 0;
 		front = result;
-		l = 0;
 		while (args[i]) {
 			if (i) {
 				front = stpcpy(front, sep);

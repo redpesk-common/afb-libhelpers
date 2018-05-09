@@ -49,5 +49,3 @@ CURL *curl_wrap_prepare_post_unescaped(const char *base, const char *path, const
 
 CURL *curl_wrap_prepare_post_escaped(const char *base, const char *path, const char * const *args);
 
-/* vim: set colorcolumn=80: */
-
