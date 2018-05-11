@@ -28,11 +28,16 @@
 
 // List Avaliable Configuration Files
 json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *prefix, const char *extention) {
-    json_object *responseJ;
+    json_object *responseJ = json_object_new_array();
     char *dirPath;
-    char* dirList= strdup(searchPath);
+    char* dirList;
     size_t extentionLen=0;
     int count=0;
+
+    if(!searchPath)
+        return responseJ;
+
+    dirList = strdup(searchPath);
 
     int ScanDir (char *searchPath) {
         int found=0;
@@ -79,8 +84,8 @@ json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const 
         return found;
     }
 
-    if (extention) extentionLen=strlen(extention);
-    responseJ = json_object_new_array();
+    if (extention)
+        extentionLen=strlen(extention);
 
     // loop recursively on dir
     for (dirPath= strtok(dirList, ":"); dirPath && *dirPath; dirPath=strtok(NULL,":")) {
@@ -140,7 +145,7 @@ char *GetBindingDirPath(struct afb_dynapi *dynapi)
     if(dynapi)
         sprintf(fd_link, "/proc/self/fd/%d", afb_dynapi_rootdir_get_fd(dynapi));
     else
-        sprintf(fd_link, "/proc/self/fd/%d", afb_daemon_rootdir_get_fd_v2());
+        sprintf(fd_link, "/proc/self/fd/%d", afb_daemon_rootdir_get_fd());
 
     if((len = readlink(fd_link, retdir, sizeof(retdir)-1)) == -1)
     {
