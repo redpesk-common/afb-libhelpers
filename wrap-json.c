@@ -378,14 +378,25 @@ int wrap_json_vpack(struct json_object **result, const char *desc, va_list args)
 		case 'Y':
 			bytes.in = va_arg(args, const uint8_t*);
 			bytes.insz = va_arg(args, size_t);
-			rc = encode_base64(bytes.in, bytes.insz,
-				&bytes.out, &bytes.outsz, 0, 0, c == 'y');
-			if (rc)
-				goto error;
-			obj = json_object_new_string_len(bytes.out, (int)bytes.outsz);
-			free(bytes.out);
-			if (!obj)
-				goto out_of_memory;
+			if (bytes.in == NULL || bytes.insz == 0)
+				obj = NULL;
+			else {
+				rc = encode_base64(bytes.in, bytes.insz,
+					&bytes.out, &bytes.outsz, 0, 0, c == 'y');
+				if (rc)
+					goto error;
+				obj = json_object_new_string_len(bytes.out, (int)bytes.outsz);
+				free(bytes.out);
+				if (!obj)
+					goto out_of_memory;
+			}
+			if (*d == '?')
+				d = skip(++d);
+			else if (*d != '*' && !obj) {
+				obj = json_object_new_string_len(d, 0);
+				if (!obj)
+					goto out_of_memory;
+			}
 			break;
 		case '[':
 		case '{':
@@ -934,6 +945,7 @@ void u(const char *value, const char *desc, ...)
 	memset(xI, 0, sizeof xI);
 	memset(xf, 0, sizeof xf);
 	memset(xo, 0, sizeof xo);
+	memset(xy, 0, sizeof xy);
 	memset(xz, 0, sizeof xz);
 	obj = json_tokener_parse(value);
 	va_start(args, desc);
@@ -1039,6 +1051,10 @@ int main()
 	P("[[[[[   [[[[[  [[[[ }]]]] ]]]] ]]]]]");
 	P("y", "???????hello>>>>>>>", (size_t)19);
 	P("Y", "???????hello>>>>>>>", (size_t)19);
+	P("{sy?}", "foo", "hi", (size_t)2);
+	P("{sy?}", "foo", NULL, 0);
+	P("{sy*}", "foo", "hi", (size_t)2);
+	P("{sy*}", "foo", NULL, 0);
 
 	U("true", "b", &xi[0]);
 	U("false", "b", &xi[0]);
@@ -1117,6 +1133,8 @@ int main()
 	U("{\"foo\":42}", "{s?isi!}", "baz", &xi[0], "foo", &xi[1]);
 
 	U("\"Pz8_Pz8_P2hlbGxvPj4-Pj4-Pg\"", "y", &xy[0], &xz[0]);
+	U("{\"foo\":\"Pz8_Pz8_P2hlbGxvPj4-Pj4-Pg\"}", "{s?y}", "foo", &xy[0], &xz[0]);
+	U("{}", "{s?y}", "foo", &xy[0], &xz[0]);
 	return 0;
 }
 
