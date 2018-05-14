@@ -241,7 +241,7 @@ static int decode_base64(
 
 	/* terminate */
 	*decoded = realloc(result, out);
-	if (*decoded == NULL) {
+	if (out && *decoded == NULL) {
 		free(result);
 		return wrap_json_error_out_of_memory;
 	}
@@ -1134,6 +1134,7 @@ int main()
 
 	U("\"Pz8_Pz8_P2hlbGxvPj4-Pj4-Pg\"", "y", &xy[0], &xz[0]);
 	U("{\"foo\":\"Pz8_Pz8_P2hlbGxvPj4-Pj4-Pg\"}", "{s?y}", "foo", &xy[0], &xz[0]);
+	U("{\"foo\":\"\"}", "{s?y}", "foo", &xy[0], &xz[0]);
 	U("{}", "{s?y}", "foo", &xy[0], &xz[0]);
 	return 0;
 }
