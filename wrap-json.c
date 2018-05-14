@@ -665,15 +665,22 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 				pz = va_arg(args, size_t *);
 			}
 			if (!ignore) {
-				if (!json_object_is_type(obj, json_type_string))
-					goto missfit;
-				if (store && py && pz) {
-					rc = decode_base64(
-						json_object_get_string(obj),
-						(size_t)json_object_get_string_len(obj),
-						py, pz, c == 'y');
-					if (rc)
-						goto error;
+				if (obj == NULL) {
+					if (store && py && pz) {
+						*py = NULL;
+						*pz = 0;
+					}
+				} else {
+					if (!json_object_is_type(obj, json_type_string))
+						goto missfit;
+					if (store && py && pz) {
+						rc = decode_base64(
+							json_object_get_string(obj),
+							(size_t)json_object_get_string_len(obj),
+							py, pz, c == 'y');
+						if (rc)
+							goto error;
+					}
 				}
 			}
 			break;
@@ -1133,6 +1140,8 @@ int main()
 	U("{\"foo\":42}", "{s?isi!}", "baz", &xi[0], "foo", &xi[1]);
 
 	U("\"Pz8_Pz8_P2hlbGxvPj4-Pj4-Pg\"", "y", &xy[0], &xz[0]);
+	U("\"\"", "y", &xy[0], &xz[0]);
+	U("null", "y", &xy[0], &xz[0]);
 	U("{\"foo\":\"Pz8_Pz8_P2hlbGxvPj4-Pj4-Pg\"}", "{s?y}", "foo", &xy[0], &xz[0]);
 	U("{\"foo\":\"\"}", "{s?y}", "foo", &xy[0], &xz[0]);
 	U("{}", "{s?y}", "foo", &xy[0], &xz[0]);
