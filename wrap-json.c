@@ -89,7 +89,7 @@ int wrap_json_get_error_code(int rc)
 const char *wrap_json_get_error_string(int rc)
 {
 	rc = wrap_json_get_error_code(rc);
-	if (rc >= sizeof pack_errors / sizeof *pack_errors)
+	if (rc >= (int)(sizeof pack_errors / sizeof *pack_errors))
 		rc = 0;
 	return pack_errors[rc];
 }
@@ -528,7 +528,7 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 	int64_t *pI = NULL;
 	size_t *pz = NULL;
 	uint8_t **py = NULL;
-	struct { struct json_object *parent; const char *acc; int index; size_t count; char type; } stack[STACKCOUNT], *top;
+	struct { struct json_object *parent; const char *acc; size_t index; size_t count; char type; } stack[STACKCOUNT], *top;
 	struct json_object *obj;
 	struct json_object **po;
 
@@ -864,7 +864,7 @@ static void object_for_all(struct json_object *object, void (*callback)(void*,st
 static void array_for_all(struct json_object *object, void (*callback)(void*,struct json_object*), void *closure)
 {
 	size_t n = json_object_array_length(object);
-	int i = 0;
+	size_t i = 0;
 	while(i < n)
 		callback(closure, json_object_array_get_idx(object, i++));
 }
@@ -907,7 +907,7 @@ void wrap_json_for_all(struct json_object *object, void (*callback)(void*,struct
 		callback(closure, object, NULL);
 	else {
 		size_t n = json_object_array_length(object);
-		int i = 0;
+		size_t i = 0;
 		while(i < n)
 			callback(closure, json_object_array_get_idx(object, i++), NULL);
 	}
