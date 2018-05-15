@@ -142,10 +142,13 @@ char *GetBindingDirPath(struct afb_dynapi *dynapi)
     char retdir[CONTROL_MAXPATH_LEN];
     ssize_t len;
 
-    if(dynapi)
-        sprintf(fd_link, "/proc/self/fd/%d", afb_dynapi_rootdir_get_fd(dynapi));
-    else
-        sprintf(fd_link, "/proc/self/fd/%d", afb_daemon_rootdir_get_fd());
+#ifdef USE_API_DYN
+    if (!dynapi)
+        return NULL;
+    sprintf(fd_link, "/proc/self/fd/%d", afb_dynapi_rootdir_get_fd(dynapi));
+#else
+    sprintf(fd_link, "/proc/self/fd/%d", afb_daemon_rootdir_get_fd());
+#endif
 
     if((len = readlink(fd_link, retdir, sizeof(retdir)-1)) == -1)
     {
