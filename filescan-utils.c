@@ -100,7 +100,7 @@ json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const 
     return (responseJ);
 }
 
-const char *GetMidleName(const char*name) {
+const char *GetMiddleName(const char*name) {
     char *fullname = strdup(name);
 
     for (int idx = 0; fullname[idx] != '\0'; idx++) {
@@ -129,7 +129,7 @@ const char *GetBinderName() {
         static char psName[17];
         // retrieve binder name from process name afb-name-trailer
         prctl(PR_GET_NAME, psName,NULL,NULL,NULL);
-        binderName=(char*)GetMidleName(psName);
+        binderName=(char*)GetMiddleName(psName);
     }
 
     return binderName;
