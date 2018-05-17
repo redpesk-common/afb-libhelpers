@@ -58,8 +58,8 @@ json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const 
                 if (dirEnt->d_name[0]=='.' || dirEnt->d_name[0]=='_') continue;
 
                 strncpy(newpath, searchPath, sizeof(newpath));
-                strncat(newpath, "/", sizeof(newpath)-strlen(newpath)-1);
-                strncat(newpath, dirEnt->d_name, sizeof(newpath)-strlen(newpath)-1);
+                strncat(newpath, "/", sizeof(newpath) - strlen(newpath) - 1);
+                strncat(newpath, dirEnt->d_name, sizeof(newpath) - strlen(newpath) - 1);
                 found += ScanDir(newpath);
                 continue;
             }
@@ -153,7 +153,7 @@ char *GetBindingDirPath(struct afb_dynapi *dynapi)
     if((len = readlink(fd_link, retdir, sizeof(retdir)-1)) == -1)
     {
         perror("lstat");
-        strncpy(retdir, "/tmp", 4);
+        strncpy(retdir, "/tmp", CONTROL_MAXPATH_LEN - 1);
     }
     else
     {
