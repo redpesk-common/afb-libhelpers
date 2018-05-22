@@ -528,7 +528,7 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 	int64_t *pI = NULL;
 	size_t *pz = NULL;
 	uint8_t **py = NULL;
-	struct { struct json_object *parent; const char *acc; size_t index; size_t count; char type; } stack[STACKCOUNT], *top;
+	struct { struct json_object *parent; const char *acc; int index; int count; char type; } stack[STACKCOUNT], *top;
 	struct json_object *obj;
 	struct json_object **po;
 
@@ -863,8 +863,8 @@ static void object_for_all(struct json_object *object, void (*callback)(void*,st
 
 static void array_for_all(struct json_object *object, void (*callback)(void*,struct json_object*), void *closure)
 {
-	size_t n = json_object_array_length(object);
-	size_t i = 0;
+	int n = json_object_array_length(object);
+	int i = 0;
 	while(i < n)
 		callback(closure, json_object_array_get_idx(object, i++));
 }
@@ -906,8 +906,8 @@ void wrap_json_for_all(struct json_object *object, void (*callback)(void*,struct
 	else if (!json_object_is_type(object, json_type_array))
 		callback(closure, object, NULL);
 	else {
-		size_t n = json_object_array_length(object);
-		size_t i = 0;
+		int n = json_object_array_length(object);
+		int i = 0;
 		while(i < n)
 			callback(closure, json_object_array_get_idx(object, i++), NULL);
 	}
