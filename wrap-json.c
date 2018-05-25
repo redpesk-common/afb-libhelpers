@@ -702,7 +702,7 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 				if (!ignore) {
 					if (!json_object_is_type(obj, json_type_array))
 						goto missfit;
-					top->count = json_object_array_length(obj);
+					top->count = (int)json_object_array_length(obj);
 				}
 				xacc[0] = ']';
 				acc = unpack_accept_arr;
@@ -863,7 +863,7 @@ static void object_for_all(struct json_object *object, void (*callback)(void*,st
 
 static void array_for_all(struct json_object *object, void (*callback)(void*,struct json_object*), void *closure)
 {
-	int n = json_object_array_length(object);
+	int n = (int)json_object_array_length(object);
 	int i = 0;
 	while(i < n)
 		callback(closure, json_object_array_get_idx(object, i++));
@@ -906,7 +906,7 @@ void wrap_json_for_all(struct json_object *object, void (*callback)(void*,struct
 	else if (!json_object_is_type(object, json_type_array))
 		callback(closure, object, NULL);
 	else {
-		int n = json_object_array_length(object);
+		int n = (int)json_object_array_length(object);
 		int i = 0;
 		while(i < n)
 			callback(closure, json_object_array_get_idx(object, i++), NULL);
