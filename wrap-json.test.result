@@ -394,6 +394,12 @@ unpack("{\"foo\":42}", "{s?isi!}", "baz", &xi[0], "foo", &xi[1])
 unpack("\"Pz8_Pz8_P2hlbGxvPj4-Pj4-Pg\"", "y", &xy[0], &xz[0])
   SUCCESS y/19:???????hello>>>>>>>
 
+unpack("\"\"", "y", &xy[0], &xz[0])
+  SUCCESS y/0:
+
+unpack("null", "y", &xy[0], &xz[0])
+  SUCCESS y/0:
+
 unpack("{\"foo\":\"Pz8_Pz8_P2hlbGxvPj4-Pj4-Pg\"}", "{s?y}", "foo", &xy[0], &xz[0])
   SUCCESS s:foo y/19:???????hello>>>>>>>
 

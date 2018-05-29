@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2016, 2017 "IoT.bzh"
+ Copyright (C) 2016, 2017, 2018 "IoT.bzh"
 
  author: José Bollo <jose.bollo@iot.bzh>
 
@@ -47,6 +47,10 @@ extern void wrap_json_array_for_all(struct json_object *object, void (*callback)
 extern void wrap_json_object_for_all(struct json_object *object, void (*callback)(void*,struct json_object*,const char*), void *closure);
 extern void wrap_json_optobject_for_all(struct json_object *object, void (*callback)(void*,struct json_object*,const char*), void *closure);
 extern void wrap_json_for_all(struct json_object *object, void (*callback)(void*,struct json_object*,const char*), void *closure);
+
+extern struct json_object *wrap_json_clone(struct json_object *object);
+extern struct json_object *wrap_json_clone_deep(struct json_object *object);
+extern void wrap_json_object_add(struct json_object *dest, struct json_object *added);
 
 #ifdef __cplusplus
     }
