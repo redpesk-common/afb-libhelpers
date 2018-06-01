@@ -28,7 +28,8 @@
 
 // hack waiting for official V3 API
 #ifdef USE_API_DYN
-    #define AFB_BINDING_VERSION dyn
+    #define AFB_BINDING_VERSION 0
+    #define AFB_BINDING_WANT_DYNAPI
     #include <afb/afb-binding.h>
     extern  afb_dynapi *AFB_default;
     #define AFB_DEBUG(...) AFB_DYNAPI_DEBUG(AFB_default, __VA_ARGS__)
