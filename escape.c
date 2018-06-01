@@ -408,7 +408,7 @@ char *unescape(const char *text, size_t textlen, size_t *reslength)
 	return result;
 }
 
-#if 1
+#if 0
 #include <stdio.h>
 int main(int ac, char **av)
 {
