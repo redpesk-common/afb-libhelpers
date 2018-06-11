@@ -409,3 +409,93 @@ unpack("{\"foo\":\"\"}", "{s?y}", "foo", &xy[0], &xz[0])
 unpack("{}", "{s?y}", "foo", &xy[0], &xz[0])
   SUCCESS s:foo y/0:
 
+compare(null)(null)
+   -> 0 / 1
+
+compare(true)(true)
+   -> 0 / 1
+
+compare(false)(false)
+   -> 0 / 1
+
+compare(1)(1)
+   -> 0 / 1
+
+compare(1.0)(1.0)
+   -> 0 / 1
+
+compare("")("")
+   -> 0 / 1
+
+compare("hi")("hi")
+   -> 0 / 1
+
+compare({})({})
+   -> 0 / 1
+
+compare({"a":true,"b":false})({"b":false,"a":true})
+   -> 0 / 1
+
+compare([])([])
+   -> 0 / 1
+
+compare([1,true,null])([1,true,null])
+   -> 0 / 1
+
+compare(null)(true)
+   -> -1 / 0
+
+compare(null)(false)
+   -> -1 / 0
+
+compare(0)(1)
+   -> -1 / 0
+
+compare(1)(0)
+   -> 1 / 0
+
+compare(0)(true)
+   -> 2 / 0
+
+compare(0)(false)
+   -> 2 / 0
+
+compare(0)(null)
+   -> 3 / 0
+
+compare("hi")("hello")
+   -> 4 / 0
+
+compare("hello")("hi")
+   -> -4 / 0
+
+compare({})(null)
+   -> 4 / 0
+
+compare({})(true)
+   -> 3 / 0
+
+compare({})(1)
+   -> 1 / 0
+
+compare({})(1.0)
+   -> 2 / 0
+
+compare({})([])
+   -> -1 / 0
+
+compare({})("x")
+   -> -2 / 0
+
+compare([1,true,null])([1,true])
+   -> 1 / 1
+
+compare({"a":true,"b":false})({"a":true})
+   -> 1 / 1
+
+compare({"a":true,"b":false})({"a":true,"c":false})
+   -> -1 / 0
+
+compare({"a":true,"c":false})({"a":true,"b":false})
+   -> 1 / 0
+
