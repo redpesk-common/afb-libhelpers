@@ -22,6 +22,7 @@
 # Add target to project dependency list
 PROJECT_TARGET_ADD(afb-helpers)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 	set(AFB_HELPERS_SRCS wrap-json.c filescan-utils.c escape.c)
 
@@ -48,7 +49,7 @@ set(CMAKE_AUTOMOC ON)
 
 	if (AFB_HELPERS_QTWSCLIENT)
 		target_link_libraries(${TARGET_NAME} Qt5::WebSockets)
-		qt5_use_modules(${TARGET_NAME} WebSockets)
+		#qt5_use_modules(${TARGET_NAME} WebSockets)
 	endif()
 
 	if (CURL_FOUND)
