@@ -61,7 +61,7 @@ static int ScanDir(char* searchPath, CtlScanDirModeT mode, size_t extentionLen,
             ssize_t extentionIdx = strlen(dirEnt->d_name) - extentionLen;
             if (extentionIdx <= 0)
                 continue;
-            if (prefix && !strcasestr(dirEnt->d_name, prefix))
+            if (prefix && strncasecmp(dirEnt->d_name, prefix, strlen(prefix)))
                 continue;
             if (extention && strcasecmp(extention, &dirEnt->d_name[extentionIdx]))
                 continue;
