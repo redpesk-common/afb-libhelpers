@@ -167,7 +167,7 @@ void QAfbWebsocketClient::onSocketTextReceived(QString msg)
         break;
     }
     case 5: // Events
-        emit event(arr[1].toString(), arr[2].toObject()["data"]);
+        emit eventReceived(arr[1].toString(), arr[2].toObject()["data"]);
         break;
     }
 }

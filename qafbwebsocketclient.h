@@ -58,7 +58,7 @@ signals:
     void error(QAbstractSocket::SocketError);
     void textReceived(QString msg);
     void textSent(QString msg);
-    void event(QString eventName, const QJsonValue& data);
+    void eventReceived(QString eventName, const QJsonValue& data);
 
 private:
     int m_nextCallId;
