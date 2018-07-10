@@ -26,16 +26,11 @@
     extern "C" {
 #endif
 
-// hack waiting for official V3 API
-#ifdef USE_API_DYN
-    #define AFB_BINDING_VERSION 0
-    #define AFB_BINDING_WANT_DYNAPI
-    #include <afb/afb-binding.h>
+#include <afb/afb-binding.h>
+
+#if((AFB_BINDING_VERSION == 0 || AFB_BINDING_VERSION == 3) && defined(AFB_BINDING_WANT_DYNAPI))
     extern  afb_dynapi *AFB_default;
     #define AFB_DEBUG(...) AFB_DYNAPI_DEBUG(AFB_default, __VA_ARGS__)
-#else
-    #define AFB_BINDING_VERSION 2
-    #include <afb/afb-binding.h>
 #endif
 
 #include <json-c/json.h>
