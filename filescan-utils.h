@@ -28,7 +28,7 @@
 
 #include <afb/afb-binding.h>
 
-#if((AFB_BINDING_VERSION == 0 || AFB_BINDING_VERSION == 3) && defined(AFB_BINDING_WANT_DYNAPI))
+#if((AFB_BINDING_VERSION == 0) && defined(AFB_BINDING_WANT_DYNAPI))
     extern  afb_dynapi *AFB_default;
     #define AFB_DEBUG(...) AFB_DYNAPI_DEBUG(AFB_default, __VA_ARGS__)
 #endif
