@@ -16,6 +16,7 @@
  */
 
 #define _GNU_SOURCE
+#include <ctype.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
@@ -168,4 +169,81 @@ char* GetBindingDirPath(struct afb_dynapi* dynapi)
     }
 
     return strndup(retdir, sizeof(retdir));
+}
+
+
+/**
+ * @brief Takes an input string and makes it upper case. The output buffer
+ * should be able to contains the whole input string else it will be truncated
+ * at the output_size.
+ *
+ * @param input the input string to transform in an upper case version
+ * @param output the upper case version of the input string
+ * @param output_size the output buffer size, if size < to strlen of input then
+ * the output will be truncated.
+ *
+ * @return size_t the string length of the resulting output variable, which should
+ * be equal to the size of input string length.
+ */
+static size_t toUpperString(const char *input, char *output, size_t output_size) {
+    int i = 0;
+
+    if(input && output) {
+        while(input[i] && i <= output_size) {
+            output[i] = (char)toupper(input[i]);
+            i++;
+        }
+        output[i] = '\0';
+        return strlen(output);
+    }
+
+   return 0;
+}
+
+const char *getEnvDirList(const char *prefix, const char *suffix) {
+    size_t lenSimple = 0, lenFull = 0, plen = 0, slen = 0, blen = 0;
+    char *envConfigPathSimple = NULL, *envConfigPathFull = NULL;
+    char *upperPrefix = NULL, *upperSuffix = NULL, *upperBinderName = NULL;
+    char *envDirList = NULL;
+    const char *binderName = GetBinderName(), *envDirListSimple = NULL;
+    const char *envDirListFull = NULL;
+
+    if(! prefix || ! suffix)
+        return NULL;
+
+    plen = strlen(prefix);
+    upperPrefix = alloca(plen + 1);
+
+    slen = strlen(suffix);
+    upperSuffix = alloca(slen + 1);
+
+    blen = strlen(binderName);
+    upperBinderName = alloca(blen + 1);
+
+    lenSimple = plen + slen + 1;
+    envConfigPathSimple = alloca(lenSimple + 1);
+
+    lenFull = slen + blen + slen + 2;
+    envConfigPathFull = alloca(lenFull + 1);
+
+    if(toUpperString(prefix, upperPrefix, plen) != plen ||
+       toUpperString(suffix, upperSuffix, slen) != slen ||
+       toUpperString(binderName, upperBinderName, blen) != blen ||
+       (snprintf(envConfigPathSimple, lenSimple + 1, "%s_%s", upperPrefix, upperSuffix) >= lenSimple + 1) ||
+       (snprintf(envConfigPathFull, lenFull + 1, "%s_%s_%s", upperPrefix, upperBinderName, upperSuffix) >= lenFull + 1)) {
+        return NULL;
+    }
+
+    envDirListFull = getenv(envConfigPathFull);
+    envDirListSimple = getenv(envConfigPathSimple);
+    if(envDirListSimple && envDirListFull) {
+        lenFull = strlen(envDirListSimple) + strlen(envDirListFull) + 1;
+        envDirList = malloc(lenFull + 1);
+        snprintf(envDirList, lenFull + 1, "%s:%s", envDirListFull, envDirListSimple);
+    }
+    else {
+        envDirList = envDirListSimple ? strdup(envDirListSimple) : envDirListFull ? strdup(envDirListFull) : NULL;
+    }
+
+    return envDirList;
 }

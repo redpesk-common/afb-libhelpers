@@ -55,14 +55,14 @@ typedef enum {
  *
  * @return const char*
  */
-const char *GetMiddleName(const char *name);
+extern const char *GetMiddleName(const char *name);
 
 /**
  * @brief Get the Binder Name without the prefix set by the AGL appfw 'afbd-'
  *
  * @return const char* the Binder name without the prefix.
  */
-const char *GetBinderName();
+extern const char *GetBinderName();
 
 /**
  * @brief Scan a directory searching all files matching pattern:
@@ -77,7 +77,7 @@ const char *GetBinderName();
  * describing the fullpath to reach the file and 'filename' containing the
  * matched files.
  */
-json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *prefix, const char *extension);
+extern json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *prefix, const char *extension);
 
 /**
  * @brief Get the Binding root directory file descriptor object
@@ -86,7 +86,21 @@ json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const 
  *
  * @return char* string representing the path to binding root directory.
  */
-char *GetBindingDirPath(struct afb_dynapi *dynapi);
+extern char *GetBindingDirPath(struct afb_dynapi *dynapi);
+
+/**
+ * @brief Get the environment directory colon separated path list. This take the
+ * prefix add the binder's name then the suffix as environment variable name and
+ * also search for another variable without the binder's name (so only
+ * prefix+suffix).
+ *
+ * @param prefix Environment variable prefix
+ * @param suffix Environment variable suffix
+ *
+ * @return const char* a string representing a colon separated path list or NULL
+ * is case of error or none environment variables found.
+ */
+extern const char *getEnvDirList(const char *prefix, const char *suffix);
 
 #ifdef __cplusplus
     }
