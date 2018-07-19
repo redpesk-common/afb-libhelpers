@@ -86,7 +86,11 @@ extern json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode,
  *
  * @return char* string representing the path to binding root directory.
  */
+#if(AFB_BINDING_VERSION == 0 && defined(AFB_BINDING_WANT_DYNAPI))
 extern char *GetBindingDirPath(struct afb_dynapi *dynapi);
+#else
+extern char *GetBindingDirPath();
+#endif
 
 /**
  * @brief Get the environment directory colon separated path list. This take the

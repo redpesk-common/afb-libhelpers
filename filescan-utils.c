@@ -146,14 +146,18 @@ const char* GetBinderName()
     return binderName;
 }
 
-char* GetBindingDirPath(struct afb_dynapi* dynapi)
+#if(AFB_BINDING_VERSION == 0 && defined(AFB_BINDING_WANT_DYNAPI))
+char *GetBindingDirPath(struct afb_dynapi *dynapi)
+#else
+char *GetBindingDirPath()
+#endif
 {
     // A file description should not be greater than 999.999.999
     char fd_link[CONTROL_MAXPATH_LEN];
     char retdir[CONTROL_MAXPATH_LEN];
     ssize_t len;
 
-#if((AFB_BINDING_VERSION == 0 || AFB_BINDING_VERSION == 3) && defined(AFB_BINDING_WANT_DYNAPI))
+#if(AFB_BINDING_VERSION == 0 && defined(AFB_BINDING_WANT_DYNAPI))
     if (!dynapi)
         return NULL;
     sprintf(fd_link, "/proc/self/fd/%d", afb_dynapi_rootdir_get_fd(dynapi));
