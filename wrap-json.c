@@ -992,8 +992,12 @@ struct json_object *wrap_json_clone_depth(struct json_object *item, int depth)
 }
 
 /**
- * Clones the 'object': returns a copy of it. But doen't clones
+ * Clones the 'object': returns a copy of it. But doesn't clones
  * the content. Synonym of wrap_json_clone_depth(object, 1).
+ *
+ * Be aware that this implementation doesn't clones content that is deeper
+ * than 1 but it does link these contents to the original object and
+ * increments their use count. So, everything deeper that 1 is still available.
  *
  * @param object the object to clone
  *
