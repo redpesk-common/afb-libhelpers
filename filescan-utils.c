@@ -117,7 +117,7 @@ const char* GetMiddleName(const char* name)
             int start;
             start = idx + 1;
             for (int jdx = start;; jdx++) {
-                if (fullname[jdx] == '-' || fullname[jdx] == '.' || fullname[jdx] == '\0') {
+                if (fullname[jdx] == '-' || fullname[jdx] == '@' || fullname[jdx] == '.' || fullname[jdx] == '\0') {
                     fullname[jdx] = '\0';
                     return &fullname[start];
                 }
