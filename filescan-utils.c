@@ -35,7 +35,10 @@ static int ScanDir(char* searchPath, CtlScanDirModeT mode, size_t extentionLen,
     struct dirent* dirEnt;
     dirHandle = opendir(searchPath);
     if (!dirHandle) {
-        AFB_DEBUG("CONFIG-SCANNING dir=%s not readable", searchPath);
+        if(afbBindingV3root)
+            AFB_API_DEBUG_V3(afbBindingV3root, "CONFIG-SCANNING dir=%s not readable", searchPath);
+        else
+            AFB_API_DEBUG_V3(afbBindingV2data.service.closure, "CONFIG-SCANNING dir=%s not readable", searchPath);
         return 0;
     }
 
@@ -148,24 +151,14 @@ const char* GetBinderName()
     return binderName;
 }
 
-#if(AFB_BINDING_VERSION == 0 && defined(AFB_BINDING_WANT_DYNAPI))
-char *GetBindingDirPath(struct afb_dynapi *dynapi)
-#else
-char *GetBindingDirPath()
-#endif
+char *GetBindingDirPath_(int fd)
 {
     // A file description should not be greater than 999.999.999
     char fd_link[CONTROL_MAXPATH_LEN];
     char retdir[CONTROL_MAXPATH_LEN];
     ssize_t len;
 
-#if(AFB_BINDING_VERSION == 0 && defined(AFB_BINDING_WANT_DYNAPI))
-    if (!dynapi)
-        return NULL;
-    sprintf(fd_link, "/proc/self/fd/%d", afb_dynapi_rootdir_get_fd(dynapi));
-#else
-    sprintf(fd_link, "/proc/self/fd/%d", afb_daemon_rootdir_get_fd());
-#endif
+    sprintf(fd_link, "/proc/self/fd/%d", fd);
 
     if ((len = readlink(fd_link, retdir, sizeof(retdir) - 1)) == -1) {
         perror("lstat");
@@ -176,6 +169,8 @@ char *GetBindingDirPath()
 
     return strndup(retdir, sizeof(retdir));
 }
+
+
 
 
 /**

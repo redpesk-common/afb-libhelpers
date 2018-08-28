@@ -86,10 +86,21 @@ extern json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode,
  *
  * @return char* string representing the path to binding root directory.
  */
-#if(AFB_BINDING_VERSION == 0 && defined(AFB_BINDING_WANT_DYNAPI))
-extern char *GetBindingDirPath(struct afb_dynapi *dynapi);
+extern char *GetBindingDirPath_(int fd);
+#if(AFB_BINDING_VERSION == 2)
+static inline char *GetBindingDirPath_v2()
+{
+    return GetBindingDirPath_(afb_daemon_rootdir_get_fd_v2());
+}
+__attribute__((alias("GetBindingDirPath_v2")))
+static char *GetBindingDirPath();
 #else
-extern char *GetBindingDirPath();
+static char *GetBindingDirPath_v3(struct afb_api_x3* apiHandle)
+{
+    return GetBindingDirPath_(afb_api_x3_rootdir_get_fd(apiHandle));
+}
+__attribute__((alias("GetBindingDirPath_v3")))
+static char *GetBindingDirPath(struct afb_api_x3* apiHandle);
 #endif
 
 /**
