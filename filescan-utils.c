@@ -56,7 +56,9 @@ static int ScanDir(char* searchPath, CtlScanDirModeT mode, size_t extentionLen,
         }
 
         // Unknown type is accepted to support dump filesystems
-        if (dirEnt->d_type == DT_REG || dirEnt->d_type == DT_UNKNOWN) {
+        if (dirEnt->d_type == DT_REG ||
+            dirEnt->d_type == DT_UNKNOWN ||
+            dirEnt->d_type == DT_LNK) {
 
             // check prefix and extention
             ssize_t extentionIdx = strlen(dirEnt->d_name) - extentionLen;
