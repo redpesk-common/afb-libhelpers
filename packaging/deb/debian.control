@@ -1,0 +1,28 @@
+Priority: optional
+Maintainer: romain.forlot <romain.forlot@iot.bzh>
+Source: agl-libafb-helpers
+Build-Depends:
+ debhelper (>= 5),
+ pkg-config,
+ cmake,
+ libjson-c-dev,
+ libsystemd-dev,
+ libcurl4-openssl-dev,
+ libqt5websockets5-dev,
+ agl-app-framework-binder-bin,
+ agl-app-framework-binder-dev,
+Standards-Version: 3.8.2
+Homepage: https://gerrit.automotivelinux.org/gerrit/#/admin/projects/apps/libafb-helpers
+
+Package: agl-libafb-helpers-bin
+Section: libs
+Architecture: any
+Description: libafb-helpers provides helpful functions to be used in a binding for the
+ Application Framework Binder
+
+Package: agl-libafb-helpers-dev
+Section: libs
+Architecture: any
+Depends: agl-libafb-helpers-bin
+Description: libafb-helpers provides helpful functions to be used in a binding for the
+ Application Framework Binder
