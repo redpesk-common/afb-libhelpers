@@ -30,7 +30,6 @@ extern "C" {
 // ----------------------
 
 typedef struct TimerHandleS {
-    int magic;
     int count;
     int delay;
     const char*uid;
@@ -43,11 +42,10 @@ typedef struct TimerHandleS {
 
 typedef int (*timerCallbackT)(TimerHandleT *context);
 
-extern int TimerEvtInit (afb_api_t apiHandle);
-extern void TimerEvtStart(afb_api_t apiHandle, TimerHandleT *timerHandle, timerCallbackT callback, void *context);
+extern void TimerEvtStart(afb_api_t api, TimerHandleT *timerHandle, timerCallbackT callback, void *context);
 extern void TimerEvtStop(TimerHandleT *timerHandle);
 
-extern uint64_t LockWait(afb_api_t apiHandle, uint64_t utimeout);
+extern uint64_t LockWait(afb_api_t api, uint64_t utimeout);
 #ifdef __cplusplus
 }
 #endif

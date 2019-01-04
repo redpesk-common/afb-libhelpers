@@ -95,12 +95,12 @@ static inline char *GetBindingDirPath_v2()
 __attribute__((alias("GetBindingDirPath_v2")))
 static char *GetBindingDirPath();
 #else
-static char *GetBindingDirPath_v3(struct afb_api_x3* apiHandle)
+static char *GetBindingDirPath_v3(struct afb_api_x3* api)
 {
-    return GetBindingDirPath_(afb_api_x3_rootdir_get_fd(apiHandle));
+    return GetBindingDirPath_(afb_api_x3_rootdir_get_fd(api));
 }
 __attribute__((alias("GetBindingDirPath_v3")))
-static char *GetBindingDirPath(struct afb_api_x3* apiHandle);
+static char *GetBindingDirPath(struct afb_api_x3* api);
 #endif
 
 /**

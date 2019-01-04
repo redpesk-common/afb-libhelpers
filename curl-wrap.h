@@ -20,9 +20,6 @@
 
 #include <curl/curl.h>
 
-extern char *curl_wrap_url (const char *base, const char *path,
-                            const char *const *query, size_t * size);
-
 extern int curl_wrap_perform (CURL * curl, char **result, size_t * size);
 
 extern void curl_wrap_do(CURL *curl, void (*callback)(void *closure, int status, CURL *curl, const char *result, size_t size), void *closure);

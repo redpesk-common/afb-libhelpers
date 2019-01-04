@@ -66,32 +66,23 @@ void TimerEvtStop(TimerHandleT *timerHandle) {
     free (timerHandle);
 }
 
-
-void TimerEvtStart(afb_api_t apiHandle, TimerHandleT *timerHandle, timerCallbackT callback, void *context) {
+void TimerEvtStart(afb_api_t api, TimerHandleT *timerHandle, timerCallbackT callback, void *context) {
     uint64_t usec;
 
     // populate CB handle
     timerHandle->callback=callback;
     timerHandle->context=context;
-    timerHandle->api=apiHandle;
+    timerHandle->api=api;
 
     // set a timer with ~250us accuracy
-    sd_event_now(afb_api_get_event_loop(apiHandle), CLOCK_MONOTONIC, &usec);
-    sd_event_add_time(afb_api_get_event_loop(apiHandle), &timerHandle->evtSource, CLOCK_MONOTONIC, usec+timerHandle->delay*1000, 250, TimerNext, timerHandle);
+    sd_event_now(afb_api_get_event_loop(api), CLOCK_MONOTONIC, &usec);
+    sd_event_add_time(afb_api_get_event_loop(api), &timerHandle->evtSource, CLOCK_MONOTONIC, usec+timerHandle->delay*1000, 250, TimerNext, timerHandle);
 }
 
-
-// Create Binding Event at Init
-int TimerEvtInit (afb_api_t apiHandle) {
-
-    AFB_API_DEBUG (apiHandle, "Timer-Init Done");
-    return 0;
-}
-
-uint64_t LockWait(afb_api_t apiHandle, uint64_t utimeout) {
+uint64_t LockWait(afb_api_t api, uint64_t utimeout) {
     uint64_t current_usec, pre_usec;
 
-    struct sd_event *event = afb_api_get_event_loop(apiHandle);
+    struct sd_event *event = afb_api_get_event_loop(api);
 
     sd_event_now(event, CLOCK_MONOTONIC, &pre_usec);
     sd_event_run(event, utimeout);

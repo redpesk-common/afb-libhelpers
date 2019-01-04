@@ -81,6 +81,7 @@ void QAfbWebsocketClient::close()
  * \param api Api to call.
  * \param verb Verb to call.
  * \param arg Argument to pass.
+ * \param closure callback to call at the verb reply
  */
 void QAfbWebsocketClient::call(const QString& api, const QString& verb, const QJsonValue& arg, closure_t closure)
 {
