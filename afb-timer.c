@@ -61,8 +61,8 @@ static int TimerNext (sd_event_source* source, uint64_t timer, void* handle) {
 }
 
 void TimerEvtStop(TimerHandleT *timerHandle) {
-
     sd_event_source_unref(timerHandle->evtSource);
+    if (timerHandle->freeCB) timerHandle->freeCB(timerHandle->context);
     free (timerHandle);
 }
 
