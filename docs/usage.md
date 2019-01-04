@@ -1,11 +1,4 @@
-# AFB Helpers library
-
-You should find useful utilities to integrate in your bindings development.
-
-This library is the successor of the old git [afb-helpers-submodule](https://gerrit.automotivelinux.org/gerrit/gitweb?p=apps%2Fapp-afb-helpers-submodule.git;a=summary)
-now available as a separated library.
-
-Please refer to the documentation in the `docs` folder for further informations.
+# Usage
 
 ## Installation
 
@@ -81,7 +74,7 @@ TARGET_LINK_LIBRARIES(${TARGET_NAME}
 
 ## Add the libafb-helpers as a static library to your binding
 
-In your `config.cmake` file, add a dependency to the afb-helpers library, i.e:
+In your `config.cmake` file, add a dependency to the controller library, i.e:
 
 ```cmake
 set(PKG_REQUIRED_LIST

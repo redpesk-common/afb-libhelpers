@@ -1,17 +1,4 @@
-[![JSON for Modern C++](https://raw.githubusercontent.com/nlohmann/json/master/doc/json.gif)](https://github.com/nlohmann/json/releases)
-
-[![Build Status](https://travis-ci.org/nlohmann/json.svg?branch=master)](https://travis-ci.org/nlohmann/json)
-[![Build Status](https://ci.appveyor.com/api/projects/status/1acb366xfyg3qybk/branch/develop?svg=true)](https://ci.appveyor.com/project/nlohmann/json)
-[![Coverage Status](https://img.shields.io/coveralls/nlohmann/json.svg)](https://coveralls.io/r/nlohmann/json)
-[![Coverity Scan Build Status](https://scan.coverity.com/projects/5550/badge.svg)](https://scan.coverity.com/projects/nlohmann-json)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f3732b3327e34358a0e9d1fe9f661f08)](https://www.codacy.com/app/nlohmann/json?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nlohmann/json&amp;utm_campaign=Badge_Grade)
-[![Try online](https://img.shields.io/badge/try-online-blue.svg)](http://melpon.org/wandbox/permlink/nv9fOg0XVVhWmFFy)
-[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://nlohmann.github.io/json)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/nlohmann/json/master/LICENSE.MIT)
-[![Github Releases](https://img.shields.io/github/release/nlohmann/json.svg)](https://github.com/nlohmann/json/releases)
-[![Github Issues](https://img.shields.io/github/issues/nlohmann/json.svg)](http://github.com/nlohmann/json/issues)
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/nlohmann/json.svg)](http://isitmaintained.com/project/nlohmann/json "Average time to resolve an issue")
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/289/badge)](https://bestpractices.coreinfrastructure.org/projects/289)
+# JSON for Modern C++
 
 - [Design goals](#design-goals)
 - [Integration](#integration)
@@ -50,7 +37,6 @@ Other aspects were not so important to us:
 
 See the [contribution guidelines](https://github.com/nlohmann/json/blob/master/.github/CONTRIBUTING.md#please-dont) for more information.
 
-
 ## Integration
 
 The single required source, file `json.hpp` is in the `src` directory or [released here](https://github.com/nlohmann/json/releases). All you need to do is add
@@ -73,7 +59,6 @@ If you are using [Conan](https://www.conan.io/) to manage your dependencies, mer
 If you are using [hunter](https://github.com/ruslo/hunter/) on your project for external dependencies, then you can use the [nlohman_json package](https://github.com/ruslo/hunter/wiki/pkg.nlohmann_json). Please see the hunter project for any issues regarding the packaging.
 
 :warning: [Version 3.0.0](https://github.com/nlohmann/json/wiki/Road-toward-3.0.0) is currently under development. Branch `develop` is used for the ongoing work and is probably **unstable**. Please use the `master` branch for the last stable version 2.1.1.
-
 
 ## Examples
 
@@ -159,7 +144,6 @@ json empty_object_explicit = json::object();
 // a way to express an _array_ of key/value pairs [["currency", "USD"], ["value", 42.99]]
 json array_not_object = { json::array({"currency", "USD"}), json::array({"value", 42.99}) };
 ```
-
 
 ### Serialization / Deserialization
 
@@ -251,7 +235,6 @@ std::vector<std::uint8_t> v = {'t', 'r', 'u', 'e'};
 json j = json::parse(v);
 ```
 
-
 ### STL-like access
 
 We designed the JSON class to behave just like an STL container. In fact, it satisfies the [**ReversibleContainer**](http://en.cppreference.com/w/cpp/concept/ReversibleContainer) requirement.
@@ -324,7 +307,6 @@ int fob_present = o.count("fob"); // 0
 // delete an entry
 o.erase("foo");
 ```
-
 
 ### Conversion from STL containers
 
@@ -426,7 +408,6 @@ json::diff(j_result, j_original);
 // ]
 ```
 
-
 ### Implicit conversions
 
 The type of the JSON object is determined automatically by the expression to store. Likewise, the stored value is implicitly converted.
@@ -520,7 +501,7 @@ using nlohmann::json;
 
 namespace ns {
     void to_json(json& j, const person& p) {
-        j = json{{"name", p.name}, {"address", p.address}, {"age", p.age}};
+        j = json{ {"name", p.name}, {"address", p.address}, {"age", p.age} };
     }
 
     void from_json(const json& j, person& p) {
@@ -536,12 +517,11 @@ Likewise, when calling `get<your_type>()`, the `from_json` method will be called
 
 Some important things:
 
-* Those methods **MUST** be in your type's namespace (which can be the global namespace), or the library will not be able to locate them (in this example, they are in namespace `ns`, where `person` is defined).
-* When using `get<your_type>()`, `your_type` **MUST** be [DefaultConstructible](http://en.cppreference.com/w/cpp/concept/DefaultConstructible). (There is a way to bypass this requirement described later.)
-* In function `from_json`, use function [`at()`](https://nlohmann.github.io/json/classnlohmann_1_1basic__json_a93403e803947b86f4da2d1fb3345cf2c.html#a93403e803947b86f4da2d1fb3345cf2c) to access the object values rather than `operator[]`. In case a key does not exists, `at` throws an exception that you can handle, whereas `operator[]` exhibits undefined behavior.
-* In case your type contains several `operator=` definitions, code like `your_variable = your_json;` [may not compile](https://github.com/nlohmann/json/issues/667). You need to write `your_variable = your_json.get<decltype your_variable>();` instead.
-* You do not need to add serializers or deserializers for STL types like `std::vector`: the library already implements these.
-
+- Those methods **MUST** be in your type's namespace (which can be the global namespace), or the library will not be able to locate them (in this example, they are in namespace `ns`, where `person` is defined).
+- When using `get<your_type>()`, `your_type` **MUST** be [DefaultConstructible](http://en.cppreference.com/w/cpp/concept/DefaultConstructible). (There is a way to bypass this requirement described later.)
+- In function `from_json`, use function [`at()`](https://nlohmann.github.io/json/classnlohmann_1_1basic__json_a93403e803947b86f4da2d1fb3345cf2c.html#a93403e803947b86f4da2d1fb3345cf2c) to access the object values rather than `operator[]`. In case a key does not exists, `at` throws an exception that you can handle, whereas `operator[]` exhibits undefined behavior.
+- In case your type contains several `operator=` definitions, code like `your_variable = your_json;` [may not compile](https://github.com/nlohmann/json/issues/667). You need to write `your_variable = your_json.get<decltype your_variable>();` instead.
+- You do not need to add serializers or deserializers for STL types like `std::vector`: the library already implements these.
 
 #### How do I convert third-party types?
 
@@ -587,7 +567,7 @@ namespace nlohmann {
             if (j.is_null()) {
                 opt = boost::none;
             } else {
-                opt = j.get<T>(); // same as above, but with 
+                opt = j.get<T>(); // same as above, but with
                                   // adl_serializer<T>::from_json
             }
         }
@@ -605,7 +585,7 @@ struct move_only_type {
     move_only_type(int ii): i(ii) {}
     move_only_type(const move_only_type&) = delete;
     move_only_type(move_only_type&&) = default;
-    
+
     int i;
 };
 
@@ -617,7 +597,7 @@ namespace nlohmann {
         static move_only_type from_json(const json& j) {
             return {j.get<int>()};
         }
-        
+
         // Here's the catch! You must provide a to_json method! Otherwise you
         // will not be able to convert move_only_type to json, since you fully
         // specialized adl_serializer on that type
@@ -634,9 +614,9 @@ Yes. You might want to take a look at [`unit-udt.cpp`](https://github.com/nlohma
 
 If you write your own serializer, you'll need to do a few things:
 
-* use a different `basic_json` alias than `nlohmann::json` (the last template parameter of `basic_json` is the `JSONSerializer`)
-* use your `basic_json` alias (or a template parameter) in all your `to_json`/`from_json` methods
-* use `nlohmann::to_json` and `nlohmann::from_json` when you need ADL
+- use a different `basic_json` alias than `nlohmann::json` (the last template parameter of `basic_json` is the `JSONSerializer`)
+- use your `basic_json` alias (or a template parameter) in all your `to_json`/`from_json` methods
+- use `nlohmann::to_json` and `nlohmann::from_json` when you need ADL
 
 Here is an example, without simplifications, that only accepts types with a size <= 32, and uses ADL.
 
@@ -652,7 +632,7 @@ struct less_than_32_serializer {
                                  // this is where the magic happens
         to_json(j, value);
     }
-    
+
     template <typename BasicJsonType>
     static void from_json(const BasicJsonType& j, T& value) {
         // same thing here
@@ -674,7 +654,7 @@ struct bad_serializer
       // if BasicJsonType::json_serializer == bad_serializer ... oops!
       j = value;
     }
-    
+
     template <typename BasicJsonType>
     static void to_json(const BasicJsonType& j, T& value) {
       // this calls BasicJsonType::json_serializer<T>::from_json(j, value);
@@ -709,7 +689,6 @@ std::vector<std::uint8_t> v_msgpack = json::to_msgpack(j);
 json j_from_msgpack = json::from_msgpack(v_msgpack);
 ```
 
-
 ## Supported compilers
 
 Though it's 2016 already, the support for C++11 is still a bit sparse. Currently, the following compilers are known to work:
@@ -725,14 +704,14 @@ Please note:
 
 - GCC 4.8 does not work because of two bugs ([55817](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=55817) and [57824](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=57824)) in the C++11 support. Note there is a [pull request](https://github.com/nlohmann/json/pull/212) to fix some of the issues.
 - Android defaults to using very old compilers and C++ libraries. To fix this, add the following to your `Application.mk`. This will switch to the LLVM C++ library, the Clang compiler, and enable C++11 and other features disabled by default.
- 
-    ```
+
+```bb
     APP_STL := c++_shared
     NDK_TOOLCHAIN_VERSION := clang3.6
     APP_CPPFLAGS += -frtti -fexceptions
-    ```
- 
-    The code compiles successfully with [Android NDK](https://developer.android.com/ndk/index.html?hl=ml), Revision 9 - 11 (and possibly later) and [CrystaX's Android NDK](https://www.crystax.net/en/android/ndk) version 10.
+```
+
+The code compiles successfully with [Android NDK](https://developer.android.com/ndk/index.html?hl=ml), Revision 9 - 11 (and possibly later) and [CrystaX's Android NDK](https://www.crystax.net/en/android/ndk) version 10.
 
 - For GCC running on MinGW or Android SDK, the error `'to_string' is not a member of 'std'` (or similarly, for `strtod`) may occur. Note this is not an issue with the code,  but rather with the compiler itself. On Android, see above to build with a newer environment.  For MinGW, please refer to [this site](http://tehsausage.com/mingw-to-string) and [this discussion](https://github.com/nlohmann/json/issues/136) for information on how to fix this bug. For Android NDK using `APP_STL := gnustl_static`, please refer to [this discussion](https://github.com/nlohmann/json/issues/219).
 
@@ -758,12 +737,10 @@ The following compilers are currently used in continuous integration at [Travis]
 | Clang Xcode 8.2 | Darwin Kernel Version 16.1.0 (macOS 10.12.1) | Apple LLVM version 8.0.0 (clang-800.0.42.1) |
 | Clang Xcode 8.3 | Darwin Kernel Version 16.5.0 (macOS 10.12.4) | Apple LLVM version 8.1.0 (clang-802.0.38) |
 | Clang Xcode 9 beta | Darwin Kernel Version 16.6.0 (macOS 10.12.5) | Apple LLVM version 9.0.0 (clang-900.0.26) |
-| Visual Studio 14 2015 | Windows Server 2012 R2 (x64) | Microsoft (R) Build Engine version 14.0.25420.1 | 
+| Visual Studio 14 2015 | Windows Server 2012 R2 (x64) | Microsoft (R) Build Engine version 14.0.25420.1 |
 | Visual Studio 2017 | Windows Server 2016 | Microsoft (R) Build Engine version 15.1.1012.6693 |
 
 ## License
-
-<img align="right" src="http://opensource.org/trademarks/opensource/OSI-Approved-License-100x137.png">
 
 The class is licensed under the [MIT License](http://opensource.org/licenses/MIT):
 
@@ -774,7 +751,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 
 ## Thanks
 
@@ -807,7 +783,7 @@ I deeply appreciate the help of the following people.
 - [Corbin Hughes](https://github.com/nibroc) fixed some typos in the contribution guidelines.
 - [twelsby](https://github.com/twelsby) fixed the array subscript operator, an issue that failed the MSVC build, and floating-point parsing/dumping. He further added support for unsigned integer numbers and implemented better roundtrip support for parsed numbers.
 - [Volker Diels-Grabsch](https://github.com/vog) fixed a link in the README file.
-- [msm-](https://github.com/msm-) added support for american fuzzy lop. 
+- [msm-](https://github.com/msm-) added support for american fuzzy lop.
 - [Annihil](https://github.com/Annihil) fixed an example in the README file.
 - [Themercee](https://github.com/Themercee) noted a wrong URL in the README file.
 - [Lv Zheng](https://github.com/lv-zheng) fixed a namespace issue with `int64_t` and `uint64_t`.
@@ -863,9 +839,7 @@ I deeply appreciate the help of the following people.
 - [Markus Werle](https://github.com/daixtrose) fixed a typo.
 - [WebProdPP](https://github.com/WebProdPP) fixed a subtle error in a precondition check.
 
-
 Thanks a lot for helping out! Please [let me know](mailto:mail@nlohmann.me) if I forgot someone.
-
 
 ## Used third-party tools
 
@@ -894,11 +868,9 @@ The library itself contains of a single header file licensed under the MIT licen
 - [**Valgrind**](http://valgrind.org) to check for correct memory management
 - [**Wandbox**](http://melpon.org/wandbox) for [online examples](http://melpon.org/wandbox/permlink/4NEU6ZZMoM9lpIex)
 
-
 ## Projects using JSON for Modern C++
 
 The library is currently used in Apple macOS Sierra and iOS 10. I am not sure what they are using the library for, but I am happy that it runs on so many devices.
-
 
 ## Notes
 
@@ -913,7 +885,6 @@ The library is currently used in Apple macOS Sierra and iOS 10. I am not sure wh
 - The code can be compiled without C++ **runtime type identification** features; that is, you can use the `-fno-rtti` compiler flag.
 - **Exceptions** are used widely within the library. They can, however, be switched off with either using the compiler flag `-fno-exceptions` or by defining the symbol `JSON_NOEXCEPTION`. In this case, exceptions are replaced by an `abort()` call.
 - By default, the library does not preserve the **insertion order of object elements**. This is standards-compliant, as the [JSON standard](https://tools.ietf.org/html/rfc7159.html) defines objects as "an unordered collection of zero or more name/value pairs". If you do want to preserve the insertion order, you can specialize the object type with containers like [`tsl::ordered_map`](https://github.com/Tessil/ordered-map) or [`nlohmann::fifo_map`](https://github.com/nlohmann/fifo_map).
-
 
 ## Execute unit tests
 
@@ -930,11 +901,11 @@ All tests passed (14504461 assertions in 48 test cases)
 Alternatively, you can use [CMake](https://cmake.org) and run
 
 ```sh
-$ mkdir build
-$ cd build
-$ cmake ..
-$ make
-$ ctest
+mkdir build
+cd build
+cmake ..
+make
+ctest
 ```
 
 For more information, have a look at the file [.travis.yml](https://github.com/nlohmann/json/blob/master/.travis.yml).

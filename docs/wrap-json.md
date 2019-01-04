@@ -31,122 +31,122 @@ arguments.
 
 `s` (string) \[const char \*\]
 
-:   Convert a null terminated UTF-8 string to a JSON string.
+: Convert a null terminated UTF-8 string to a JSON string.
 
 `s?` (string) \[const char \*\]
 
-:   Like `s`, but if the argument is *NULL*, output a JSON null value.
+: Like `s`, but if the argument is *NULL*, output a JSON null value.
 
 `s*` (string) \[const char \*\]
 
-:   Like `s`, but if the argument is *NULL*, do not output any value.
+: Like `s`, but if the argument is *NULL*, do not output any value.
     This format can only be used inside an object or an array. If used
     inside an object, the corresponding key is additionally suppressed
     when the value is omitted. See below for an example.
 
 `s#` (string) \[const char \*, int\]
 
-:   Convert a UTF-8 buffer of a given length to a JSON string.
+: Convert a UTF-8 buffer of a given length to a JSON string.
 
 `s%` (string) \[const char \*, size\_t\]
 
-:   Like `s#` but the length argument is of type size\_t.
+: Like `s#` but the length argument is of type size\_t.
 
 `+` \[const char \*\]
 
-:   Like `s`, but concatenate to the previous string. Only valid after
+: Like `s`, but concatenate to the previous string. Only valid after
     `s`, `s#`, `+` or `+#`.
 
 `+#` \[const char \*, int\]
 
-:   Like `s#`, but concatenate to the previous string. Only valid after
+: Like `s#`, but concatenate to the previous string. Only valid after
     `s`, `s#`, `+` or `+#`.
 
 `+%` (string) \[const char \*, size\_t\]
 
-:   Like `+#` but the length argument is of type size\_t.
+: Like `+#` but the length argument is of type size\_t.
 
 `y` (byte array) \[const uint8_t \*, size\_t\]
 
-:   Convert the byte array whose length is given to
+: Convert the byte array whose length is given to
     its base64url string representation.
 
 `Y` (byte array) \[const uint8_t \*, size\_t\]
 
-:   Like 'y' but output is base64.
+: Like 'y' but output is base64.
 
 `y?`, `Y?` (byte array or null) \[const uint8_t \*, size\_t\]
 
-:   Like 'y' or 'Y' but allows to output a JSON null value
+: Like 'y' or 'Y' but allows to output a JSON null value
     either when the buffer is *NULL* or when the size is *0*.
 
 `y*`, `y*` (optional byte array) \[const uint8_t \*, size\_t\]
 
-:   Like 'y' or 'Y' but do not put JSON value
-    either when the buffer is *NULL* or when the size is *0*.
-    This format can only be used inside an object or an array. If used
-    inside an object, the corresponding key is additionally suppressed
-    when the value is omitted. See below for an example.
+: Like 'y' or 'Y' but do not put JSON value
+  either when the buffer is *NULL* or when the size is *0*.
+  This format can only be used inside an object or an array. If used
+  inside an object, the corresponding key is additionally suppressed
+  when the value is omitted. See below for an example.
 
 `n` (null)
 
-:   Output a JSON null value. No argument is consumed.
+: Output a JSON null value. No argument is consumed.
 
 `b` (boolean) \[int\]
 
-:   Convert a C int to JSON boolean value. Zero is converted to `false`
+: Convert a C int to JSON boolean value. Zero is converted to `false`
     and non-zero to `true`.
 
 `i` (integer) \[int\]
 
-:   Convert a C int to JSON integer.
+: Convert a C int to JSON integer.
 
 `I` (integer) \[json\_int\_t\]
 
-:   Convert a C json\_int\_t to JSON integer.
+: Convert a C json\_int\_t to JSON integer.
 
 `f` (real) \[double\]
 
-:   Convert a C double to JSON real.
+: Convert a C double to JSON real.
 
 `o` (any value) \[json\_t \*\]
 
-:   Output any given JSON value as-is. If the value is added to an array
-    or object, the reference to the value passed to `o` is stolen by the
-    container.
+: Output any given JSON value as-is. If the value is added to an array
+  or object, the reference to the value passed to `o` is stolen by the
+  container.
 
 `O` (any value) \[json\_t \*\]
 
-:   Like `o`, but the argument's reference count is incremented. This is
-    useful if you pack into an array or object and want to keep the
-    reference for the JSON value consumed by `O` to yourself.
+: Like `o`, but the argument's reference count is incremented. This is
+  useful if you pack into an array or object and want to keep the
+  reference for the JSON value consumed by `O` to yourself.
 
 `o?`, `O?` (any value) \[json\_t \*\]
 
-:   Like `o` and `O`, respectively, but if the argument is *NULL*,
-    output a JSON null value.
+: Like `o` and `O`, respectively, but if the argument is *NULL*,
+  output a JSON null value.
 
 `o*`, `O*` (any value) \[json\_t \*\]
 
-:   Like `o` and `O`, respectively, but if the argument is *NULL*, do
-    not output any value. This format can only be used inside an object
-    or an array. If used inside an object, the corresponding key is
-    additionally suppressed. See below for an example.
+: Like `o` and `O`, respectively, but if the argument is *NULL*, do
+  not output any value. This format can only be used inside an object
+  or an array. If used inside an object, the corresponding key is
+  additionally suppressed. See below for an example.
 
 `[fmt]` (array)
 
-:   Build an array with contents from the inner format string. `fmt` may
-    contain objects and arrays, i.e. recursive value building is
-    supported.
+: Build an array with contents from the inner format string. `fmt` may
+  contain objects and arrays, i.e. recursive value building is
+  supported.
 
 `{fmt}` (object)
 
-:   Build an object with contents from the inner format string `fmt`.
-    The first, third, etc. format specifier represent a key, and must be
-    a string (see `s`, `s#`, `+` and `+#` above), as object keys are
-    always strings. The second, fourth, etc. format specifier represent
-    a value. Any value may be an object or array, i.e. recursive value
-    building is supported.
+: Build an object with contents from the inner format string `fmt`.
+  The first, third, etc. format specifier represent a key, and must be
+  a string (see `s`, `s#`, `+` and `+#` above), as object keys are
+  always strings. The second, fourth, etc. format specifier represent
+  a value. Any value may be an object or array, i.e. recursive value
+  building is supported.
 
 Whitespace, `:` and `,` are ignored.
 
@@ -195,90 +195,90 @@ type whose address should be passed.
 
 `s` (string) \[const char \*\]
 
-:   Convert a JSON string to a pointer to a null terminated UTF-8
-    string. The resulting string is extracted by using
-    json\_string\_value() internally, so it exists as long as there are
-    still references to the corresponding JSON string.
+: Convert a JSON string to a pointer to a null terminated UTF-8
+  string. The resulting string is extracted by using
+  json\_string\_value() internally, so it exists as long as there are
+  still references to the corresponding JSON string.
 
 `s%` (string) \[const char \*, size\_t \*\]
 
-:   Convert a JSON string to a pointer to a null terminated UTF-8 string
-    and its length.
+: Convert a JSON string to a pointer to a null terminated UTF-8 string
+  and its length.
 
 `y` (byte array) \[uint8_t \*\*, size\_t \*\]
 
-:   Convert an input string base64url encoded to its
-    byte array representation. The result and its length
-    are stored. The returned buffer must be freed by the caller.
+: Convert an input string base64url encoded to its
+  byte array representation. The result and its length
+  are stored. The returned buffer must be freed by the caller.
 
 `Y` (byte array) \[uint8_t \*\*, size\_t \*\]
 
-:   Like 'y' but input is base64.
+: Like 'y' but input is base64.
 
 `n` (null)
 
-:   Expect a JSON null value. Nothing is extracted.
+: Expect a JSON null value. Nothing is extracted.
 
 `b` (boolean) \[int\]
 
-:   Convert a JSON boolean value to a C int, so that `true` is converted
-    to 1 and `false` to 0.
+: Convert a JSON boolean value to a C int, so that `true` is converted
+  to 1 and `false` to 0.
 
 `i` (integer) \[int\]
 
-:   Convert a JSON integer to C int.
+: Convert a JSON integer to C int.
 
 `I` (integer) \[json\_int\_t\]
 
-:   Convert a JSON integer to C json\_int\_t.
+: Convert a JSON integer to C json\_int\_t.
 
 `f` (real) \[double\]
 
-:   Convert a JSON real to C double.
+: Convert a JSON real to C double.
 
 `F` (integer or real) \[double\]
 
-:   Convert a JSON number (integer or real) to C double.
+: Convert a JSON number (integer or real) to C double.
 
 `o` (any value) \[json\_t \*\]
 
-:   Store a JSON value with no conversion to a json\_t pointer.
+: Store a JSON value with no conversion to a json\_t pointer.
 
 `O` (any value) \[json\_t \*\]
 
-:   Like `O`, but the JSON value's reference count is incremented.
+: Like `O`, but the JSON value's reference count is incremented.
 
 `[fmt]` (array)
 
-:   Convert each item in the JSON array according to the inner format
-    string. `fmt` may contain objects and arrays, i.e. recursive value
-    extraction is supported.
+: Convert each item in the JSON array according to the inner format
+  string. `fmt` may contain objects and arrays, i.e. recursive value
+  extraction is supported.
 
 `{fmt}` (object)
 
-:   Convert each item in the JSON object according to the inner format
-    string `fmt`. The first, third, etc. format specifier represent a
-    key, and must be `s`. The corresponding argument to unpack functions
-    is read as the object key. The second fourth, etc. format specifier
-    represent a value and is written to the address given as the
-    corresponding argument. **Note** that every other argument is read
-    from and every other is written to.
+: Convert each item in the JSON object according to the inner format
+  string `fmt`. The first, third, etc. format specifier represent a
+  key, and must be `s`. The corresponding argument to unpack functions
+  is read as the object key. The second fourth, etc. format specifier
+  represent a value and is written to the address given as the
+  corresponding argument. **Note** that every other argument is read
+  from and every other is written to.
 
     `fmt` may contain objects and arrays as values, i.e. recursive value
     extraction is supported.
 
 `!`
 
-:   This special format specifier is used to enable the check that all
-    object and array items are accessed, on a per-value basis. It must
-    appear inside an array or object as the last format specifier before
-    the closing bracket or brace.
+: This special format specifier is used to enable the check that all
+  object and array items are accessed, on a per-value basis. It must
+  appear inside an array or object as the last format specifier before
+  the closing bracket or brace.
 
 `*`
 
-:   This special format specifier is the opposite of `!`. This is the default.
-    It must appear inside an array or object as the last format specifier
-    before the closing bracket or brace.
+: This special format specifier is the opposite of `!`. This is the default.
+  It must appear inside an array or object as the last format specifier
+  before the closing bracket or brace.
 
 Whitespace, `:` and `,` are ignored.
 
