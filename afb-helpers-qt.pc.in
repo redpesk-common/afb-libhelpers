@@ -25,5 +25,5 @@ Name: @TARGET_NAME@-qt
 Description: @PROJECT_DESCRIPTION@ and Qt
 Version: @PROJECT_VERSION@
 URL: @PROJECT_URL@
-Libs: -L@CMAKE_INSTALL_LIBDIR@ -l@TARGET_NAME@-qt
+Libs: -L${libdir} -l@TARGET_NAME@-qt
 Cflags: -I${includedir}
