@@ -20,6 +20,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.3)
 include(GNUInstallDirs)
 
 set(TARGET_NAME "afb-helpers")
+set(AGLVERSION 6.99 CACHE STRING "Current AGL Version")
+set(PROJECT_VERSION ${AGLVERSION} CACHE STRING "Project version can override AGLVERSION")
 set(PROJECT_PRETTY_NAME "Afb Helpers")
 set(PROJECT_DESCRIPTION "Library providing some helpful functions for apps using Application Framework Binder")
 set(PROJECT_URL "https://gerrit.automotivelinux.org/gerrit/#/admin/projects/src/libafb-helpers")
