@@ -2,5 +2,5 @@
 host=gerrit.automotivelinux.org
 port=29418
 project=src/libafb-helpers
-defaultbranch=master
+defaultbranch=guppy
 
