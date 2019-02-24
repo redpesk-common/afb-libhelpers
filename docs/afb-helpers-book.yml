@@ -1,0 +1,27 @@
+type: books
+books:
+-
+    id: afb-helpers
+    title:  AFB Helper functions reference
+    description:  AFB Helper functions reference documentation
+    keywords:
+    author: "IotBzh"
+    version: master
+    chapters:
+        - url: usage.md
+          name: Usage
+        - url: afb-timer.md
+          name: AFB Timer
+        - url: curl-wrap.md
+          name: CURL wrapper
+        - url: escape.md
+          name: URL escaping
+        - url: filescan-utils.md
+          name: Filescan Utils
+        - url: qafbwebsocketclient.md
+          name: Qt AFB Websocket client
+        - url: json.md
+          name: JSON library for modern C++
+        - url: wrap-json.md
+          name: C JSON Wrapper
+
