@@ -30,10 +30,6 @@ set(PROJECT_AUTHOR_MAIL "fulup@iot.bzh")
 set(PROJECT_LICENSE "APL2.0")
 set(PROJECT_LANGUAGES "C")
 
-# Add target to project dependency list
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-
 if(NOT CMAKE_INSTALL_PREFIX)
     set(CMAKE_INSTALL_PREFIX "/usr")
 endif()
@@ -93,6 +89,11 @@ if(${AFB_HELPERS})
 endif()
 
 if(${AFB_HELPERS_QT})
+    message(STATUS "Qt's support enabled!")
+    # Add target to project dependency list
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTORCC ON)
+
     find_package(Qt5WebSockets REQUIRED)
 
     set(AFB_HELPERS_QT_HEADERS qafbwebsocketclient.h)
