@@ -28,7 +28,8 @@ set(PROJECT_URL "https://gerrit.automotivelinux.org/gerrit/#/admin/projects/src/
 set(PROJECT_AUTHOR "Ar Foll, Fulup")
 set(PROJECT_AUTHOR_MAIL "fulup@iot.bzh")
 set(PROJECT_LICENSE "APL2.0")
-set(PROJECT_LANGUAGES "C")
+set(PROJECT_LANGUAGES "C CXX")
+set (CMAKE_CXX_STANDARD 11)
 
 # Add target to project dependency list
 set(CMAKE_AUTOMOC ON)
