@@ -2,7 +2,7 @@ type: books
 books:
 -
     id: afb-helpers
-    title:  AFB Helper functions reference
+    title:  AFB Helper Guide
     description:  AFB Helper functions reference documentation
     keywords:
     author: "IotBzh"
