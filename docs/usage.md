@@ -85,4 +85,4 @@ set(PKG_REQUIRED_LIST
 ```
 
 Or you can also use the [FIND_PACKAGE](https://cmake.org/cmake/help/v3.6/command/find_package.html?highlight=find_package)
-CMake command to add it if you don't use the [cmake-apps-module](../cmakeafbtemplates/0_Abstract.html)
+CMake command to add it if you don't use the [cmake-apps-module](../cmakeafbtemplates/dev_guide/cmake-overview.html)
