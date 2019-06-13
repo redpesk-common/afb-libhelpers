@@ -85,16 +85,15 @@ void QAfbWebsocketClient::close()
  */
 void QAfbWebsocketClient::call(const QString& api, const QString& verb, const QJsonValue& arg, closure_t closure)
 {
-    QString callId = QString::number(m_nextCallId);
-    m_closures[callId] = closure;
+    QString callId = QString::number(m_nextCallId++);
+    if (closure)
+        m_closures[callId] = closure;
 
     QJsonArray msg;
     msg.append(2); // Call
     msg.append(callId);
     msg.append(api + "/" + verb);
     msg.append(arg);
-
-    m_nextCallId++;
 
     QJsonDocument value;
     value.setArray(msg);
