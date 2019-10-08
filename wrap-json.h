@@ -51,6 +51,8 @@ extern struct json_object *wrap_json_clone_depth(struct json_object *object, int
 
 extern struct json_object *wrap_json_object_add(struct json_object *dest, struct json_object *added);
 
+extern struct json_object *wrap_json_array_insert_array(struct json_object *dest, struct json_object *added, int idx);
+
 extern struct json_object *wrap_json_sort(struct json_object *array);
 extern struct json_object *wrap_json_keys(struct json_object *object);
 extern int wrap_json_cmp(struct json_object *x, struct json_object *y);

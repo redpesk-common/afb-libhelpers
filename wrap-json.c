@@ -1031,7 +1031,7 @@ struct json_object *wrap_json_clone_deep(struct json_object *object)
  * Adds the items of the object 'added' to the object 'dest'.
  *
  * @param dest the object to complete this object is modified
- * @added the object containing fields to add
+ * @param added the object containing fields to add
  *
  * @return the destination object 'dest'
  *
@@ -1049,6 +1049,46 @@ struct json_object *wrap_json_object_add(struct json_object *dest, struct json_o
 				json_object_get(json_object_iter_peek_value(&it)));
 			json_object_iter_next(&it);
 		}
+	}
+	return dest;
+}
+
+/**
+ * Insert content of the array 'added' at index 'idx' of 'dest' array.
+ *
+ * @param dest the array to complete, this array is modified
+ * @param added the array containing content to add
+ * @param idx the index where the 'added' array content will be inserted into
+ * 'dest' array. To insert 'added' array at the end of 'dest' array,
+ * you can set 'idx' to:
+ * - a negative value.
+ * - a valued bigger than 'dest' array length.
+ *
+ * @return the destination array 'dest'
+ *
+ * @example wrap_json_array_insert(["a","b",5],["X","Y",0.92], 1) -> ["a","X","Y",0.92,"b",5]
+ */
+struct json_object *wrap_json_array_insert_array(struct json_object *dest, struct json_object *added, int idx)
+{
+	int i, nd, na;
+	if (!json_object_is_type(dest, json_type_array) || !json_object_is_type(added, json_type_array))
+		return dest;
+	nd = (int) json_object_array_length(dest);
+	na = (int) json_object_array_length(added);
+	i = nd + na;
+	if (idx < 0 || idx > nd)
+		idx = nd;
+	while (i > idx + na) {
+		i--;
+		json_object_array_put_idx(dest,
+			i,
+			json_object_get(json_object_array_get_idx(dest, i - na)));
+	}
+	while (i > idx) {
+		i--;
+		json_object_array_put_idx(dest,
+			i,
+			json_object_get(json_object_array_get_idx(added, i - idx)));
 	}
 	return dest;
 }
