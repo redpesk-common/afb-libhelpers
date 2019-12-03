@@ -80,27 +80,47 @@ extern const char *GetBinderName();
 extern json_object* ScanForConfig (const char* searchPath, CtlScanDirModeT mode, const char *prefix, const char *extension);
 
 /**
- * @brief Get the Binding root directory file descriptor object
+ * @brief Get the Binder root directory path using root directory fd.
  *
- * @param dynapi : Could be NULL if you don't use dynamic api
+ * @param fd : Binder root directory file descriptor.
  *
- * @return char* string representing the path to binding root directory.
+ * @return char* string representing the path to the binder root directory.
  */
-extern char *GetBindingDirPath_(int fd);
+extern char *GetAFBRootDirPathUsingFd(int fd);
+
+/**
+ * @brief Get the Binder root directory path using AFB API.
+ *
+ * @param apiHandle : pointer to the AFB API.
+ *
+ * @return char* string representing the path to binder root directory.
+ */
+extern char *GetAFBRootDirPath(afb_api_t apiHandle);
+
+/**
+ * For compatibility issues :
+ * 'GetBindingDirPath_' is linked to 'GetAFBRootDirPathUsingFd'
+ */
+#define GetBindingDirPath_ GetAFBRootDirPathUsingFd
+
+/**
+ * For compatibility issues :
+ * 'GetBindingDirPath' is linked to 'GetAFBRootDirPathUsingFd'
+*/
 #if(AFB_BINDING_VERSION == 2)
-static inline char *GetBindingDirPath_v2()
+static inline char *GetAFBRootDirPath_v2()
 {
-    return GetBindingDirPath_(afb_daemon_rootdir_get_fd_v2());
+  return GetAFBRootDirPathUsingFd(afb_daemon_rootdir_get_fd());
 }
-__attribute__((alias("GetBindingDirPath_v2")))
+__attribute__((alias("GetAFBRootDirPath_v2")))
 static char *GetBindingDirPath();
 #else
-static char *GetBindingDirPath_v3(struct afb_api_x3* api)
+static char *GetAFBRootDirPath_v3(afb_api_t api)
 {
-    return GetBindingDirPath_(afb_api_x3_rootdir_get_fd(api));
+  return GetAFBRootDirPathUsingFd(afb_api_rootdir_get_fd(api));
 }
-__attribute__((alias("GetBindingDirPath_v3")))
-static char *GetBindingDirPath(struct afb_api_x3* api);
+__attribute__((alias("GetAFBRootDirPath_v3")))
+static char *GetBindingDirPath(afb_api_t api);
 #endif
 
 /**

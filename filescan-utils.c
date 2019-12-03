@@ -151,7 +151,7 @@ const char* GetBinderName()
     return binderName;
 }
 
-char *GetBindingDirPath_(int fd)
+char *GetAFBRootDirPathUsingFd(int fd)
 {
     // A file description should not be greater than 999.999.999
     char fd_link[CONTROL_MAXPATH_LEN];
@@ -168,6 +168,15 @@ char *GetBindingDirPath_(int fd)
     }
 
     return strndup(retdir, sizeof(retdir));
+}
+
+char *GetAFBRootDirPath(afb_api_t apiHandle)
+{
+    int fd;
+
+    fd = afb_api_rootdir_get_fd(apiHandle);
+
+    return GetAFBRootDirPathUsingFd(fd);
 }
 
 

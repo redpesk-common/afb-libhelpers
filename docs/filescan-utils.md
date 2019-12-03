@@ -26,13 +26,37 @@ Scan a directory searching all files matching pattern: 'prefix*extention'.
 Returns a json_object array of object with 2 parts a 'fullpath' describing the
 fullpath to reach the file and 'filename' containing the matched files.
 
-## char *GetBindingDirPath_(afb_api_t api)
+## char *GetAFBRootDirPathUsingFd(int fd)
 
-For binding with a version >= 3, get the root directory path.
+Get the binder root directory path (the path specified with '--rootdir' option
+at binder launch, if the option is not used, the path from where the binder
+is launched) using binder root directory file descriptor.
 
-* `api` : pointer to the AFB API.
+* `fd` : Binder root directory file descriptor.
 
-Returns a string representing the path to binding root directory.
+Returns a string representing the path to binder root directory.
+
+## char *GetAFBRootDirPath(afb_api_t apiHandle)
+
+For binding with a version >= 3, same as 'GetAFBRootDirPathUsingFd' function,
+but use pointer to the AFB API as parameter instead of
+binder root directory file descriptor.
+
+* `apiHandle` : pointer to the AFB API.
+
+Returns a string representing the path to binder root directory.
+
+## char* GetBindingDirPath()
+
+For binding with a version <= 2, same as 'GetAFBRootDirPath' function,
+but the pointer to the AFB API is not needed.
+Kept for compatibility issues.
+
+## char* GetBindingDirPath(afb_api_t api)
+
+For binding with a version >= 3, same as 'GetAFBRootDirPath' function.
+Deprecated, please use 'GetAFBRootDirPath' function.
+Kept for compatibility issues.
 
 ## const char *getEnvDirList(const char *prefix, const char *suffix)
 
