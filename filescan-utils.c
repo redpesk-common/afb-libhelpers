@@ -179,7 +179,33 @@ char *GetAFBRootDirPath(afb_api_t apiHandle)
     return GetAFBRootDirPathUsingFd(fd);
 }
 
+char *GetRunningBindingDirPath(afb_api_t apiHandle)
+{
+    int ret;
 
+    char *lastSlashInPath, *bindingDirectoryPath;
+    const char *bindingPath;
+
+    json_object *settingsJ, *bindingPathJ = NULL;
+
+    settingsJ = afb_api_settings(apiHandle);
+    if(!settingsJ)
+        return NULL;
+
+    ret = json_object_object_get_ex(settingsJ, "binding-path", &bindingPathJ);
+    if(!ret || !bindingPathJ || !json_object_is_type(bindingPathJ, json_type_string))
+        return NULL;
+
+    bindingPath = json_object_get_string(bindingPathJ);
+
+    lastSlashInPath = rindex(bindingPath, '/');
+    if(!lastSlashInPath)
+        return NULL;
+
+    bindingDirectoryPath = strndup(bindingPath, lastSlashInPath - bindingPath);
+
+    return bindingDirectoryPath;
+}
 
 
 /**

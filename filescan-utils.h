@@ -123,6 +123,16 @@ __attribute__((alias("GetAFBRootDirPath_v3")))
 static char *GetBindingDirPath(afb_api_t api);
 #endif
 
+/*
+ * @brief Get the Binding directory
+ *
+ * @param dynapi : Api use in binding
+ *
+ * @return char* string representing the path to binding directory.
+ * NULL if something wrong happened.
+ */
+extern char *GetRunningBindingDirPath(afb_api_t apiHandle);
+
 /**
  * @brief Get the environment directory colon separated path list. This take the
  * prefix add the binder's name then the suffix as environment variable name and

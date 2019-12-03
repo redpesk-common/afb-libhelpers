@@ -58,6 +58,15 @@ For binding with a version >= 3, same as 'GetAFBRootDirPath' function.
 Deprecated, please use 'GetAFBRootDirPath' function.
 Kept for compatibility issues.
 
+## char *GetRunningBindingDirPath(afb_api_t api)
+
+For binding with a version >= 3, get the binding directory path
+(the path to the directory that contains the binding).
+
+* `api` : pointer to the AFB API.
+
+Returns a string representing the path to the binding directory.
+
 ## const char *getEnvDirList(const char *prefix, const char *suffix)
 
 Get the environment directory colon separated path list. This take the prefix
