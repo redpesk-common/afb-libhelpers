@@ -36,34 +36,29 @@ static int TimerNext (sd_event_source* source, uint64_t timer, void* handle) {
     int done;
     uint64_t usec;
 
+    // Stop Timer when count is null
+    if (timerHandle->count-- == 0) {
+        if (timerHandle->freeCB) timerHandle->freeCB(timerHandle->context);
+        free (timerHandle);
+        return -1;
+    }
+
     done= timerHandle->callback(timerHandle);
     if (!done) {
         AFB_API_WARNING(timerHandle->api, "TimerNext Callback Fail Tag=%s", timerHandle->uid);
         return -1;
     }
 
-    // Rearm timer if needed
-    timerHandle->count --;
-    if (timerHandle->count == 0) {
-        sd_event_source_unref(source);
-        if (timerHandle->freeCB) timerHandle->freeCB(timerHandle->context);
-        free (handle);
-        return 0;
-    }
-    else {
-        // otherwise validate timer for a new run
-        sd_event_now(afb_api_get_event_loop(timerHandle->api), CLOCK_MONOTONIC, &usec);
-        sd_event_source_set_enabled(source, SD_EVENT_ONESHOT);
-        sd_event_source_set_time(source, usec + timerHandle->delay*1000);
-    }
+    // otherwise validate timer for a new run
+    sd_event_now(afb_api_get_event_loop(timerHandle->api), CLOCK_MONOTONIC, &usec);
+    sd_event_source_set_time(source, usec + timerHandle->delay*1000);
+    sd_event_source_set_enabled(source, SD_EVENT_ONESHOT);
 
     return 0;
 }
 
 void TimerEvtStop(TimerHandleT *timerHandle) {
-    sd_event_source_unref(timerHandle->evtSource);
-    if (timerHandle->freeCB) timerHandle->freeCB(timerHandle->context);
-    free (timerHandle);
+    timerHandle->count = 0; // Force timer to close
 }
 
 void TimerEvtStart(afb_api_t api, TimerHandleT *timerHandle, timerCallbackT callback, void *context) {
@@ -76,7 +71,7 @@ void TimerEvtStart(afb_api_t api, TimerHandleT *timerHandle, timerCallbackT call
 
     // set a timer with ~250us accuracy
     sd_event_now(afb_api_get_event_loop(api), CLOCK_MONOTONIC, &usec);
-    sd_event_add_time(afb_api_get_event_loop(api), &timerHandle->evtSource, CLOCK_MONOTONIC, usec+timerHandle->delay*1000, 250, TimerNext, timerHandle);
+    sd_event_add_time(afb_api_get_event_loop(api), &timerHandle->evtSource, CLOCK_MONOTONIC, usec+timerHandle->delay*1000, 0, TimerNext, timerHandle);
 }
 
 uint64_t LockWait(afb_api_t api, uint64_t utimeout) {
