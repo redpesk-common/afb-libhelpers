@@ -1,6 +1,6 @@
 Format: 1.0
-Source: agl-libafb-helpers
-Binary: agl-libafb-helpers-bin, agl-libafb-helpers-dev
+Source: rp-libafb-helpers
+Binary: rp-libafb-helpers-bin, rp-libafb-helpers-dev
 Architecture: any
 Version: 2.0-0
 Maintainer: romain.forlot <romain.forlot@iot.bzh>
@@ -14,8 +14,8 @@ Build-Depends: debhelper (>= 5),
  libsystemd-dev,
  libcurl4-openssl-dev,
  libqt5websockets5-dev,
- agl-app-framework-binder-bin,
- agl-app-framework-binder-dev,
+ rp-app-framework-binder-bin,
+ rp-app-framework-binder-dev,
 DEBTRANSFORM-RELEASE: 1
 Files:
  libafb-helpers_2.0.tar.gz
