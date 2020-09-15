@@ -28,11 +28,6 @@
 
 #include <afb/afb-binding.h>
 
-#if((AFB_BINDING_VERSION == 0) && defined(AFB_BINDING_WANT_DYNAPI))
-    extern  afb_dynapi *AFB_default;
-    #define AFB_DEBUG(...) AFB_DYNAPI_DEBUG(AFB_default, __VA_ARGS__)
-#endif
-
 #include <json-c/json.h>
 
 #ifndef CONTROL_MAXPATH_LEN
@@ -126,7 +121,7 @@ static char *GetBindingDirPath(afb_api_t api);
 /*
  * @brief Get the Binding directory
  *
- * @param dynapi : Api use in binding
+ * @param apiHandle : Api use in binding
  *
  * @return char* string representing the path to binding directory.
  * NULL if something wrong happened.
