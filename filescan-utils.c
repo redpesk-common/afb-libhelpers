@@ -35,10 +35,7 @@ static int ScanDir(char* searchPath, CtlScanDirModeT mode, size_t extentionLen,
     struct dirent* dirEnt;
     dirHandle = opendir(searchPath);
     if (!dirHandle) {
-        if(afbBindingV3root)
-            AFB_API_DEBUG_V3(afbBindingV3root, "CONFIG-SCANNING dir=%s not readable", searchPath);
-        else
-            AFB_API_DEBUG_V3(afbBindingV2data.service.closure, "CONFIG-SCANNING dir=%s not readable", searchPath);
+        AFB_DEBUG("CONFIG-SCANNING dir=%s not readable", searchPath);
         return 0;
     }
 

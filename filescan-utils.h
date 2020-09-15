@@ -26,6 +26,10 @@
     extern "C" {
 #endif
 
+#if (AFB_BINDING_VERSION != 3)
+# error "Current version of helper only support bindings version 3"
+#endif
+
 #include <afb/afb-binding.h>
 
 #include <json-c/json.h>
@@ -98,25 +102,10 @@ extern char *GetAFBRootDirPath(afb_api_t apiHandle);
  */
 #define GetBindingDirPath_ GetAFBRootDirPathUsingFd
 
-/**
- * For compatibility issues :
- * 'GetBindingDirPath' is linked to 'GetAFBRootDirPathUsingFd'
-*/
-#if(AFB_BINDING_VERSION == 2)
-static inline char *GetAFBRootDirPath_v2()
-{
-  return GetAFBRootDirPathUsingFd(afb_daemon_rootdir_get_fd());
-}
-__attribute__((alias("GetAFBRootDirPath_v2")))
-static char *GetBindingDirPath();
-#else
-static char *GetAFBRootDirPath_v3(afb_api_t api)
+static inline char *GetBindingDirPath(afb_api_t api)
 {
   return GetAFBRootDirPathUsingFd(afb_api_rootdir_get_fd(api));
 }
-__attribute__((alias("GetAFBRootDirPath_v3")))
-static char *GetBindingDirPath(afb_api_t api);
-#endif
 
 /*
  * @brief Get the Binding directory
