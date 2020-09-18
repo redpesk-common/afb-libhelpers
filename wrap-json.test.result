@@ -152,7 +152,7 @@ pack("y", "???????hello>>>>>>>", (size_t)19)
   SUCCESS "Pz8_Pz8_P2hlbGxvPj4-Pj4-Pg"
 
 pack("Y", "???????hello>>>>>>>", (size_t)19)
-  SUCCESS "Pz8\/Pz8\/P2hlbGxvPj4+Pj4+Pg"
+  SUCCESS "Pz8/Pz8/P2hlbGxvPj4+Pj4+Pg"
 
 pack("{sy?}", "foo", "hi", (size_t)2)
   SUCCESS { "foo": "aGk" }
@@ -408,6 +408,30 @@ unpack("{\"foo\":\"\"}", "{s?y}", "foo", &xy[0], &xz[0])
 
 unpack("{}", "{s?y}", "foo", &xy[0], &xz[0])
   SUCCESS s:foo y/0:
+
+unpack("{}", "!")
+  ERROR[char 1 err 5] invalid character
+
+unpack("{}", "{!}")
+  SUCCESS
+
+unpack("{}", "{!}!")
+  ERROR[char 4 err 5] invalid character
+
+unpack("[]", "[!]")
+  SUCCESS
+
+unpack("{}", "}")
+  ERROR[char 1 err 5] invalid character
+
+unpack("[]", "]")
+  ERROR[char 1 err 5] invalid character
+
+unpack("{}", "{}}")
+  ERROR[char 3 err 5] invalid character
+
+unpack("[]", "[]]")
+  ERROR[char 3 err 5] invalid character
 
 compare(null)(null)
    -> 0 / 1

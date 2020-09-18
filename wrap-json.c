@@ -702,7 +702,7 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 			break;
 		case '}':
 		case ']':
-			if (!top || c != xacc[0])
+			if (c != xacc[0])
 				goto internal_error;
 			acc = top->acc;
 			xacc[0] = top->type;
@@ -1204,7 +1204,7 @@ int wrap_json_contains(struct json_object *x, struct json_object *y)
 #if !defined(JSON_C_TO_STRING_NOSLASHESCAPE)
 #define JSON_C_TO_STRING_NOSLASHESCAPE 0
 #endif
-#define j2t(o) json_object_to_json_string_ext((o), JSON_C_TO_STRING_NOSLASHESCAPE)
+#define j2t(o) json_object_to_json_string_ext((o), JSON_C_TO_STRING_NOSLASHESCAPE | JSON_C_TO_STRING_SPACED)
 
 void tclone(struct json_object *object)
 {
@@ -1292,7 +1292,7 @@ void u(const char *value, const char *desc, ...)
 				uint8_t *p = *va_arg(args, uint8_t**);
 				size_t s = *va_arg(args, size_t*);
 				printf(" y/%d:%.*s", (int)s, (int)s, (char*)p);
-				k ^= m&1;
+				k = m&1;
 				break;
 				}
 			default: break;
@@ -1474,6 +1474,14 @@ int main()
 	U("{\"foo\":\"Pz8_Pz8_P2hlbGxvPj4-Pj4-Pg\"}", "{s?y}", "foo", &xy[0], &xz[0]);
 	U("{\"foo\":\"\"}", "{s?y}", "foo", &xy[0], &xz[0]);
 	U("{}", "{s?y}", "foo", &xy[0], &xz[0]);
+	U("{}", "!");
+	U("{}", "{!}");
+	U("{}", "{!}!");
+	U("[]", "[!]");
+	U("{}", "}");
+	U("[]", "]");
+	U("{}", "{}}");
+	U("[]", "[]]");
 
 	c("null", "null", 1, 1);
 	c("true", "true", 1, 1);
@@ -1509,6 +1517,7 @@ int main()
 	c("{\"a\":true,\"b\":false}", "{\"a\":true}", 0, 1);
 	c("{\"a\":true,\"b\":false}", "{\"a\":true,\"c\":false}", 0, 0);
 	c("{\"a\":true,\"c\":false}", "{\"a\":true,\"b\":false}", 0, 0);
+
 	return 0;
 }
 
