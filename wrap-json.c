@@ -24,26 +24,6 @@
 #define STACKCOUNT  32
 #define STRCOUNT    8
 
-enum {
-	wrap_json_error_none,
-	wrap_json_error_null_object,
-	wrap_json_error_truncated,
-	wrap_json_error_internal_error,
-	wrap_json_error_out_of_memory,
-	wrap_json_error_invalid_character,
-	wrap_json_error_too_long,
-	wrap_json_error_too_deep,
-	wrap_json_error_null_spec,
-	wrap_json_error_null_key,
-	wrap_json_error_null_string,
-	wrap_json_error_out_of_range,
-	wrap_json_error_incomplete,
-	wrap_json_error_missfit_type,
-	wrap_json_error_key_not_found,
-	wrap_json_error_bad_base64,
-	_wrap_json_error_count_
-};
-
 static const char ignore_all[] = " \t\n\r,:";
 static const char pack_accept_arr[] = "][{snbiIfoOyY";
 static const char pack_accept_key[] = "s}";
@@ -73,12 +53,14 @@ static const char *pack_errors[_wrap_json_error_count_] =
 	[wrap_json_error_bad_base64] = "bad base64 encoding"
 };
 
+/* position of the error code */
 int wrap_json_get_error_position(int rc)
 {
 	if (rc < 0)
 		rc = -rc;
 	return (rc >> 4) + 1;
 }
+
 
 int wrap_json_get_error_code(int rc)
 {
@@ -720,7 +702,7 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 			break;
 		case '}':
 		case ']':
-			if (!top || c != xacc[0])
+			if (c != xacc[0])
 				goto internal_error;
 			acc = top->acc;
 			xacc[0] = top->type;
@@ -852,6 +834,17 @@ int wrap_json_unpack(struct json_object *object, const char *desc, ...)
 	return rc;
 }
 
+/**
+ * Call the callback for each item of the given object
+ * The given callback receives 3 arguments:
+ *  1. the closure
+ *  2. the item
+ *  3. the name of the item
+ *
+ * @param object   the object to iterate
+ * @param callback the callback to call
+ * @param closure  the closure for the callback
+ */
 static void object_for_all(struct json_object *object, void (*callback)(void*,struct json_object*,const char*), void *closure)
 {
 	struct json_object_iterator it = json_object_iter_begin(object);
@@ -862,6 +855,16 @@ static void object_for_all(struct json_object *object, void (*callback)(void*,st
 	}
 }
 
+/**
+ * Call the callback for each item of the given array
+ * The given callback receives 2 arguments:
+ *  1. the closure
+ *  2. the item
+ *
+ * @param object   the array to iterate
+ * @param callback the callback to call
+ * @param closure  the closure for the callback
+ */
 static void array_for_all(struct json_object *object, void (*callback)(void*,struct json_object*), void *closure)
 {
 	int n = (int)json_object_array_length(object);
@@ -870,6 +873,7 @@ static void array_for_all(struct json_object *object, void (*callback)(void*,str
 		callback(closure, json_object_array_get_idx(object, i++));
 }
 
+/* apply callback to items of an array or to it if not an object */
 void wrap_json_optarray_for_all(struct json_object *object, void (*callback)(void*,struct json_object*), void *closure)
 {
 	if (json_object_is_type(object, json_type_array))
@@ -878,18 +882,21 @@ void wrap_json_optarray_for_all(struct json_object *object, void (*callback)(voi
 		callback(closure, object);
 }
 
+/* apply callback to items of an array */
 void wrap_json_array_for_all(struct json_object *object, void (*callback)(void*,struct json_object*), void *closure)
 {
 	if (json_object_is_type(object, json_type_array))
 		array_for_all(object, callback, closure);
 }
 
+/* apply callback to items of an object */
 void wrap_json_object_for_all(struct json_object *object, void (*callback)(void*,struct json_object*,const char*), void *closure)
 {
 	if (json_object_is_type(object, json_type_object))
 		object_for_all(object, callback, closure);
 }
 
+/* apply callback to items of an object or to it if not an object */
 void wrap_json_optobject_for_all(struct json_object *object, void (*callback)(void*,struct json_object*,const char*), void *closure)
 {
 	if (json_object_is_type(object, json_type_object))
@@ -898,6 +905,7 @@ void wrap_json_optobject_for_all(struct json_object *object, void (*callback)(vo
 		callback(closure, object, NULL);
 }
 
+/* apply callback to items or object */
 void wrap_json_for_all(struct json_object *object, void (*callback)(void*,struct json_object*,const char*), void *closure)
 {
 	if (!object)
@@ -958,24 +966,7 @@ static struct json_object *clone_array(struct json_object *array, int subdepth)
 	return r;
 }
 
-/**
- * Clones any json 'item' for the depth 'depth'. The item is duplicated
- * and if 'depth' is not zero, its contents is recursively cloned with
- * the depth 'depth' - 1.
- *
- * Be aware that this implementation doesn't copies the primitive json
- * items (numbers, nulls, booleans, strings) but instead increments their
- * use count. This can cause issues with newer versions of libjson-c that
- * now unfortunately allows to change their values.
- *
- * @param item the item to clone. Can be of any kind.
- * @param depth the depth to use when cloning composites: object or arrays.
- *
- * @return the cloned array.
- *
- * @see wrap_json_clone
- * @see wrap_json_clone_deep
- */
+/* clone with controled depth */
 struct json_object *wrap_json_clone_depth(struct json_object *item, int depth)
 {
 	if (depth) {
@@ -991,52 +982,19 @@ struct json_object *wrap_json_clone_depth(struct json_object *item, int depth)
 	return json_object_get(item);
 }
 
-/**
- * Clones the 'object': returns a copy of it. But doesn't clones
- * the content. Synonym of wrap_json_clone_depth(object, 1).
- *
- * Be aware that this implementation doesn't clones content that is deeper
- * than 1 but it does link these contents to the original object and
- * increments their use count. So, everything deeper that 1 is still available.
- *
- * @param object the object to clone
- *
- * @return a copy of the object.
- *
- * @see wrap_json_clone_depth
- * @see wrap_json_clone_deep
- */
+/* clone first level */
 struct json_object *wrap_json_clone(struct json_object *object)
 {
 	return wrap_json_clone_depth(object, 1);
 }
 
-/**
- * Clones the 'object': returns a copy of it. Also clones all
- * the content recursively. Synonym of wrap_json_clone_depth(object, INT_MAX).
- *
- * @param object the object to clone
- *
- * @return a copy of the object.
- *
- * @see wrap_json_clone_depth
- * @see wrap_json_clone
- */
+/* clone entirely */
 struct json_object *wrap_json_clone_deep(struct json_object *object)
 {
 	return wrap_json_clone_depth(object, INT_MAX);
 }
 
-/**
- * Adds the items of the object 'added' to the object 'dest'.
- *
- * @param dest the object to complete this object is modified
- * @param added the object containing fields to add
- *
- * @return the destination object 'dest'
- *
- * @example wrap_json_object_add({"a":"a"},{"X":"X"}) -> {"a":"a","X":"X"}
- */
+/* add items of object added in dest */
 struct json_object *wrap_json_object_add(struct json_object *dest, struct json_object *added)
 {
 	struct json_object_iterator it, end;
@@ -1053,21 +1011,7 @@ struct json_object *wrap_json_object_add(struct json_object *dest, struct json_o
 	return dest;
 }
 
-/**
- * Insert content of the array 'added' at index 'idx' of 'dest' array.
- *
- * @param dest the array to complete, this array is modified
- * @param added the array containing content to add
- * @param idx the index where the 'added' array content will be inserted into
- * 'dest' array. To insert 'added' array at the end of 'dest' array,
- * you can set 'idx' to:
- * - a negative value.
- * - a valued bigger than 'dest' array length.
- *
- * @return the destination array 'dest'
- *
- * @example wrap_json_array_insert(["a","b",5],["X","Y",0.92], 1) -> ["a","X","Y",0.92,"b",5]
- */
+/* insert items of added in dest before position idx */
 struct json_object *wrap_json_array_insert_array(struct json_object *dest, struct json_object *added, int idx)
 {
 	int i, nd, na;
@@ -1093,15 +1037,7 @@ struct json_object *wrap_json_array_insert_array(struct json_object *dest, struc
 	return dest;
 }
 
-/**
- * Sort the 'array' and returns it. Sorting is done accordingly to the
- * order given by the function 'wrap_json_cmp'. If the paramater isn't
- * an array, nothing is done and the parameter is returned unchanged.
- *
- * @param array the array to sort
- *
- * @returns the array sorted
- */
+/* sort the array and return it */
 struct json_object *wrap_json_sort(struct json_object *array)
 {
 	if (json_object_is_type(array, json_type_array))
@@ -1110,13 +1046,7 @@ struct json_object *wrap_json_sort(struct json_object *array)
 	return array;
 }
 
-/**
- * Returns a json array of the sorted keys of 'object' or null if 'object' has no keys.
- *
- * @param object the object whose keys are to be returned
- *
- * @return either NULL is 'object' isn't an object or a sorted array of the key's strings.
- */
+/* return array of the sorted keys of the object */
 struct json_object *wrap_json_keys(struct json_object *object)
 {
 	struct json_object *r;
@@ -1131,7 +1061,7 @@ struct json_object *wrap_json_keys(struct json_object *object)
 			json_object_array_add(r, json_object_new_string(json_object_iter_peek_name(&it)));
 			json_object_iter_next(&it);
 		}
-		wrap_json_sort(r);
+		r = wrap_json_sort(r);
 	}
 	return r;
 }
@@ -1248,53 +1178,33 @@ static int jcmp(struct json_object *x, struct json_object *y, int inc, int sort)
 	return r;
 }
 
-/**
- * Compares 'x' with 'y'
- *
- * @param x first object to compare
- * @param y second object to compare
- *
- * @return an integer less than, equal to, or greater than zero
- * if 'x' is found, respectively, to be less than, to match,
- * or be greater than 'y'.
- */
+/* compares 2 items */
 int wrap_json_cmp(struct json_object *x, struct json_object *y)
 {
 	return jcmp(x, y, 0, 1);
 }
 
-/**
- * Searchs wether 'x' equals 'y'
- *
- * @param x first object to compare
- * @param y second object to compare
- *
- * @return an integer equal to zero when 'x' != 'y' or 1 when 'x' == 'y'.
- */
+/* test equallity of two items */
 int wrap_json_equal(struct json_object *x, struct json_object *y)
 {
 	return !jcmp(x, y, 0, 0);
 }
 
-/**
- * Searchs wether 'x' contains 'y'
- *
- * @param x first object to compare
- * @param y second object to compare
- *
- * @return an integer equal to 1 when 'y' is a subset of 'x' or zero otherwise
- */
+/* if x contains y */
 int wrap_json_contains(struct json_object *x, struct json_object *y)
 {
 	return !jcmp(x, y, 1, 0);
 }
 
+/**********************************************************************/
+/*                TESTING                                             */
+/**********************************************************************/
 #if defined(WRAP_JSON_TEST)
 #include <stdio.h>
 #if !defined(JSON_C_TO_STRING_NOSLASHESCAPE)
 #define JSON_C_TO_STRING_NOSLASHESCAPE 0
 #endif
-#define j2t(o) json_object_to_json_string_ext((o), JSON_C_TO_STRING_NOSLASHESCAPE)
+#define j2t(o) json_object_to_json_string_ext((o), JSON_C_TO_STRING_NOSLASHESCAPE | JSON_C_TO_STRING_SPACED)
 
 void tclone(struct json_object *object)
 {
@@ -1382,7 +1292,7 @@ void u(const char *value, const char *desc, ...)
 				uint8_t *p = *va_arg(args, uint8_t**);
 				size_t s = *va_arg(args, size_t*);
 				printf(" y/%d:%.*s", (int)s, (int)s, (char*)p);
-				k ^= m&1;
+				k = m&1;
 				break;
 				}
 			default: break;
@@ -1564,6 +1474,14 @@ int main()
 	U("{\"foo\":\"Pz8_Pz8_P2hlbGxvPj4-Pj4-Pg\"}", "{s?y}", "foo", &xy[0], &xz[0]);
 	U("{\"foo\":\"\"}", "{s?y}", "foo", &xy[0], &xz[0]);
 	U("{}", "{s?y}", "foo", &xy[0], &xz[0]);
+	U("{}", "!");
+	U("{}", "{!}");
+	U("{}", "{!}!");
+	U("[]", "[!]");
+	U("{}", "}");
+	U("[]", "]");
+	U("{}", "{}}");
+	U("[]", "[]]");
 
 	c("null", "null", 1, 1);
 	c("true", "true", 1, 1);
@@ -1599,6 +1517,7 @@ int main()
 	c("{\"a\":true,\"b\":false}", "{\"a\":true}", 0, 1);
 	c("{\"a\":true,\"b\":false}", "{\"a\":true,\"c\":false}", 0, 0);
 	c("{\"a\":true,\"c\":false}", "{\"a\":true,\"b\":false}", 0, 0);
+
 	return 0;
 }
 

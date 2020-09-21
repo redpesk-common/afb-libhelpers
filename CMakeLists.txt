@@ -36,7 +36,7 @@ if(NOT CMAKE_INSTALL_PREFIX)
 endif()
 
 add_definitions(-DAFB_BINDING_VERSION=3)
-ADD_COMPILE_OPTIONS(-DCONTROL_SUPPORT_LUA -Wall -Wextra -Wconversion -Wno-unused-parameter -Wno-sign-compare -Wno-sign-conversion -Werror=maybe-uninitialized -Werror=implicit-function-declaration -ffunction-sections -fdata-sections -fPIC)
+ADD_COMPILE_OPTIONS(-Wall -Wextra -Wconversion -Wno-unused-parameter -Wno-sign-compare -Wno-sign-conversion -Werror=maybe-uninitialized -Werror=implicit-function-declaration -ffunction-sections -fdata-sections -fPIC)
 
 option(AFB_HELPERS "Enable the basics helpers functions for the Application Framework Binders" ON)
 option(AFB_HELPERS_QT "Enable the Qt helpers functions for the Application Framework Binders" OFF)
