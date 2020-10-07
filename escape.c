@@ -315,7 +315,7 @@ char *escape_args(const char * const *args, size_t *length)
 
 const char *escape_str(const char* str, size_t *length)
 {
-	const char *a[2] = { str, NULL };
+	const char *a[3] = { str, NULL, NULL };
 	return escape_args(a, length);
 }
 
