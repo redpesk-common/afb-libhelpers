@@ -26,10 +26,6 @@
     extern "C" {
 #endif
 
-#if (AFB_BINDING_VERSION != 3)
-# error "Current version of helper only support bindings version 3"
-#endif
-
 #include <afb/afb-binding.h>
 
 #include <json-c/json.h>

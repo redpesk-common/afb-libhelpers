@@ -170,11 +170,19 @@ char *GetAFBRootDirPathUsingFd(int fd)
 
 char *GetAFBRootDirPath(afb_api_t apiHandle)
 {
+    char *rd = getenv("AFB_ROOTDIR");
+    if (rd)
+        return strdup(rd);
+#if (AFB_BINDING_VERSION > 3)
+    return NULL;
+#else
+
     int fd;
 
     fd = afb_api_rootdir_get_fd(apiHandle);
 
     return GetAFBRootDirPathUsingFd(fd);
+#endif
 }
 
 char *GetRunningBindingDirPath(afb_api_t apiHandle)
