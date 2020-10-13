@@ -99,13 +99,10 @@ extern char *GetAFBRootDirPath(afb_api_t apiHandle);
 /**
  * For compatibility issues :
  * 'GetBindingDirPath_' is linked to 'GetAFBRootDirPathUsingFd'
+ * 'GetBindingDirPath' is linked to 'GetAFBRootDirPath'
  */
-#define GetBindingDirPath_ GetAFBRootDirPathUsingFd
-
-static inline char *GetBindingDirPath(afb_api_t api)
-{
-  return GetAFBRootDirPathUsingFd(afb_api_rootdir_get_fd(api));
-}
+#define GetBindingDirPath_  GetAFBRootDirPathUsingFd
+#define GetBindingDirPath   GetAFBRootDirPath
 
 /*
  * @brief Get the Binding directory
