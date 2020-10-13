@@ -197,7 +197,7 @@ char *GetRunningBindingDirPath(afb_api_t apiHandle)
 
     lastSlashInPath = rindex(bindingPath, '/');
     if(!lastSlashInPath)
-        return NULL;
+        return strdup(".");
 
     bindingDirectoryPath = strndup(bindingPath, lastSlashInPath - bindingPath);
 
