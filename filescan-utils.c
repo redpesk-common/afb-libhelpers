@@ -233,7 +233,7 @@ static size_t toUpperString(const char *input, char *output, size_t output_size)
    return 0;
 }
 
-const char *getEnvDirList(const char *prefix, const char *suffix) {
+char *getEnvDirList(const char *prefix, const char *suffix) {
     size_t lenSimple = 0, lenFull = 0, plen = 0, slen = 0, blen = 0;
     char *envConfigPathSimple = NULL, *envConfigPathFull = NULL;
     char *upperPrefix = NULL, *upperSuffix = NULL, *upperBinderName = NULL;

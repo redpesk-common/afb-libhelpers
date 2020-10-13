@@ -129,7 +129,7 @@ extern char *GetRunningBindingDirPath(afb_api_t apiHandle);
  * @return const char* a string representing a colon separated path list or NULL
  * is case of error or none environment variables found.
  */
-extern const char *getEnvDirList(const char *prefix, const char *suffix);
+extern char *getEnvDirList(const char *prefix, const char *suffix);
 
 #ifdef __cplusplus
     }
