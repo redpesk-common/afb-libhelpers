@@ -1,6 +1,6 @@
 Priority: optional
 Maintainer: romain.forlot <romain.forlot@iot.bzh>
-Source: rp-libafb-helpers
+Source: afb-libhelpers
 Build-Depends:
  debhelper (>= 5),
  pkg-config,
@@ -14,15 +14,15 @@ Build-Depends:
 Standards-Version: 3.8.2
 Homepage: https://gerrit.automotivelinux.org/gerrit/#/admin/projects/apps/libafb-helpers
 
-Package: rp-libafb-helpers-bin
+Package: afb-libhelpers-bin
 Section: libs
 Architecture: any
 Description: libafb-helpers provides helpful functions to be used in a binding for the
  Application Framework Binder
 
-Package: rp-libafb-helpers-dev
+Package: afb-libhelpers-dev
 Section: libs
 Architecture: any
-Depends: rp-libafb-helpers-bin
+Depends: afb-libhelpers-bin
 Description: libafb-helpers provides helpful functions to be used in a binding for the
  Application Framework Binder

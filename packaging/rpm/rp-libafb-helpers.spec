@@ -9,7 +9,7 @@
 %global debug_package %{nil}
 %endif
 
-Name:           rp-libafb-helpers
+Name:           afb-libhelpers
 # WARNING {name} is not used for tar file name in source nor for setup
 #         Check hard coded values required to match git directory naming
 Version:        2.0

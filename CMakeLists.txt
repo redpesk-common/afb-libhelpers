@@ -43,7 +43,7 @@ option(AFB_HELPERS_QT "Enable the Qt helpers functions for the Application Frame
 
 INCLUDE(FindPkgConfig)
 set (PKG_REQUIRED_LIST
-    afb-daemon
+    afb-binding
 )
 
 find_package(CURL REQUIRED)

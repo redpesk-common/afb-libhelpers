@@ -2,7 +2,7 @@
     "title": "AFB Helpers Reference",
     "subtitle": "Developer Documentation",
     "description": "This is the utilisation guide for the AFB helpers functions",
-    "keywords": "AGL, Development, Iotbzh, afb-helpers, helpers, afb",
+    "keywords": "AGL, Development, Iotbzh, afb-libhelpers, helpers, afb",
     "author": "IoT.Bzh Team",
     "website": "http://iot.bzh",
     "published": "January 2019",

@@ -1,6 +1,6 @@
 Format: 1.0
-Source: rp-libafb-helpers
-Binary: rp-libafb-helpers-bin, rp-libafb-helpers-dev
+Source: afb-libhelpers
+Binary: afb-libhelpers-bin, afb-libhelpers-dev
 Architecture: any
 Version: 2.0-0
 Maintainer: romain.forlot <romain.forlot@iot.bzh>
