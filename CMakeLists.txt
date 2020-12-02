@@ -19,7 +19,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.3)
 include(GNUInstallDirs)
 
-set(TARGET_NAME "afb-helpers")
+set(TARGET_NAME "afb-libhelpers")
 set(AGLVERSION 6.99 CACHE STRING "Current AGL Version")
 set(PROJECT_VERSION ${AGLVERSION} CACHE STRING "Project version can override AGLVERSION")
 set(PROJECT_PRETTY_NAME "Afb Helpers")
@@ -75,9 +75,9 @@ if(${AFB_HELPERS})
         PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    CONFIGURE_FILE(afb-helpers.pc.in afb-helpers.pc @ONLY)
+    CONFIGURE_FILE(${TARGET_NAME}.pc.in ${TARGET_NAME}.pc @ONLY)
     INSTALL(FILES
-            ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers.pc
+            ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}.pc
             DESTINATION
             ${CMAKE_INSTALL_LIBDIR}/pkgconfig
         )
