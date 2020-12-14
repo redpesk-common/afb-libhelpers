@@ -10,7 +10,7 @@ Returns the process middle name of the running binder.
 
 ## const char *GetBinderName()
 
-Get the Binder Name without the prefix set by the AGL appfw 'afbd-'
+Get the Binder Name without the prefix set by the Application Framework 'afbd-'
 
 Returns the Binder name without the prefix.
 
