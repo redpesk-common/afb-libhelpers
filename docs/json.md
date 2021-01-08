@@ -25,7 +25,7 @@ There are myriads of [JSON](http://json.org) libraries out there, and each may e
 
 - **Intuitive syntax**. In languages such as Python, JSON feels like a first class data type. We used all the operator magic of modern C++ to achieve the same feeling in your code. Check out the [examples below](#examples) and you'll know what I mean.
 
-- **Trivial integration**. Our whole code consists of a single header file [`json.hpp`](https://github.com/nlohmann/json/blob/develop/src/json.hpp). That's it. No library, no subproject, no dependencies, no complex build system. The class is written in vanilla C++11. All in all, everything should require no adjustment of your compiler flags or project settings.
+- **Trivial integration**. Our whole code consists of a single header file [`json.hpp`](https://github.com/nlohmann/json/blob/develop/include/nlohmann/json.hpp). That's it. No library, no subproject, no dependencies, no complex build system. The class is written in vanilla C++11. All in all, everything should require no adjustment of your compiler flags or project settings.
 
 - **Serious testing**. Our class is heavily [unit-tested](https://github.com/nlohmann/json/blob/master/test/src/unit.cpp) and covers [100%](https://coveralls.io/r/nlohmann/json) of the code, including all exceptional behavior. Furthermore, we checked with [Valgrind](http://valgrind.org) that there are no memory leaks. To maintain high quality, the project is following the [Core Infrastructure Initiative (CII) best practices](https://bestpractices.coreinfrastructure.org/projects/289).
 
@@ -62,7 +62,7 @@ If you are using [hunter](https://github.com/ruslo/hunter/) on your project for 
 
 ## Examples
 
-Beside the examples below, you may want to check the [documentation](https://nlohmann.github.io/json/) where each function contains a separate code example (e.g., check out [`emplace()`](https://nlohmann.github.io/json/classnlohmann_1_1basic__json_a602f275f0359ab181221384989810604.html#a602f275f0359ab181221384989810604)). All [example files](https://github.com/nlohmann/json/tree/develop/doc/examples) can be compiled and executed on their own (e.g., file [emplace.cpp](https://github.com/nlohmann/json/blob/develop/doc/examples/emplace.cpp)).
+Beside the examples below, you may want to check the [documentation](https://nlohmann.github.io/json/) where each function contains a separate code example (e.g., check out [`emplace()`](https://nlohmann.github.io/json/api/basic_json/emplace/)). All [example files](https://github.com/nlohmann/json/tree/develop/doc/examples) can be compiled and executed on their own (e.g., file [emplace.cpp](https://github.com/nlohmann/json/blob/develop/doc/examples/emplace.cpp)).
 
 ### JSON as first-class data type
 
@@ -237,7 +237,7 @@ json j = json::parse(v);
 
 ### STL-like access
 
-We designed the JSON class to behave just like an STL container. In fact, it satisfies the [**ReversibleContainer**](http://en.cppreference.com/w/cpp/concept/ReversibleContainer) requirement.
+We designed the JSON class to behave just like an STL container. In fact, it satisfies the [**ReversibleContainer**](https://en.cppreference.com/w/cpp/named_req/ReversibleContainer) requirement.
 
 ```cpp
 // create an array using push_back
@@ -312,6 +312,9 @@ o.erase("foo");
 
 Any sequence container (`std::array`, `std::vector`, `std::deque`, `std::forward_list`, `std::list`) whose values can be used to construct JSON types (e.g., integers, floating point numbers, Booleans, string types, or again STL containers described in this section) can be used to create a JSON array. The same holds for similar associative containers (`std::set`, `std::multiset`, `std::unordered_set`, `std::unordered_multiset`), but in these cases the order of the elements of the array depends how the elements are ordered in the respective STL container.
 
+<!-- DOC generation: tell to Jekyll / Liquid to disable tag processing -->
+{% raw %}
+
 ```cpp
 std::vector<int> c_vector {1, 2, 3, 4};
 json j_vec(c_vector);
@@ -349,6 +352,8 @@ std::unordered_multiset<std::string> c_umset {"one", "two", "one", "four"};
 json j_umset(c_umset); // both entries for "one" are used
 // maybe ["one", "two", "one", "four"]
 ```
+
+{% endraw %}
 
 Likewise, any associative key-value containers (`std::map`, `std::multimap`, `std::unordered_map`, `std::unordered_multimap`) whose keys can construct an `std::string` and whose values can be used to construct JSON types (see examples above) can be used to create a JSON object. Note that in case of multimaps only one key is used in the JSON object and the value depends on the internal order of the STL container.
 
@@ -518,8 +523,8 @@ Likewise, when calling `get<your_type>()`, the `from_json` method will be called
 Some important things:
 
 - Those methods **MUST** be in your type's namespace (which can be the global namespace), or the library will not be able to locate them (in this example, they are in namespace `ns`, where `person` is defined).
-- When using `get<your_type>()`, `your_type` **MUST** be [DefaultConstructible](http://en.cppreference.com/w/cpp/concept/DefaultConstructible). (There is a way to bypass this requirement described later.)
-- In function `from_json`, use function [`at()`](https://nlohmann.github.io/json/classnlohmann_1_1basic__json_a93403e803947b86f4da2d1fb3345cf2c.html#a93403e803947b86f4da2d1fb3345cf2c) to access the object values rather than `operator[]`. In case a key does not exists, `at` throws an exception that you can handle, whereas `operator[]` exhibits undefined behavior.
+- When using `get<your_type>()`, `your_type` **MUST** be [DefaultConstructible](https://en.cppreference.com/w/cpp/named_req/DefaultConstructible). (There is a way to bypass this requirement described later.)
+- In function `from_json`, use function `at()` to access the object values rather than `operator[]`. In case a key does not exists, `at` throws an exception that you can handle, whereas `operator[]` exhibits undefined behavior.
 - In case your type contains several `operator=` definitions, code like `your_variable = your_json;` [may not compile](https://github.com/nlohmann/json/issues/667). You need to write `your_variable = your_json.get<decltype your_variable>();` instead.
 - You do not need to add serializers or deserializers for STL types like `std::vector`: the library already implements these.
 
@@ -577,7 +582,7 @@ namespace nlohmann {
 
 #### How can I use `get()` for non-default constructible/non-copyable types?
 
-There is a way, if your type is [MoveConstructible](http://en.cppreference.com/w/cpp/concept/MoveConstructible). You will need to specialize the `adl_serializer` as well, but with a special `from_json` overload:
+There is a way, if your type is [MoveConstructible](https://en.cppreference.com/w/cpp/named_req/MoveConstructible). You will need to specialize the `adl_serializer` as well, but with a special `from_json` overload:
 
 ```cpp
 struct move_only_type {
@@ -756,88 +761,88 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 I deeply appreciate the help of the following people.
 
-- [Teemperor](https://github.com/Teemperor) implemented CMake support and lcov integration, realized escape and Unicode handling in the string parser, and fixed the JSON serialization.
-- [elliotgoodrich](https://github.com/elliotgoodrich) fixed an issue with double deletion in the iterator classes.
-- [kirkshoop](https://github.com/kirkshoop) made the iterators of the class composable to other libraries.
-- [wancw](https://github.com/wanwc) fixed a bug that hindered the class to compile with Clang.
+- [Teemperor]() implemented CMake support and lcov integration, realized escape and Unicode handling in the string parser, and fixed the JSON serialization.
+- [elliotgoodrich]() fixed an issue with double deletion in the iterator classes.
+- [kirkshoop]() made the iterators of the class composable to other libraries.
+- [wancw]() fixed a bug that hindered the class to compile with Clang.
 - Tomas Åblad found a bug in the iterator implementation.
-- [Joshua C. Randall](https://github.com/jrandall) fixed a bug in the floating-point serialization.
-- [Aaron Burghardt](https://github.com/aburgh) implemented code to parse streams incrementally. Furthermore, he greatly improved the parser class by allowing the definition of a filter function to discard undesired elements while parsing.
-- [Daniel Kopeček](https://github.com/dkopecek) fixed a bug in the compilation with GCC 5.0.
-- [Florian Weber](https://github.com/Florianjw) fixed a bug in and improved the performance of the comparison operators.
-- [Eric Cornelius](https://github.com/EricMCornelius) pointed out a bug in the handling with NaN and infinity values. He also improved the performance of the string escaping.
-- [易思龙](https://github.com/likebeta) implemented a conversion from anonymous enums.
-- [kepkin](https://github.com/kepkin) patiently pushed forward the support for Microsoft Visual studio.
-- [gregmarr](https://github.com/gregmarr) simplified the implementation of reverse iterators and helped with numerous hints and improvements. In particular, he pushed forward the implementation of user-defined types.
-- [Caio Luppi](https://github.com/caiovlp) fixed a bug in the Unicode handling.
-- [dariomt](https://github.com/dariomt) fixed some typos in the examples.
-- [Daniel Frey](https://github.com/d-frey) cleaned up some pointers and implemented exception-safe memory allocation.
-- [Colin Hirsch](https://github.com/ColinH) took care of a small namespace issue.
-- [Huu Nguyen](https://github.com/whoshuu) correct a variable name in the documentation.
-- [Silverweed](https://github.com/silverweed) overloaded `parse()` to accept an rvalue reference.
-- [dariomt](https://github.com/dariomt) fixed a subtlety in MSVC type support and implemented the `get_ref()` function to get a reference to stored values.
-- [ZahlGraf](https://github.com/ZahlGraf) added a workaround that allows compilation using Android NDK.
-- [whackashoe](https://github.com/whackashoe) replaced a function that was marked as unsafe by Visual Studio.
-- [406345](https://github.com/406345) fixed two small warnings.
-- [Glen Fernandes](https://github.com/glenfe) noted a potential portability problem in the `has_mapped_type` function.
-- [Corbin Hughes](https://github.com/nibroc) fixed some typos in the contribution guidelines.
-- [twelsby](https://github.com/twelsby) fixed the array subscript operator, an issue that failed the MSVC build, and floating-point parsing/dumping. He further added support for unsigned integer numbers and implemented better roundtrip support for parsed numbers.
-- [Volker Diels-Grabsch](https://github.com/vog) fixed a link in the README file.
-- [msm-](https://github.com/msm-) added support for american fuzzy lop.
-- [Annihil](https://github.com/Annihil) fixed an example in the README file.
-- [Themercee](https://github.com/Themercee) noted a wrong URL in the README file.
-- [Lv Zheng](https://github.com/lv-zheng) fixed a namespace issue with `int64_t` and `uint64_t`.
-- [abc100m](https://github.com/abc100m) analyzed the issues with GCC 4.8 and proposed a [partial solution](https://github.com/nlohmann/json/pull/212).
-- [zewt](https://github.com/zewt) added useful notes to the README file about Android.
-- [Róbert Márki](https://github.com/robertmrk) added a fix to use move iterators and improved the integration via CMake.
-- [Chris Kitching](https://github.com/ChrisKitching) cleaned up the CMake files.
-- [Tom Needham](https://github.com/06needhamt) fixed a subtle bug with MSVC 2015 which was also proposed by [Michael K.](https://github.com/Epidal).
-- [Mário Feroldi](https://github.com/thelostt) fixed a small typo.
-- [duncanwerner](https://github.com/duncanwerner) found a really embarrassing performance regression in the 2.0.0 release.
-- [Damien](https://github.com/dtoma) fixed one of the last conversion warnings.
-- [Thomas Braun](https://github.com/t-b) fixed a warning in a test case.
-- [Théo DELRIEU](https://github.com/theodelrieu) patiently and constructively oversaw the long way toward [iterator-range parsing](https://github.com/nlohmann/json/issues/290). He also implemented the magic behind the serialization/deserialization of user-defined types.
-- [Stefan](https://github.com/5tefan) fixed a minor issue in the documentation.
-- [Vasil Dimov](https://github.com/vasild) fixed the documentation regarding conversions from `std::multiset`.
-- [ChristophJud](https://github.com/ChristophJud) overworked the CMake files to ease project inclusion.
-- [Vladimir Petrigo](https://github.com/vpetrigo) made a SFINAE hack more readable and added Visual Studio 17 to the build matrix.
-- [Denis Andrejew](https://github.com/seeekr) fixed a grammar issue in the README file.
-- [Pierre-Antoine Lacaze](https://github.com/palacaze) found a subtle bug in the `dump()` function.
-- [TurpentineDistillery](https://github.com/TurpentineDistillery) pointed to [`std::locale::classic()`](http://en.cppreference.com/w/cpp/locale/locale/classic) to avoid too much locale joggling, found some nice performance improvements in the parser, improved the benchmarking code, and realized locale-independent number parsing and printing.
-- [cgzones](https://github.com/cgzones) had an idea how to fix the Coverity scan.
-- [Jared Grubb](https://github.com/jaredgrubb) silenced a nasty documentation warning.
-- [Yixin Zhang](https://github.com/qwename) fixed an integer overflow check.
-- [Bosswestfalen](https://github.com/Bosswestfalen) merged two iterator classes into a smaller one.
-- [Daniel599](https://github.com/Daniel599) helped to get Travis execute the tests with Clang's sanitizers.
-- [Jonathan Lee](https://github.com/vjon) fixed an example in the README file.
-- [gnzlbg](https://github.com/gnzlbg) supported the implementation of user-defined types.
-- [Alexej Harm](https://github.com/qis) helped to get the user-defined types working with Visual Studio.
-- [Jared Grubb](https://github.com/jaredgrubb) supported the implementation of user-defined types.
-- [EnricoBilla](https://github.com/EnricoBilla) noted a typo in an example.
-- [Martin Hořeňovský](https://github.com/horenmar) found a way for a 2x speedup for the compilation time of the test suite.
-- [ukhegg](https://github.com/ukhegg) found proposed an improvement for the examples section.
-- [rswanson-ihi](https://github.com/rswanson-ihi) noted a typo in the README.
-- [Mihai Stan](https://github.com/stanmihai4) fixed a bug in the comparison with `nullptr`s.
-- [Tushar Maheshwari](https://github.com/tusharpm) added [cotire](https://github.com/sakra/cotire) support to speed up the compilation.
-- [TedLyngmo](https://github.com/TedLyngmo) noted a typo in the README, removed unnecessary bit arithmetic, and fixed some `-Weffc++` warnings.
-- [Krzysztof Woś](https://github.com/krzysztofwos) made exceptions more visible.
-- [ftillier](https://github.com/ftillier) fixed a compiler warning.
-- [tinloaf](https://github.com/tinloaf) made sure all pushed warnings are properly popped.
-- [Fytch](https://github.com/Fytch) found a bug in the documentation.
-- [Jay Sistar](https://github.com/Type1J) implemented a Meson build description.
-- [Henry Lee](https://github.com/HenryRLee) fixed a warning in ICC and improved the iterator implementation.
-- [Vincent Thiery](https://github.com/vthiery) maintains a package for the Conan package manager.
-- [Steffen](https://github.com/koemeet) fixed a potential issue with MSVC and `std::min`.
-- [Mike Tzou](https://github.com/Chocobo1) fixed some typos.
-- [amrcode](https://github.com/amrcode) noted a missleading documentation about comparison of floats.
-- [Oleg Endo](https://github.com/olegendo) reduced the memory consumption by replacing `<iostream>` with `<iosfwd>`.
-- [dan-42](https://github.com/dan-42) cleaned up the CMake files to simplify including/reusing of the library.
-- [Nikita Ofitserov](https://github.com/himikof) allowed for moving values from initializer lists.
-- [Greg Hurrell](https://github.com/wincent) fixed a typo.
-- [Dmitry Kukovinets](https://github.com/DmitryKuk) fixed a typo.
-- [kbthomp1](https://github.com/kbthomp1) fixed an issue related to the Intel OSX compiler.
-- [Markus Werle](https://github.com/daixtrose) fixed a typo.
-- [WebProdPP](https://github.com/WebProdPP) fixed a subtle error in a precondition check.
+- [Joshua C. Randall]() fixed a bug in the floating-point serialization.
+- [Aaron Burghardt]() implemented code to parse streams incrementally. Furthermore, he greatly improved the parser class by allowing the definition of a filter function to discard undesired elements while parsing.
+- [Daniel Kopeček]() fixed a bug in the compilation with GCC 5.0.
+- [Florian Weber]() fixed a bug in and improved the performance of the comparison operators.
+- [Eric Cornelius]() pointed out a bug in the handling with NaN and infinity values. He also improved the performance of the string escaping.
+- [易思龙]() implemented a conversion from anonymous enums.
+- [kepkin]() patiently pushed forward the support for Microsoft Visual studio.
+- [gregmarr]() simplified the implementation of reverse iterators and helped with numerous hints and improvements. In particular, he pushed forward the implementation of user-defined types.
+- [Caio Luppi]() fixed a bug in the Unicode handling.
+- [dariomt]() fixed some typos in the examples.
+- [Daniel Frey]() cleaned up some pointers and implemented exception-safe memory allocation.
+- [Colin Hirsch]() took care of a small namespace issue.
+- [Huu Nguyen]() correct a variable name in the documentation.
+- [Silverweed]()` to accept an rvalue reference.
+- [dariomt]()` function to get a reference to stored values.
+- [ZahlGraf]() added a workaround that allows compilation using Android NDK.
+- [whackashoe]() replaced a function that was marked as unsafe by Visual Studio.
+- [406345]() fixed two small warnings.
+- [Glen Fernandes]() noted a potential portability problem in the `has_mapped_type` function.
+- [Corbin Hughes]() fixed some typos in the contribution guidelines.
+- [twelsby]() fixed the array subscript operator, an issue that failed the MSVC build, and floating-point parsing/dumping. He further added support for unsigned integer numbers and implemented better roundtrip support for parsed numbers.
+- [Volker Diels-Grabsch]() fixed a link in the README file.
+- [msm-]() added support for american fuzzy lop.
+- [Annihil]() fixed an example in the README file.
+- [Themercee]() noted a wrong URL in the README file.
+- [Lv Zheng]() fixed a namespace issue with `int64_t` and `uint64_t`.
+- [abc100m]() analyzed the issues with GCC 4.8 and proposed a partial solution https://github.com/nlohmann/json/pull/212.
+- [zewt]() added useful notes to the README file about Android.
+- [Róbert Márki]() added a fix to use move iterators and improved the integration via CMake.
+- [Chris Kitching]() cleaned up the CMake files.
+- [Tom Needham]() fixed a subtle bug with MSVC 2015 which was also proposed by [Michael K.]().
+- [Mário Feroldi]() fixed a small typo.
+- [duncanwerner]() found a really embarrassing performance regression in the 2.0.0 release.
+- [Damien]() fixed one of the last conversion warnings.
+- [Thomas Braun]() fixed a warning in a test case.
+- [Théo DELRIEU]() patiently and constructively oversaw the long way toward [iterator-range parsing](). He also implemented the magic behind the serialization/deserialization of user-defined types.
+- [Stefan]() fixed a minor issue in the documentation.
+- [Vasil Dimov]() fixed the documentation regarding conversions from `std::multiset`.
+- [ChristophJud]() overworked the CMake files to ease project inclusion.
+- [Vladimir Petrigo]() made a SFINAE hack more readable and added Visual Studio 17 to the build matrix.
+- [Denis Andrejew]() fixed a grammar issue in the README file.
+- [Pierre-Antoine Lacaze]()` function.
+- [TurpentineDistillery]() pointed to [`std::locale::classic()`]() to avoid too much locale joggling, found some nice performance improvements in the parser, improved the benchmarking code, and realized locale-independent number parsing and printing.
+- [cgzones]() had an idea how to fix the Coverity scan.
+- [Jared Grubb]() silenced a nasty documentation warning.
+- [Yixin Zhang]() fixed an integer overflow check.
+- [Bosswestfalen]() merged two iterator classes into a smaller one.
+- [Daniel599]() helped to get Travis execute the tests with Clang's sanitizers.
+- [Jonathan Lee]() fixed an example in the README file.
+- [gnzlbg]() supported the implementation of user-defined types.
+- [Alexej Harm]() helped to get the user-defined types working with Visual Studio.
+- [Jared Grubb]() supported the implementation of user-defined types.
+- [EnricoBilla]() noted a typo in an example.
+- [Martin Hořeňovský]() found a way for a 2x speedup for the compilation time of the test suite.
+- [ukhegg]() found proposed an improvement for the examples section.
+- [rswanson-ihi]() noted a typo in the README.
+- [Mihai Stan]() fixed a bug in the comparison with `nullptr`s.
+- [Tushar Maheshwari]() added [cotire]() support to speed up the compilation.
+- [TedLyngmo]() noted a typo in the README, removed unnecessary bit arithmetic, and fixed some `-Weffc++` warnings.
+- [Krzysztof Woś]() made exceptions more visible.
+- [ftillier]() fixed a compiler warning.
+- [tinloaf]() made sure all pushed warnings are properly popped.
+- [Fytch]() found a bug in the documentation.
+- [Jay Sistar]() implemented a Meson build description.
+- [Henry Lee]() fixed a warning in ICC and improved the iterator implementation.
+- [Vincent Thiery]() maintains a package for the Conan package manager.
+- [Steffen]() fixed a potential issue with MSVC and `std::min`.
+- [Mike Tzou]() fixed some typos.
+- [amrcode]() noted a missleading documentation about comparison of floats.
+- [Oleg Endo]() reduced the memory consumption by replacing `<iostream>` with `<iosfwd>`.
+- [dan-42]() cleaned up the CMake files to simplify including/reusing of the library.
+- [Nikita Ofitserov]() allowed for moving values from initializer lists.
+- [Greg Hurrell]() fixed a typo.
+- [Dmitry Kukovinets]() fixed a typo.
+- [kbthomp1]() fixed an issue related to the Intel OSX compiler.
+- [Markus Werle]() fixed a typo.
+- [WebProdPP]() fixed a subtle error in a precondition check.
 
 Thanks a lot for helping out! Please [let me know](mailto:mail@nlohmann.me) if I forgot someone.
 
@@ -848,7 +853,7 @@ The library itself contains of a single header file licensed under the MIT licen
 - [**American fuzzy lop**](http://lcamtuf.coredump.cx/afl/) for fuzz testing
 - [**AppVeyor**](https://www.appveyor.com) for [continuous integration](https://ci.appveyor.com/project/nlohmann/json) on Windows
 - [**Artistic Style**](http://astyle.sourceforge.net) for automatic source code identation
-- [**benchpress**](https://github.com/sbs-ableton/benchpress) to benchmark the code
+- [**benchpress**]() to benchmark the code
 - [**Catch**](https://github.com/philsquared/Catch) for the unit tests
 - [**Clang**](http://clang.llvm.org) for compilation with code sanitizers
 - [**Cmake**](https://cmake.org) for build automation
@@ -858,7 +863,7 @@ The library itself contains of a single header file licensed under the MIT licen
 - [**Coverity Scan**](https://scan.coverity.com) for [static analysis](https://scan.coverity.com/projects/nlohmann-json)
 - [**cppcheck**](http://cppcheck.sourceforge.net) for static analysis
 - [**cxxopts**](https://github.com/jarro2783/cxxopts) to let benchpress parse command-line parameters
-- [**Doxygen**](http://www.stack.nl/~dimitri/doxygen/) to generate [documentation](https://nlohmann.github.io/json/)
+- [**Doxygen**]() to generate [documentation](https://nlohmann.github.io/json/)
 - [**git-update-ghpages**](https://github.com/rstacruz/git-update-ghpages) to upload the documentation to gh-pages
 - [**Github Changelog Generator**](https://github.com/skywinder/github-changelog-generator) to generate the [ChangeLog](https://github.com/nlohmann/json/blob/develop/ChangeLog.md)
 - [**libFuzzer**](http://llvm.org/docs/LibFuzzer.html) to implement fuzz testing for OSS-Fuzz
@@ -874,7 +879,7 @@ The library is currently used in Apple macOS Sierra and iOS 10. I am not sure wh
 
 ## Notes
 
-- The code contains numerous debug **assertions** which can be switched off by defining the preprocessor macro `NDEBUG`, see the [documentation of `assert`](http://en.cppreference.com/w/cpp/error/assert). In particular, note [`operator[]`](https://nlohmann.github.io/json/classnlohmann_1_1basic__json_a2e26bd0b0168abb61f67ad5bcd5b9fa1.html#a2e26bd0b0168abb61f67ad5bcd5b9fa1) implements **unchecked access** for const objects: If the given key is not present, the behavior is undefined (think of a dereferenced null pointer) and yields an [assertion failure](https://github.com/nlohmann/json/issues/289) if assertions are switched on. If you are not sure whether an element in an object exists, use checked access with the [`at()` function](https://nlohmann.github.io/json/classnlohmann_1_1basic__json_a674de1ee73e6bf4843fc5dc1351fb726.html#a674de1ee73e6bf4843fc5dc1351fb726).
+- The code contains numerous debug **assertions** which can be switched off by defining the preprocessor macro `NDEBUG`, see the [documentation of `assert`](http://en.cppreference.com/w/cpp/error/assert). In particular, note [`operator[]`]() implements **unchecked access** for const objects: If the given key is not present, the behavior is undefined (think of a dereferenced null pointer) and yields an [assertion failure](https://github.com/nlohmann/json/issues/289) if assertions are switched on. If you are not sure whether an element in an object exists, use checked access with the [`at()` function]().
 - As the exact type of a number is not defined in the [JSON specification](http://rfc7159.net/rfc7159), this library tries to choose the best fitting C++ number type automatically. As a result, the type `double` may be used to store numbers which may yield [**floating-point exceptions**](https://github.com/nlohmann/json/issues/181) in certain rare situations if floating-point exceptions have been unmasked in the calling code. These exceptions are not caused by the library and need to be fixed in the calling code, such as by re-masking the exceptions prior to calling library functions.
 - The library supports **Unicode input** as follows:
   - Only **UTF-8** encoded input is supported which is the default encoding for JSON according to [RFC 7159](http://rfc7159.net/rfc7159#rfc.section.8.1).
