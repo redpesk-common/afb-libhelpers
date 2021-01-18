@@ -30,7 +30,6 @@ typedef struct {
     const char *uid;
 } AutoTestCtxT;
 
-
 static int TimerNext (sd_event_source* source, uint64_t timer, void* handle) {
     TimerHandleT *timerHandle = (TimerHandleT*) handle;
     int done;
@@ -39,6 +38,9 @@ static int TimerNext (sd_event_source* source, uint64_t timer, void* handle) {
     // Stop Timer when count is null
     if (timerHandle->count-- == 0) {
         if (timerHandle->freeCB) timerHandle->freeCB(timerHandle->context);
+        timerHandle->freeCB=NULL;
+        sd_event_source_set_enabled (timerHandle->evtSource, SD_EVENT_OFF);
+        sd_event_source_unref (timerHandle->evtSource);
         free (timerHandle);
         return -1;
     }
