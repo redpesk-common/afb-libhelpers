@@ -6,7 +6,7 @@ The afb-helpers library is available as a package for the Redpesk supported linu
 distributions.
 
 
-To install the native package please refer to [this chapter](host-configuration/docs/1-Setup-your-build-host.html)
+To install the native package please refer to [this chapter]({% chapter_link host-configuration-doc.setup-your-build-host %})
 in the Redpesk documentation to install the Redpesk repository for your distribution.
 
 Then use your package manager to install the library.
