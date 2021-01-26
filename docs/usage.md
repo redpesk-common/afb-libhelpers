@@ -2,12 +2,12 @@
 
 ## Installation
 
-The afb-helpers library is available as a package for the Redpesk supported linux
+The afb-helpers library is available as a package for the redpesk supported linux
 distributions.
 
 
 To install the native package please refer to [this chapter]({% chapter_link host-configuration-doc.setup-your-build-host %})
-in the Redpesk documentation to install the Redpesk repository for your distribution.
+in the redpesk documentation to install the redpesk repository for your distribution.
 
 Then use your package manager to install the library.
 
