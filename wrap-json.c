@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2015-2020 IoT.bzh Company
+ Copyright (C) 2015-2021 IoT.bzh Company
 
  Author: José Bollo <jose.bollo@iot.bzh>
 
@@ -20,6 +20,7 @@
 #include <limits.h>
 
 #include "wrap-json.h"
+#include "wrap-base64.h"
 
 #define STACKCOUNT  32
 
@@ -74,161 +75,6 @@ const char *wrap_json_get_error_string(int rc)
 	if (rc >= (int)(sizeof pack_errors / sizeof *pack_errors))
 		rc = 0;
 	return pack_errors[rc];
-}
-
-static int encode_base64(
-		const uint8_t *data,
-		size_t datalen,
-		char **encoded,
-		size_t *encodedlen,
-		int width,
-		int pad,
-		int url)
-{
-	uint16_t u16 = 0;
-	uint8_t u8 = 0;
-	size_t in, out, rlen, n3, r3, iout, nout;
-	int iw;
-	char *result, c;
-
-	/* compute unformatted output length */
-	n3 = datalen / 3;
-	r3 = datalen % 3;
-	nout = 4 * n3 + r3 + !!r3;
-
-	/* deduce formatted output length */
-	rlen = nout;
-	if (pad)
-		rlen += ((~rlen) + 1) & 3;
-	if (width)
-		rlen += rlen / width;
-
-	/* allocate the output */
-	result = malloc(rlen + 1);
-	if (result == NULL)
-		return wrap_json_error_out_of_memory;
-
-	/* compute the formatted output */
-	iw = width;
-	for (in = out = iout = 0 ; iout < nout ; iout++) {
-		/* get in 'u8' the 6 bits value to add */
-		switch (iout & 3) {
-		case 0:
-			u16 = (uint16_t)data[in++];
-			u8 = (uint8_t)(u16 >> 2);
-			break;
-		case 1:
-			u16 = (uint16_t)(u16 << 8);
-			if (in < datalen)
-				u16 = (uint16_t)(u16 | data[in++]);
-			u8 = (uint8_t)(u16 >> 4);
-			break;
-		case 2:
-			u16 = (uint16_t)(u16 << 8);
-			if (in < datalen)
-				u16 = (uint16_t)(u16 | data[in++]);
-			u8 = (uint8_t)(u16 >> 6);
-			break;
-		case 3:
-			u8 = (uint8_t)u16;
-			break;
-		}
-		u8 &= 63;
-
-		/* encode 'u8' to the char 'c' */
-		if (u8 < 52) {
-			if (u8 < 26)
-				c = (char)('A' + u8);
-			else
-				c = (char)('a' + u8 - 26);
-		} else {
-			if (u8 < 62)
-				c = (char)('0' + u8 - 52);
-			else if (u8 == 62)
-				c = url ? '-' : '+';
-			else
-				c = url ? '_' : '/';
-		}
-
-		/* put to output with format */
-		result[out++] = c;
-		if (iw && !--iw) {
-			result[out++] = '\n';
-			iw = width;
-		}
-	}
-
-	/* pad the output */
-	while (out < rlen) {
-		result[out++] = '=';
-		if (iw && !--iw) {
-			result[out++] = '\n';
-			iw = width;
-		}
-	}
-
-	/* terminate */
-	result[out] = 0;
-	*encoded = result;
-	*encodedlen = rlen;
-	return 0;
-}
-
-static int decode_base64(
-		const char *data,
-		size_t datalen,
-		uint8_t **decoded,
-		size_t *decodedlen,
-		int url)
-{
-	uint16_t u16;
-	uint8_t u8, *result;
-	size_t in, out, iin;
-	char c;
-
-	/* allocate enougth output */
-	result = malloc(datalen);
-	if (result == NULL)
-		return wrap_json_error_out_of_memory;
-
-	/* decode the input */
-	for (iin = in = out = 0 ; in < datalen ; in++) {
-		c = data[in];
-		if (c != '\n' && c != '\r' && c != '=') {
-			if ('A' <= c && c <= 'Z')
-				u8 = (uint8_t)(c - 'A');
-			else if ('a' <= c && c <= 'z')
-				u8 = (uint8_t)(c - 'a' + 26);
-			else if ('0' <= c && c <= '9')
-				u8 = (uint8_t)(c - '0' + 52);
-			else if (c == '+' || c == '-')
-				u8 = (uint8_t)62;
-			else if (c == '/' || c == '_')
-				u8 = (uint8_t)63;
-			else {
-				free(result);
-				return wrap_json_error_bad_base64;
-			}
-			if (!iin) {
-				u16 = (uint16_t)u8;
-				iin = 6;
-			} else {
-				u16 = (uint16_t)((u16 << 6) | u8);
-				iin -= 2;
-				u8 = (uint8_t)(u16 >> iin);
-				result[out++] = u8;
-			}
-		}
-	}
-
-	/* terminate */
-	*decoded = realloc(result, out);
-	if (out && *decoded == NULL) {
-		free(result);
-		return wrap_json_error_out_of_memory;
-	}
-	*decodedlen = out;
-	return 0;
 }
 
 static inline const char *skip(const char *d)
@@ -372,10 +218,10 @@ int wrap_json_vpack(struct json_object **result, const char *desc, va_list args)
 			if (bytes.in == NULL || bytes.insz == 0)
 				obj = NULL;
 			else {
-				rc = encode_base64(bytes.in, bytes.insz,
+				rc = wrap_base64_encode(bytes.in, bytes.insz,
 					&bytes.out, &bytes.outsz, 0, 0, c == 'y');
-				if (rc)
-					goto error;
+				if (rc < 0)
+					goto out_of_memory;
 				obj = json_object_new_string_len(bytes.out, (int)bytes.outsz);
 				free(bytes.out);
 				if (!obj)
@@ -411,7 +257,7 @@ int wrap_json_vpack(struct json_object **result, const char *desc, va_list args)
 			if (c != top->type || top <= stack)
 				goto internal_error;
 			obj = (top--)->cont;
-			if (*d == '*' && !(c == '}' ? json_object_object_length(obj) : json_object_array_length(obj))) {
+			if (*d == '*' && !(c == '}' ? !!json_object_object_length(obj) : !!json_object_array_length(obj))) {
 				json_object_put(obj);
 				obj = NULL;
 			}
@@ -664,12 +510,17 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 					if (!json_object_is_type(obj, json_type_string))
 						goto missfit;
 					if (store && py && pz) {
-						rc = decode_base64(
+						rc = wrap_base64_decode(
 							json_object_get_string(obj),
 							(size_t)json_object_get_string_len(obj),
-							py, pz, c == 'y');
-						if (rc)
+							py, pz, 0);
+						if (rc) {
+							if (rc == -1)
+								rc = wrap_json_error_out_of_memory;
+							else
+								rc = wrap_json_error_bad_base64;
 							goto error;
+						}
 					}
 				}
 			}
@@ -718,7 +569,7 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 				ignore--;
 			break;
 		case '!':
-			if (*d != xacc[0])
+			if (*d != xacc[0] || top == NULL)
 				goto invalid_character;
 			if (!ignore && top->index != top->count)
 				goto incomplete;
@@ -742,7 +593,7 @@ static int vunpack(struct json_object *object, const char *desc, va_list args, i
 				if (key && key >= unpack_accept_any) {
 					if (top->index >= top->count)
 						goto out_of_range;
-					obj = json_object_array_get_idx(top->parent, top->index++);
+					obj = json_object_array_get_idx(top->parent, (wrap_json_index_t)top->index++);
 				}
 			}
 			break;
@@ -877,7 +728,7 @@ static void array_for_all(struct json_object *object, void (*callback)(void*,str
 	int n = (int)json_object_array_length(object);
 	int i = 0;
 	while(i < n)
-		callback(closure, json_object_array_get_idx(object, i++));
+		callback(closure, json_object_array_get_idx(object, (wrap_json_index_t)i++));
 }
 
 /* apply callback to items of an array or to it if not an object */
@@ -925,7 +776,7 @@ void wrap_json_for_all(struct json_object *object, void (*callback)(void*,struct
 		int n = (int)json_object_array_length(object);
 		int i = 0;
 		while(i < n)
-			callback(closure, json_object_array_get_idx(object, i++), NULL);
+			callback(closure, json_object_array_get_idx(object, (wrap_json_index_t)i++), NULL);
 	}
 }
 
@@ -967,8 +818,8 @@ static struct json_object *clone_array(struct json_object *array, int subdepth)
 	struct json_object *r = json_object_new_array();
 	while (n) {
 		n--;
-		json_object_array_put_idx(r, n,
-			wrap_json_clone_depth(json_object_array_get_idx(array, n), subdepth));
+		json_object_array_put_idx(r, (wrap_json_index_t)n,
+			wrap_json_clone_depth(json_object_array_get_idx(array, (wrap_json_index_t)n), subdepth));
 	}
 	return r;
 }
@@ -1004,16 +855,72 @@ struct json_object *wrap_json_clone_deep(struct json_object *object)
 /* add items of object added in dest */
 struct json_object *wrap_json_object_add(struct json_object *dest, struct json_object *added)
 {
+	return wrap_json_object_merge(dest, added, wrap_json_merge_option_replace);
+}
+
+/* merge items of object 'merged' to the object 'dest' */
+static void object_merge(struct json_object *dest, struct json_object *merged, int option)
+{
+	int exists, add;
+	enum json_type tyto, tyfrom;
+	struct json_object *to, *from;
 	struct json_object_iterator it, end;
-	if (json_object_is_type(dest, json_type_object) && json_object_is_type(added, json_type_object)) {
-		it = json_object_iter_begin(added);
-		end = json_object_iter_end(added);
-		while (!json_object_iter_equal(&it, &end)) {
+
+	/* iterate over elements of the merged object */
+	it = json_object_iter_begin(merged);
+	end = json_object_iter_end(merged);
+	while (!json_object_iter_equal(&it, &end)) {
+		from = json_object_iter_peek_value(&it);
+		if (option == wrap_json_merge_option_replace) {
+			/* always replace */
+			add = 1;
+		}
+		else {
+			/* check if dest has already an item of the name */
+			exists = json_object_object_get_ex(dest, json_object_iter_peek_name(&it), &to);
+			if (!exists) {
+				/* add if not existing */
+				add = 1;
+			}
+			else if (option == wrap_json_merge_option_keep) {
+				/* no replacement */
+				add = 0;
+			}
+			else {
+				tyto = json_object_get_type(to);
+				tyfrom = json_object_get_type(from);
+				if (tyto == json_type_object && tyfrom == json_type_object) {
+					/* recursive merge of objects */
+					object_merge(to, from, option);
+					add = 0;
+				}
+				else if (tyto == json_type_array && tyfrom == json_type_array) {
+					/* append the array */
+					wrap_json_array_insert_array(to, from, -1);
+					add = 0;
+				}
+				else {
+					/* fallback baheaviour */
+					add = option & wrap_json_merge_option_replace;
+				}
+			}
+		}
+
+		/* add or replace the item if required */
+		if (add) {
 			json_object_object_add(dest,
 				json_object_iter_peek_name(&it),
-				json_object_get(json_object_iter_peek_value(&it)));
-			json_object_iter_next(&it);
+				json_object_get(from));
 		}
+		json_object_iter_next(&it);
+	}
+}
+
+/* merge items of object 'merged' to the object 'dest' */
+struct json_object *wrap_json_object_merge(struct json_object *dest, struct json_object *merged, int option)
+{
+	if (json_object_is_type(dest, json_type_object) && json_object_is_type(merged, json_type_object)) {
+		object_merge(dest, merged, option);
 	}
 	return dest;
 }
@@ -1022,24 +929,39 @@ struct json_object *wrap_json_object_add(struct json_object *dest, struct json_o
 struct json_object *wrap_json_array_insert_array(struct json_object *dest, struct json_object *added, int idx)
 {
 	int i, nd, na;
+
+	/* check th type */
 	if (!json_object_is_type(dest, json_type_array) || !json_object_is_type(added, json_type_array))
 		return dest;
+
+	/* get lengths */
 	nd = (int) json_object_array_length(dest);
 	na = (int) json_object_array_length(added);
-	i = nd + na;
-	if (idx < 0 || idx > nd)
+
+	/* handle case of negative indexes */
+	if (idx < 0)
+		idx = 1 + nd + idx;
+
+	/* limit index to destination size */
+	if (idx < 0)
+		idx = 0;
+	else if (idx > nd)
 		idx = nd;
+
+	/* move part of the array after insertion point */
+	i = nd + na;
 	while (i > idx + na) {
 		i--;
 		json_object_array_put_idx(dest,
-			i,
-			json_object_get(json_object_array_get_idx(dest, i - na)));
+			(wrap_json_index_t)i,
+			json_object_get(json_object_array_get_idx(dest, (wrap_json_index_t)(i - na))));
 	}
+	/* copy the added items */
 	while (i > idx) {
 		i--;
 		json_object_array_put_idx(dest,
-			i,
-			json_object_get(json_object_array_get_idx(added, i - idx)));
+			(wrap_json_index_t)i,
+			json_object_get(json_object_array_get_idx(added, (wrap_json_index_t)(i - idx))));
 	}
 	return dest;
 }
@@ -1170,8 +1092,8 @@ static int jcmp(struct json_object *x, struct json_object *y, int inc, int sort)
 		if (r > 0 && inc)
 			r = 0;
 		for (i = 0 ; !r && i < ny ; i++) {
-			jx = json_object_array_get_idx(x, i);
-			jy = json_object_array_get_idx(y, i);
+			jx = json_object_array_get_idx(x, (wrap_json_index_t)i);
+			jy = json_object_array_get_idx(y, (wrap_json_index_t)i);
 			r = jcmp(jx, jy, inc, sort);
 		}
 		break;

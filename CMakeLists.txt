@@ -36,7 +36,18 @@ if(NOT CMAKE_INSTALL_PREFIX)
 endif()
 
 add_definitions(-DAFB_BINDING_VERSION=3)
-ADD_COMPILE_OPTIONS(-Wall -Wextra -Wconversion -Wno-unused-parameter -Wno-sign-compare -Wno-sign-conversion -Werror=maybe-uninitialized -Werror=implicit-function-declaration -ffunction-sections -fdata-sections -fPIC)
+ADD_COMPILE_OPTIONS(
+    -Wall
+    -Wextra
+    -Wconversion
+    -Wno-unused-parameter
+    -Wno-sign-compare
+    -Wno-sign-conversion
+    -Werror=maybe-uninitialized
+    -Werror=implicit-function-declaration
+    -ffunction-sections
+    -fdata-sections
+    -fPIC)
 
 option(AFB_HELPERS "Enable the basics helpers functions for the Application Framework Binders" ON)
 option(AFB_HELPERS_QT "Enable the Qt helpers functions for the Application Framework Binders" OFF)
@@ -59,10 +70,23 @@ foreach (PKG_CONFIG ${PKG_REQUIRED_LIST})
 endforeach(PKG_CONFIG)
 
 if(${AFB_HELPERS})
-    set(AFB_HELPERS_SRCS wrap-json.c filescan-utils.c escape.c afb-timer.c curl-wrap.c)
+    set(AFB_HELPERS_SRCS
+        afb-timer.c
+        curl-wrap.c
+        escape.c
+        filescan-utils.c
+        wrap-base64.c
+        wrap-json.c
+    )
 
-    set(AFB_HELPERS_HEADERS afb-helpers-utils.h curl-wrap.h escape.h
-        filescan-utils.h wrap-json.h afb-timer.h
+    set(AFB_HELPERS_HEADERS
+        afb-helpers-utils.h
+        afb-timer.h
+        curl-wrap.h
+        escape.h
+        filescan-utils.h
+        wrap-base64.h
+        wrap-json.h
     )
 
     # Define targets
