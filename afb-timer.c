@@ -23,13 +23,6 @@
 
 #include "afb-timer.h"
 
-#define DEFAULT_PAUSE_DELAY 3000
-#define DEFAULT_TEST_COUNT 1
-typedef struct {
-    int value;
-    const char *uid;
-} AutoTestCtxT;
-
 static int TimerNext (sd_event_source* source, uint64_t timer, void* handle) {
     TimerHandleT *timerHandle = (TimerHandleT*) handle;
     int done;
