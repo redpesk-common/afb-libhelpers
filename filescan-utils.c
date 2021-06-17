@@ -44,11 +44,12 @@ static int ScanDir(char* searchPath, CtlScanDirModeT mode, size_t extentionLen,
 
         // recursively search embedded directories ignoring any directory starting by '.' or '_'
         if (dirEnt->d_type == DT_DIR && mode == CTL_SCAN_RECURSIVE) {
-            char newpath[CONTROL_MAXPATH_LEN];
+            char newpath[CONTROL_MAXPATH_LEN + 1];
             if (dirEnt->d_name[0] == '.' || dirEnt->d_name[0] == '_')
                 continue;
 
-            strncpy(newpath, searchPath, sizeof(newpath));
+            strncpy(newpath, searchPath, sizeof(newpath) - 1);
+            newpath[sizeof(newpath) - 1] = 0;
             strncat(newpath, "/", sizeof(newpath) - strlen(newpath) - 1);
             strncat(newpath, dirEnt->d_name, sizeof(newpath) - strlen(newpath) - 1);
             found += ScanDir(newpath, mode, extentionLen, prefix, extention, responseJ);
