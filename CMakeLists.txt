@@ -16,19 +16,18 @@
 # limitations under the License.
 ###########################################################################
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.3)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.15)
+project(afb-libhelpers VERSION 10.0.0
+    DESCRIPTION "Library providing some helpful functions for apps using Application Framework Binder"
+    HOMEPAGE_URL "https://gerrit.automotivelinux.org/gerrit/#/admin/projects/src/libafb-helpers"
+    LANGUAGES C CXX)
 include(GNUInstallDirs)
 
-set(TARGET_NAME "afb-libhelpers")
-set(PROJECT_VERSION 10.0.0)
 set(PROJECT_PRETTY_NAME "Afb Helpers")
-set(PROJECT_DESCRIPTION "Library providing some helpful functions for apps using Application Framework Binder")
-set(PROJECT_URL "https://gerrit.automotivelinux.org/gerrit/#/admin/projects/src/libafb-helpers")
 set(PROJECT_AUTHOR "Ar Foll, Fulup")
 set(PROJECT_AUTHOR_MAIL "fulup@iot.bzh")
 set(PROJECT_LICENSE "APL2.0")
-set(PROJECT_LANGUAGES "C CXX")
-set (CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 11)
 
 if(NOT CMAKE_INSTALL_PREFIX)
     set(CMAKE_INSTALL_PREFIX "/usr")
@@ -89,22 +88,22 @@ if(${AFB_HELPERS})
     )
 
     # Define targets
-    ADD_LIBRARY(${TARGET_NAME} STATIC ${AFB_HELPERS_SRCS})
+    ADD_LIBRARY(${PROJECT_NAME} STATIC ${AFB_HELPERS_SRCS})
 
-    target_link_libraries(${TARGET_NAME} curl)
+    target_link_libraries(${PROJECT_NAME} curl)
 
     # Define target includes
-    TARGET_INCLUDE_DIRECTORIES(${TARGET_NAME}
+    TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME}
         PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    CONFIGURE_FILE(${TARGET_NAME}.pc.in ${TARGET_NAME}.pc @ONLY)
+    CONFIGURE_FILE(${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
     INSTALL(FILES
-            ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}.pc
+            ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
             DESTINATION
             ${CMAKE_INSTALL_LIBDIR}/pkgconfig
         )
-    INSTALL(TARGETS ${TARGET_NAME}
+    INSTALL(TARGETS ${PROJECT_NAME}
             DESTINATION ${CMAKE_INSTALL_LIBDIR}
         )
     INSTALL(FILES ${AFB_HELPERS_HEADERS}
@@ -125,13 +124,13 @@ if(${AFB_HELPERS_QT})
     set(AFB_HELPERS_QT_SRCS qafbwebsocketclient.cpp)
 
     # Define Qt targets
-    ADD_LIBRARY(${TARGET_NAME}-qt STATIC ${AFB_HELPERS_QT_SRCS})
+    ADD_LIBRARY(${PROJECT_NAME}-qt STATIC ${AFB_HELPERS_QT_SRCS})
 
     include_directories(${Qt5WebSockets_INCLUDE_DIRS})
-    target_link_libraries(${TARGET_NAME}-qt Qt5::WebSockets)
+    target_link_libraries(${PROJECT_NAME}-qt Qt5::WebSockets)
 
     # Define Qt target includes
-    TARGET_INCLUDE_DIRECTORIES(${TARGET_NAME}-qt
+    TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME}-qt
             PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
@@ -141,7 +140,7 @@ if(${AFB_HELPERS_QT})
             DESTINATION
             ${CMAKE_INSTALL_LIBDIR}/pkgconfig
            )
-    INSTALL(TARGETS ${TARGET_NAME}-qt
+    INSTALL(TARGETS ${PROJECT_NAME}-qt
             DESTINATION ${CMAKE_INSTALL_LIBDIR}
            )
     INSTALL(FILES ${AFB_HELPERS_QT_HEADERS}

@@ -21,10 +21,10 @@ exec_prefix=${prefix}
 libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
 includedir=${prefix}/include
 
-Name: @TARGET_NAME@
+Name: @PROJECT_NAME@
 Description: @PROJECT_DESCRIPTION@
 Version: @PROJECT_VERSION@
 URL: @PROJECT_URL@
-Libs: -L${libdir} -l@TARGET_NAME@
+Libs: -L${libdir} -l@PROJECT_NAME@
 Cflags: -I${includedir}
 
