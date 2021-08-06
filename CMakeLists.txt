@@ -80,9 +80,11 @@ if(${AFB_HELPERS})
     set(AFB_HELPERS_HEADERS
         afb-helpers-utils.h
         afb-timer.h
+    	afb-plugin-helpers.h
         curl-wrap.h
         escape.h
         filescan-utils.h
+        json.hpp
         wrap-base64.h
         wrap-json.h
     )
