@@ -18,11 +18,12 @@
 #ifndef AFB_PLUGINS_HELPERS_H
 #define AFB_PLUGINS_HELPERS_H
 #define _GNU_SOURCE
-#define AFB_BINDING_VERSION 4
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#if AFB_BINDING_VERSION > 3
 
 #include <afb/afb-binding.h>
 
@@ -95,6 +96,8 @@ void** plugin_seek_cb_in_all(afb_api_t api, plugins_store *store, const char *fu
  * @param plugin_name the name of the plugin to unload
  */
 void plugin_unload(plugins_store **store, const char *plugin_name);
+
+#endif /* AFB_BINDING_VERSION > 3 */
 
 #ifdef __cplusplus
 }

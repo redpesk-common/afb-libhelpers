@@ -34,7 +34,6 @@ if(NOT CMAKE_INSTALL_PREFIX)
     set(CMAKE_INSTALL_PREFIX "/usr")
 endif()
 
-add_definitions(-DAFB_BINDING_VERSION=3)
 ADD_COMPILE_OPTIONS(
     -Wall
     -Wextra
@@ -48,7 +47,8 @@ ADD_COMPILE_OPTIONS(
     -fdata-sections
     -fPIC)
 
-option(AFB_HELPERS "Enable the basics helpers functions for the Application Framework Binders" ON)
+option(AFB_HELPERS_V3 "Enable the basics helpers functions for the Application Framework Binders V3" ON)
+option(AFB_HELPERS_V4 "Enable the basics helpers functions for the Application Framework Binders V4" ON)
 option(AFB_HELPERS_QT "Enable the Qt helpers functions for the Application Framework Binders" OFF)
 
 INCLUDE(FindPkgConfig)
@@ -68,9 +68,9 @@ foreach (PKG_CONFIG ${PKG_REQUIRED_LIST})
     add_compile_options (${${XPREFIX}_CFLAGS})
 endforeach(PKG_CONFIG)
 
-if(${AFB_HELPERS})
-    set(AFB_HELPERS_SRCS
-        afb-timer.c
+if(${AFB_HELPERS_V3} OR ${AFB_HELPERS_V4})
+
+    set(AFB_HELPERS_SRCS_COMMON
         curl-wrap.c
         escape.c
         filescan-utils.c
@@ -78,10 +78,8 @@ if(${AFB_HELPERS})
         wrap-json.c
     )
 
-    set(AFB_HELPERS_HEADERS
+    set(AFB_HELPERS_HEADERS_COMMON
         afb-helpers-utils.h
-        afb-timer.h
-    	afb-plugin-helpers.h
         curl-wrap.h
         escape.h
         filescan-utils.h
@@ -90,29 +88,71 @@ if(${AFB_HELPERS})
         wrap-json.h
     )
 
-    # Define targets
-    ADD_LIBRARY(${PROJECT_NAME} SHARED ${AFB_HELPERS_SRCS})
+    set(AFB_HELPERS_SRCS_V3
+        ${AFB_HELPERS_SRCS_COMMON}
+        afb-timer.c
+    )
 
-    target_link_libraries(${PROJECT_NAME} curl)
+    set(AFB_HELPERS_HEADERS_V3
+        ${AFB_HELPERS_HEADERS_COMMON}
+        afb-timer.h
+    )
+
+    set(AFB_HELPERS_SRCS_V4
+        ${AFB_HELPERS_SRCS_COMMON}
+        afb-plugin-helpers.c
+    )
+
+    set(AFB_HELPERS_HEADERS_V4
+        ${AFB_HELPERS_HEADERS_COMMON}
+        afb-plugin-helpers.h
+    )
+
 
     # Define target includes
-    TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME}
-        PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}
-        )
+    INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-    CONFIGURE_FILE(${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
-    INSTALL(FILES
-            ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
-            DESTINATION
-            ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+    # Define targets
+    if(${AFB_HELPERS_V4})
+        ADD_LIBRARY(${PROJECT_NAME}-v4 SHARED ${AFB_HELPERS_SRCS_V4})
+        target_link_libraries(${PROJECT_NAME}-v4 curl)
+        target_compile_definitions(${PROJECT_NAME}-v4 PUBLIC -DAFB_BINDING_VERSION=4)
+        set_target_properties(${PROJECT_NAME}-v4 PROPERTIES
+            OUTPUT_NAME ${PROJECT_NAME}
+            SOVERSION 4
         )
-    INSTALL(TARGETS ${PROJECT_NAME}
+        INSTALL(TARGETS ${PROJECT_NAME}-v4
             DESTINATION ${CMAKE_INSTALL_LIBDIR}
         )
-    INSTALL(FILES ${AFB_HELPERS_HEADERS}
+        INSTALL(FILES ${AFB_HELPERS_HEADERS_V4}
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
         )
+    endif()
+
+    if(${AFB_HELPERS_V3})
+        ADD_LIBRARY(${PROJECT_NAME}-v3 SHARED ${AFB_HELPERS_SRCS_V3})
+        target_link_libraries(${PROJECT_NAME}-v3 curl)
+        target_compile_definitions(${PROJECT_NAME}-v3 PUBLIC -DAFB_BINDING_VERSION=3)
+        set_target_properties(${PROJECT_NAME}-v3 PROPERTIES
+            OUTPUT_NAME ${PROJECT_NAME}
+            SOVERSION 3
+        )
+        INSTALL(TARGETS ${PROJECT_NAME}-v3
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        )
+        INSTALL(FILES ${AFB_HELPERS_HEADERS_V3}
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+        )
+    endif()
+
 endif()
+
+CONFIGURE_FILE(${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
+INSTALL(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
+    DESTINATION
+    ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+    )
 
 if(${AFB_HELPERS_QT})
     message(STATUS "Qt's support enabled!")
