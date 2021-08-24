@@ -90,7 +90,7 @@ if(${AFB_HELPERS})
     )
 
     # Define targets
-    ADD_LIBRARY(${PROJECT_NAME} STATIC ${AFB_HELPERS_SRCS})
+    ADD_LIBRARY(${PROJECT_NAME} SHARED ${AFB_HELPERS_SRCS})
 
     target_link_libraries(${PROJECT_NAME} curl)
 
@@ -126,7 +126,7 @@ if(${AFB_HELPERS_QT})
     set(AFB_HELPERS_QT_SRCS qafbwebsocketclient.cpp)
 
     # Define Qt targets
-    ADD_LIBRARY(${PROJECT_NAME}-qt STATIC ${AFB_HELPERS_QT_SRCS})
+    ADD_LIBRARY(${PROJECT_NAME}-qt SHARED ${AFB_HELPERS_QT_SRCS})
 
     include_directories(${Qt5WebSockets_INCLUDE_DIRS})
     target_link_libraries(${PROJECT_NAME}-qt Qt5::WebSockets)
