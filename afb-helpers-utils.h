@@ -12,6 +12,7 @@
  * snprintf(targetS, sizeof (targetS), "%d", target);
  * */
 
-#define INT_STR_MAX sizeof(xstr(INT_MAX))
+#define INT_STR_MAX sizeof(xstr(INT_MIN))
+#define UINT_STR_MAX sizeof(xstr(UINT_MAX))
 
 #endif /* AFB_HELPERS_UTILS_H */
