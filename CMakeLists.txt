@@ -28,7 +28,7 @@ set(PROJECT_PRETTY_NAME "Afb Helpers")
 set(PROJECT_AUTHOR "Ar Foll, Fulup")
 set(PROJECT_AUTHOR_MAIL "fulup@iot.bzh")
 set(PROJECT_LICENSE "APL2.0")
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 if(NOT CMAKE_INSTALL_PREFIX)
     set(CMAKE_INSTALL_PREFIX "/usr")
@@ -42,7 +42,7 @@ ADD_COMPILE_OPTIONS(
     -Wno-sign-compare
     -Wno-sign-conversion
     -Werror=maybe-uninitialized
-    -Werror=implicit-function-declaration
+    $<$<COMPILE_LANGUAGE:C>:-Werror=implicit-function-declaration>
     -ffunction-sections
     -fdata-sections
     -fPIC)
@@ -100,14 +100,18 @@ if(${AFB_HELPERS_V3} OR ${AFB_HELPERS_V4})
 
     set(AFB_HELPERS_SRCS_V4
         ${AFB_HELPERS_SRCS_COMMON}
+        afb-data-utils.c
+        afb-data-utils.cpp
         afb-plugin-helpers.c
     )
 
     set(AFB_HELPERS_HEADERS_V4
         ${AFB_HELPERS_HEADERS_COMMON}
+        afb-data-utils
+        afb-data-utils.h
+        afb-data-utils.hpp
         afb-plugin-helpers.h
     )
-
 
     # Define target includes
     INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
