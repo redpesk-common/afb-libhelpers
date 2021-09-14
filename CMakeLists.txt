@@ -16,10 +16,11 @@
 # limitations under the License.
 ###########################################################################
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.15)
-project(afb-libhelpers VERSION 10.0.0
+CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
+project(afb-libhelpers
+    VERSION 10.0.0
     DESCRIPTION "Library providing some helpful functions for apps using Application Framework Binder"
-    HOMEPAGE_URL "https://gerrit.automotivelinux.org/gerrit/#/admin/projects/src/libafb-helpers"
+    HOMEPAGE_URL "https://github.com/redpesk-common/afb-libhelpers"
     LANGUAGES C CXX)
 include(GNUInstallDirs)
 
