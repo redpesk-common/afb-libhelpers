@@ -49,9 +49,9 @@ extern void TimerEvtStop(TimerHandleT *timerHandle);
 
 extern uint64_t LockWait(afb_api_t api, uint64_t utimeout);
 
-#endif /* AFB_BINDING_VERSION <= 3 */
-
 #ifdef __cplusplus
 }
 #endif
+#endif /* AFB_BINDING_VERSION <= 3 */
+
 #endif // CTL_TIMER_INCLUDE
