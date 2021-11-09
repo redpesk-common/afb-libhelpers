@@ -138,7 +138,7 @@ if(${AFB_HELPERS_V3} OR ${AFB_HELPERS_V4})
         target_link_libraries(${PROJECT_NAME}-v3 curl)
         target_compile_definitions(${PROJECT_NAME}-v3 PUBLIC -DAFB_BINDING_VERSION=3)
         set_target_properties(${PROJECT_NAME}-v3 PROPERTIES
-            OUTPUT_NAME ${PROJECT_NAME}
+            OUTPUT_NAME afb-helpers
             SOVERSION 3
         )
         INSTALL(TARGETS ${PROJECT_NAME}-v3
@@ -157,6 +157,13 @@ INSTALL(FILES
     DESTINATION
     ${CMAKE_INSTALL_LIBDIR}/pkgconfig
     )
+
+CONFIGURE_FILE(afb-helpers.pc.in afb-helpers.pc @ONLY)
+INSTALL(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers.pc
+        DESTINATION
+        ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+        )
 
 if(${AFB_HELPERS_QT})
     message(STATUS "Qt's support enabled!")
