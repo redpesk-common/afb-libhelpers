@@ -47,28 +47,30 @@ ADD_COMPILE_OPTIONS(
     -fdata-sections
     -fPIC)
 
+add_link_options(
+    -Wl,--no-undefined)
+
 option(AFB_HELPERS_V3 "Enable the basics helpers functions for the Application Framework Binders V3" ON)
 option(AFB_HELPERS_V4 "Enable the basics helpers functions for the Application Framework Binders V4" ON)
 option(AFB_HELPERS_QT "Enable the Qt helpers functions for the Application Framework Binders" OFF)
 
 INCLUDE(FindPkgConfig)
-set (PKG_REQUIRED_LIST
-    afb-binding
-)
-
 find_package(CURL REQUIRED)
 
-# Loop on required package and add options
-foreach (PKG_CONFIG ${PKG_REQUIRED_LIST})
-    string(REGEX REPLACE "[<>]?=.*$" "" XPREFIX ${PKG_CONFIG})
-    PKG_CHECK_MODULES(${XPREFIX} REQUIRED ${PKG_CONFIG})
 
-    INCLUDE_DIRECTORIES(${${XPREFIX}_INCLUDE_DIRS})
-    list(APPEND link_libraries ${${XPREFIX}_LDFLAGS})
-    add_compile_options (${${XPREFIX}_CFLAGS})
-endforeach(PKG_CONFIG)
+pkg_check_modules(AFB REQUIRED afb-binding)
+
+# Define target includes
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+INCLUDE_DIRECTORIES(${AFB_INCLUDE_DIRS})
+add_link_options(${AFB_LDFLAGS})
+link_libraries(${AFB_LINK_LIBRARIES})
+add_compile_options(${AFB_CFLAGS})
 
 if(${AFB_HELPERS_V3} OR ${AFB_HELPERS_V4})
+
+    pkg_check_modules(JSON REQUIRED json-c)
 
     set(AFB_HELPERS_SRCS_COMMON
         curl-wrap.c
@@ -113,14 +115,14 @@ if(${AFB_HELPERS_V3} OR ${AFB_HELPERS_V4})
         afb-plugin-helpers.h
     )
 
-    # Define target includes
-    INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-
     # Define targets
     if(${AFB_HELPERS_V4})
-        ADD_LIBRARY(${PROJECT_NAME}-v4 SHARED ${AFB_HELPERS_SRCS_V4})
-        target_link_libraries(${PROJECT_NAME}-v4 curl)
+        add_library(${PROJECT_NAME}-v4 SHARED ${AFB_HELPERS_SRCS_V4})
+        target_include_directories(${PROJECT_NAME}-v4 PRIVATE ${JSON_INCLUDE_DIRS})
+        target_compile_options(${PROJECT_NAME}-v4 PRIVATE ${JSON_CFLAGS})
         target_compile_definitions(${PROJECT_NAME}-v4 PUBLIC -DAFB_BINDING_VERSION=4)
+        target_link_options(${PROJECT_NAME}-v4 PRIVATE ${JSON_LDFLAGS})
+        target_link_libraries(${PROJECT_NAME}-v4 PUBLIC ${JSON_LINK_LIBRARIES} curl ${CMAKE_DL_LIBS})
         set_target_properties(${PROJECT_NAME}-v4 PROPERTIES
             OUTPUT_NAME ${PROJECT_NAME}
             SOVERSION 4
@@ -134,9 +136,13 @@ if(${AFB_HELPERS_V3} OR ${AFB_HELPERS_V4})
     endif()
 
     if(${AFB_HELPERS_V3})
+        pkg_check_modules(SYSD REQUIRED libsystemd)
         ADD_LIBRARY(${PROJECT_NAME}-v3 SHARED ${AFB_HELPERS_SRCS_V3})
-        target_link_libraries(${PROJECT_NAME}-v3 curl)
+        target_include_directories(${PROJECT_NAME}-v3 PRIVATE ${JSON_INCLUDE_DIRS} ${SYSD_INCLUDE_DIRS})
+        target_compile_options(${PROJECT_NAME}-v3 PRIVATE ${JSON_CFLAGS} ${SYSD_CFLAGS})
         target_compile_definitions(${PROJECT_NAME}-v3 PUBLIC -DAFB_BINDING_VERSION=3)
+        target_link_options(${PROJECT_NAME}-v3 PRIVATE ${JSON_LDFLAGS} ${SYSD_LDFLAGS})
+        target_link_libraries(${PROJECT_NAME}-v3 PUBLIC ${JSON_LINK_LIBRARIES} ${SYSD_LINK_LIBRARIES} curl)
         set_target_properties(${PROJECT_NAME}-v3 PROPERTIES
             OUTPUT_NAME afb-helpers
             SOVERSION 3
@@ -188,7 +194,7 @@ if(${AFB_HELPERS_QT})
             PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-    CONFIGURE_FILE(afb-helpers-qt.pc.in afb-helpers-qt.pc @ONLY)
+    CONFIGURE_FILE(afb-libhelpers-qt.pc.in afb-helpers-qt.pc @ONLY)
     INSTALL(FILES
             ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers-qt.pc
             DESTINATION
