@@ -17,8 +17,8 @@
 #pragma once
 
 extern char *escape_url(const char *base, const char *path, const char * const *args, size_t *length);
-extern const char *escape_args(const char * const *args, size_t *length);
-extern const char *escape_str(const char *str, size_t *length);
-extern const char **unescape_args(const char *args);
+extern char *escape_args(const char * const *args, size_t *length);
+extern char *escape_str(const char *str, size_t *length);
+extern char **unescape_args(const char *args);
 
 /* vim: set colorcolumn=80: */

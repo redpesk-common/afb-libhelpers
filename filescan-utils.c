@@ -111,24 +111,20 @@ json_object* ScanForConfig(const char* searchPath, CtlScanDirModeT mode, const c
     return (responseJ);
 }
 
-const char* GetMiddleName(const char* name)
+char* GetMiddleName(const char* name)
 {
     char* fullname = strdup(name);
-
-    for (int idx = 0; fullname[idx] != '\0'; idx++) {
-        if (fullname[idx] == '-') {
-            int start;
-            start = idx + 1;
-            for (int jdx = start;; jdx++) {
-                if (fullname[jdx] == '-' || fullname[jdx] == '@' || fullname[jdx] == '.' || fullname[jdx] == '\0') {
-                    fullname[jdx] = '\0';
-                    return &fullname[start];
-                }
-            }
-            break;
+    if (fullname != NULL) {
+        char *start = strchr(fullname, '-');
+        if (start == NULL)
+            fullname[0] = 0;
+        else {
+            size_t len = strcspn(++start, "-@.");
+            memmove(fullname, start, len);
+            fullname[len] = 0;
         }
     }
-    return "";
+    return fullname;
 }
 
 const char* GetBinderName()
@@ -143,7 +139,9 @@ const char* GetBinderName()
         static char psName[17];
         // retrieve binder name from process name afb-name-trailer
         prctl(PR_GET_NAME, psName, NULL, NULL, NULL);
-        binderName = (char*)GetMiddleName(psName);
+        binderName = GetMiddleName(psName);
+        if (binderName == NULL)
+            binderName = "";
     }
 
     return binderName;

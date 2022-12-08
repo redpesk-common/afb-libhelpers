@@ -33,7 +33,7 @@ struct buffer {
 	char *data;
 };
 
-static const char* curl_concatenate_args(const char * const *args, const char *sep, size_t *length)
+static char* curl_concatenate_args(const char * const *args, const char *sep, size_t *length)
 {
 	int i;
 	size_t lq;
@@ -237,36 +237,46 @@ CURL *curl_wrap_prepare_post_url_data(const char *url, const char *datatype, con
 	curl = curl_easy_init();
 	if (curl
 	&& CURLE_OK == curl_easy_setopt(curl, CURLOPT_URL, url)
-	&& (!szdata || CURLE_OK == curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, szdata))
-	&& CURLE_OK == curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data)
+	&& (!szdata || (CURLE_OK == curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, szdata)
+			&& CURLE_OK == curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data)))
 	&& (!datatype || curl_wrap_add_header_value(curl, "content-type", datatype)))
 		return curl;
 	curl_easy_cleanup(curl);
 	return NULL;
 }
 
-static CURL *curl_wrap_prepare_post(const char *base, const char *path, int unescape_flag, const char *separator, const char * const *args, const char *simple_args)
-{
+static CURL *curl_wrap_prepare_post(
+			const char *base,
+			const char *path,
+			int unescape_flag,
+			const char *separator,
+			const char * const *args,
+			const char *simple_args
+) {
 	CURL *res;
-	char *url;
-	const char *data = NULL;
+	char *url, *fdata;
+	const char *data;
 	size_t szdata = 0;
 
 	url = escape_url(base, path, NULL, NULL);
 	if(args) {
-		data = unescape_flag ?
+		data = fdata = unescape_flag ?
 			curl_concatenate_args(args, separator, &szdata) :
 			escape_args(args, &szdata);
 	}
 	else {
-		data = unescape_flag ?
-			escape_str(simple_args, &szdata) :
-			simple_args;
+		if (unescape_flag)
+			data = fdata = escape_str(simple_args, &szdata);
+		else {
+			fdata = NULL;
+			data = simple_args;
+			szdata = data == NULL ? 0 : strlen(data);
+		}
 	}
-	szdata = szdata ? szdata : strlen(data);
 
 	res = url ? curl_wrap_prepare_post_url_data(url, NULL, data, szdata) : NULL;
 	free(url);
+	free(fdata);
 	return res;
 }
 

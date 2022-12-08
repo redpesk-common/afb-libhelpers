@@ -313,15 +313,15 @@ char *escape_args(const char * const *args, size_t *length)
 	return escape_url(NULL, NULL, args, length);
 }
 
-const char *escape_str(const char* str, size_t *length)
+char *escape_str(const char* str, size_t *length)
 {
 	const char *a[3] = { str, NULL, NULL };
 	return escape_args(a, length);
 }
 
-const char **unescape_args(const char *args)
+char **unescape_args(const char *args)
 {
-	const char **r, **q;
+	char **r, **q;
 	char c, *p;
 	size_t j, z, l, n, lt;
 

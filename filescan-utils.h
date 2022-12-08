@@ -50,7 +50,7 @@ typedef enum {
  *
  * @return const char*
  */
-extern const char *GetMiddleName(const char *name);
+extern char *GetMiddleName(const char *name);
 
 /**
  * @brief Get the Binder Name without the prefix set by the AGL appfw 'afbd-'
