@@ -16,14 +16,18 @@
 ## limitations under the License.
 ##
 
-prefix=@CMAKE_INSTALL_PREFIX@
-exec_prefix=${prefix}
-libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
-includedir=${prefix}/include
+##
+## This file is part of afb-libhelpers project
+##
 
-Name: afb-helpers
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+
+Provides: afb-helpers
+Name: afb-helpers3
 Description: @PROJECT_DESCRIPTION@
 Version: @PROJECT_VERSION@
 URL: @PROJECT_URL@
-Libs: -L${libdir} -lafb-helpers
-Cflags: -I${includedir} -I${includedir}/@PROJECT_NAME@
+Libs: -L${libdir} -lafb-helpers3
+Cflags: -I${includedir} -I${includedir}/afb-helpers3
+

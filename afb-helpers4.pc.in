@@ -1,0 +1,14 @@
+##
+## This file is part of afb-libhelpers project
+##
+
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+
+Name: afb-helpers4
+Description: @PROJECT_DESCRIPTION@
+Version: @PROJECT_VERSION@
+URL: @PROJECT_URL@
+Libs: -L${libdir} -lafb-helpers4
+Cflags: -I${includedir} -I${includedir}/afb-helpers4
+

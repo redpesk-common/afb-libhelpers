@@ -1,8 +1,6 @@
 ###########################################################################
 # Copyright 2015, 2016, 2017 IoT.bzh
 #
-# author: Fulup Ar Foll <rfulup@iot.bzh>
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -22,17 +20,14 @@ project(afb-libhelpers
     DESCRIPTION "Library providing some helpful functions for apps using Application Framework Binder"
     HOMEPAGE_URL "https://github.com/redpesk-common/afb-libhelpers"
     LANGUAGES C CXX)
-include(GNUInstallDirs)
 
-set(PROJECT_PRETTY_NAME "Afb Helpers")
-set(PROJECT_AUTHOR "Ar Foll, Fulup")
+set(PROJECT_PRETTY_NAME "AFB Helpers")
+set(PROJECT_AUTHOR "IoT.bzh")
 set(PROJECT_AUTHOR_MAIL "fulup@iot.bzh")
 set(PROJECT_LICENSE "APL2.0")
 set(CMAKE_CXX_STANDARD 14)
 
-if(NOT CMAKE_INSTALL_PREFIX)
-    set(CMAKE_INSTALL_PREFIX "/usr")
-endif()
+include(GNUInstallDirs)
 
 ADD_COMPILE_OPTIONS(
     -Wall
@@ -68,19 +63,17 @@ add_link_options(${AFB_LDFLAGS})
 link_libraries(${AFB_LINK_LIBRARIES})
 add_compile_options(${AFB_CFLAGS})
 
-if(${AFB_HELPERS_V3} OR ${AFB_HELPERS_V4})
-
-    pkg_check_modules(JSON REQUIRED json-c)
-
-    set(AFB_HELPERS_SRCS_COMMON
+if(${AFB_HELPERS_V3})
+    set(AFB_HELPERS_SRCS_V3
         curl-wrap.c
         escape.c
         filescan-utils.c
         wrap-base64.c
         wrap-json.c
+        afb-timer.c
     )
 
-    set(AFB_HELPERS_HEADERS_COMMON
+    set(AFB_HELPERS_HEADERS_V3
         afb-helpers-utils.h
         curl-wrap.h
         escape.h
@@ -88,88 +81,62 @@ if(${AFB_HELPERS_V3} OR ${AFB_HELPERS_V4})
         json.hpp
         wrap-base64.h
         wrap-json.h
-    )
-
-    set(AFB_HELPERS_SRCS_V3
-        ${AFB_HELPERS_SRCS_COMMON}
-        afb-timer.c
-    )
-
-    set(AFB_HELPERS_HEADERS_V3
-        ${AFB_HELPERS_HEADERS_COMMON}
         afb-timer.h
     )
 
-    set(AFB_HELPERS_SRCS_V4
-        ${AFB_HELPERS_SRCS_COMMON}
-        afb-data-utils.c
-        afb-data-utils.cpp
-        afb-plugin-helpers.c
-    )
+    pkg_check_modules(DEPv3 REQUIRED json-c libsystemd)
+
+    ADD_LIBRARY(afb-helpers3 SHARED ${AFB_HELPERS_SRCS_V3})
+    target_include_directories(afb-helpers3 PRIVATE ${DEPv3_INCLUDE_DIRS})
+    target_compile_options(afb-helpers3 PRIVATE ${DEPv3_CFLAGS})
+    target_compile_definitions(afb-helpers3 PUBLIC -DAFB_BINDING_VERSION=3)
+    target_link_options(afb-helpers3 PRIVATE ${DEPv3_LDFLAGS})
+    target_link_libraries(afb-helpers3 PUBLIC ${DEPv3_LINK_LIBRARIES} curl)
+    set_target_properties(afb-helpers3 PROPERTIES OUTPUT_NAME afb-helpers SOVERSION 3)
+    INSTALL(TARGETS afb-helpers3 DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    INSTALL(FILES ${AFB_HELPERS_HEADERS_V3} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/afb-helpers3)
+
+    CONFIGURE_FILE(afb-helpers3.pc.in afb-helpers3.pc @ONLY)
+    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers3.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers3.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig RENAME afb-helpers.pc)
+endif()
+
+if(${AFB_HELPERS_V4})
 
     set(AFB_HELPERS_HEADERS_V4
-        ${AFB_HELPERS_HEADERS_COMMON}
-        afb-data-utils
-        afb-data-utils.h
-        afb-data-utils.hpp
-        afb-plugin-helpers.h
     )
 
     # Define targets
-    if(${AFB_HELPERS_V4})
-        add_library(${PROJECT_NAME}-v4 SHARED ${AFB_HELPERS_SRCS_V4})
-        target_include_directories(${PROJECT_NAME}-v4 PRIVATE ${JSON_INCLUDE_DIRS})
-        target_compile_options(${PROJECT_NAME}-v4 PRIVATE ${JSON_CFLAGS})
-        target_compile_definitions(${PROJECT_NAME}-v4 PUBLIC -DAFB_BINDING_VERSION=4)
-        target_link_options(${PROJECT_NAME}-v4 PRIVATE ${JSON_LDFLAGS})
-        target_link_libraries(${PROJECT_NAME}-v4 PUBLIC ${JSON_LINK_LIBRARIES} curl ${CMAKE_DL_LIBS})
-        set_target_properties(${PROJECT_NAME}-v4 PROPERTIES
-            OUTPUT_NAME ${PROJECT_NAME}
-            SOVERSION 4
-        )
-        INSTALL(TARGETS ${PROJECT_NAME}-v4
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        )
-        INSTALL(FILES ${AFB_HELPERS_HEADERS_V4}
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
-        )
-    endif()
 
-    if(${AFB_HELPERS_V3})
-        pkg_check_modules(SYSD REQUIRED libsystemd)
-        ADD_LIBRARY(${PROJECT_NAME}-v3 SHARED ${AFB_HELPERS_SRCS_V3})
-        target_include_directories(${PROJECT_NAME}-v3 PRIVATE ${JSON_INCLUDE_DIRS} ${SYSD_INCLUDE_DIRS})
-        target_compile_options(${PROJECT_NAME}-v3 PRIVATE ${JSON_CFLAGS} ${SYSD_CFLAGS})
-        target_compile_definitions(${PROJECT_NAME}-v3 PUBLIC -DAFB_BINDING_VERSION=3)
-        target_link_options(${PROJECT_NAME}-v3 PRIVATE ${JSON_LDFLAGS} ${SYSD_LDFLAGS})
-        target_link_libraries(${PROJECT_NAME}-v3 PUBLIC ${JSON_LINK_LIBRARIES} ${SYSD_LINK_LIBRARIES} curl)
-        set_target_properties(${PROJECT_NAME}-v3 PROPERTIES
-            OUTPUT_NAME afb-helpers
-            SOVERSION 3
-        )
-        INSTALL(TARGETS ${PROJECT_NAME}-v3
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        )
-        INSTALL(FILES ${AFB_HELPERS_HEADERS_V3}
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
-        )
-    endif()
+    pkg_check_modules(DEPv4 REQUIRED json-c)
 
+    add_library(afb-helpers4 SHARED
+        curl-wrap.c
+        escape.c
+        filescan-utils.c
+        afb-data-utils.c
+        afb-data-utils.cpp
+        afb-plugin-helpers.c
+    )  
+    target_include_directories(afb-helpers4 PRIVATE ${DEPv4_INCLUDE_DIRS})
+    target_compile_options(afb-helpers4 PRIVATE ${DEPv4_CFLAGS})
+    target_compile_definitions(afb-helpers4 PUBLIC -DAFB_BINDING_VERSION=4)
+    target_link_options(afb-helpers4 PRIVATE ${DEPv4_LDFLAGS})
+    target_link_libraries(afb-helpers4 PUBLIC ${DEPv4_LINK_LIBRARIES} curl ${CMAKE_DL_LIBS})
+    set_target_properties(afb-helpers4 PROPERTIES SOVERSION 4)
+    INSTALL(TARGETS afb-helpers4 DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    INSTALL(FILES 
+            afb-helpers-utils.h
+            afb-data-utils
+            afb-data-utils.h
+            afb-data-utils.hpp
+            afb-plugin-helpers.h
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/afb-helpers4)
+
+    CONFIGURE_FILE(afb-helpers4.pc.in afb-helpers4.pc @ONLY)
+    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers4.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()
 
-CONFIGURE_FILE(${PROJECT_NAME}.pc.in ${PROJECT_NAME}.pc @ONLY)
-INSTALL(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
-    DESTINATION
-    ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-    )
-
-CONFIGURE_FILE(afb-helpers.pc.in afb-helpers.pc @ONLY)
-INSTALL(FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers.pc
-        DESTINATION
-        ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-        )
 
 if(${AFB_HELPERS_QT})
     message(STATUS "Qt's support enabled!")
@@ -179,18 +146,14 @@ if(${AFB_HELPERS_QT})
 
     find_package(Qt5WebSockets REQUIRED)
 
-    set(AFB_HELPERS_QT_HEADERS qafbwebsocketclient.h)
-
-    set(AFB_HELPERS_QT_SRCS qafbwebsocketclient.cpp)
-
     # Define Qt targets
-    ADD_LIBRARY(${PROJECT_NAME}-qt SHARED ${AFB_HELPERS_QT_SRCS})
+    ADD_LIBRARY(afb-helpers-qt SHARED qafbwebsocketclient.cpp)
 
     include_directories(${Qt5WebSockets_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME}-qt Qt5::WebSockets)
+    target_link_libraries(afb-helpers-qt Qt5::WebSockets)
 
     # Define Qt target includes
-    TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME}-qt
+    TARGET_INCLUDE_DIRECTORIES(afb-helpers-qt
             PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
@@ -200,10 +163,10 @@ if(${AFB_HELPERS_QT})
             DESTINATION
             ${CMAKE_INSTALL_LIBDIR}/pkgconfig
            )
-    INSTALL(TARGETS ${PROJECT_NAME}-qt
+    INSTALL(TARGETS afb-helpers-qt
             DESTINATION ${CMAKE_INSTALL_LIBDIR}
            )
-    INSTALL(FILES ${AFB_HELPERS_QT_HEADERS}
+    INSTALL(FILES qafbwebsocketclient.h
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
            )
 endif()
