@@ -124,7 +124,7 @@ int wrap_base64_decode(
 		int url)
 {
 	uint16_t u16;
-	uint8_t u8, *result;
+	uint8_t u8, *result, *fake;
 	size_t in, out, iin;
 	char c;
 
@@ -177,8 +177,8 @@ int wrap_base64_decode(
 		}
 	}
 	/* terminate */
-	*decoded = realloc(result, out + 1);
-	if (out && *decoded == NULL) {
+	*decoded = fake = realloc(result, out + 1);
+	if (fake == NULL) {
 		free(result);
 		return wrap_base64_nomem;
 	}
