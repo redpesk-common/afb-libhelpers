@@ -23,8 +23,6 @@
 extern "C" {
 #endif
 
-#if AFB_BINDING_VERSION > 3
-
 #include <afb/afb-binding.h>
 
 /* Make plugins CB signatures dynamic and chosen by developper.
@@ -32,72 +30,90 @@ extern "C" {
 *  the plugin owning it
 */
 
-typedef struct plugins_store plugins_store;
+typedef struct plugin_store_s plugin_store_t;
+typedef plugin_store_t plugin_t;
 
-/**
- * @brief Return the length of the plugin's linked list
- *
- * @param store head of the linked list
- * @return size_t Size of the linked list
- */
-size_t plugin_store_length(plugins_store *store);
-
-/**
- * @brief Get the plugin by name object
- *
- * @param store the head of the plugin's linked list
- * @param name Name of the plugin to retrieve
- * @return plugins_store* Returns the plugin_store pointer instance of the found
- * plugin or NULL when not found.
- */
-plugins_store* get_plugin_by_name(plugins_store *store, const char *name);
+/*
+* Initial value for plugin stores
+*/
+#define PLUGIN_STORE_INITIAL NULL
 
 /**
  * @brief Load a binding plugin and store it
  *
- * @param api The Binding api handle
- * @param pluginpath path of the plugin to load
- * @param plugins_store NULL terminated structure where will be stored the plugin once loaded.
+ * @param store the store address
+ * @param path path of the plugin to load
+ * @param path name for storing the plugin
+ * @param api The binding api handle
  *
  * @return int 0 for a success, -1 for a failure
  */
-int plugin_load(afb_api_t api, const char *plugin_name, const char *pluginpath, plugins_store **plugins_store);
+int plugin_store_load(plugin_store_t **store, const char *path, const char *name, afb_api_t api);
 
 /**
- * @brief Get a pointer to a function from a loaded plugins. You have to know
- * the signature of it to be able to call it.
+ * @brief Return the length of the plugin's linked list
  *
- * @param api Api pointer
- * @param plugin
- * @param function
- * @return void*
+ * @param store the store
+ * @return size_t Size of the linked list
  */
-void* plugin_get_cb(afb_api_t api, plugins_store *plugin, const char *function);
-
-
-void* plugin_seek_cb_by_plugin_name(afb_api_t api, plugins_store *store, const char *name, const char *function);
-
-/**
- * @brief Return an array of pointer to the function sought. Signature of those
- * functions aren't known and the user must cast them manually.
- *
- * @param api the api pointer
- * @param store The head of the linked list of plugins
- * @param function name of the function sought
- * @return void** array of function pointer when found or NULL it do not found anything
- */
-void** plugin_seek_cb_in_all(afb_api_t api, plugins_store *store, const char *function);
+size_t plugin_store_length(plugin_store_t *store);
 
 /**
  * @brief Unload a plugin from the plugins store. Free the memory and close the
  * dynamic library handle.
  *
- * @param store the head linked list of plugins
- * @param plugin_name the name of the plugin to unload
+ * @param store the store address
+ * @param name the name of the plugin to unload
  */
-void plugin_unload(plugins_store **store, const char *plugin_name);
+void plugin_store_unload(plugin_store_t **store, const char *name);
 
-#endif /* AFB_BINDING_VERSION > 3 */
+/**
+ * @brief Get the object by its name and plugin name
+ *
+ * @param store the store
+ * @param plugname Name of the plugin
+ * @param objname Name of the object
+ * @return Returns the plugin instance found or NULL when not found
+ */
+void *plugin_store_get_object(plugin_store_t *store, const char *plugname, const char *objname);
+
+/**
+ * @brief Return an array of all objects of the given name.
+ *
+ * @param store The head of the linked list of plugins
+ * @param name name of the objects
+ * @return NULL terminated array of function pointer when found or NULL it do not found anything
+ * The result must be freed using 'free'
+ */
+void** plugin_store_all_objects(plugin_store_t *store, const char *function);
+
+/**
+ * @brief Get a plugin by its name
+ *
+ * @param store the store
+ * @param name Name of the plugin to retrieve
+ * @return Returns the plugin instance found or NULL when not found
+ */
+plugin_t *plugin_store_get_plugin(plugin_store_t *store, const char *name);
+
+/**
+ * @brief Get a pointer to an object from a loaded plugins.
+ *
+ * @param plugin the plugin where to search
+ * @param name name of the object to get
+ * @return NULL if the object is not found or else, its address
+ */
+void* plugin_get_object(const plugin_t *plugin, const char *name);
+
+#if 0 /* compatibility with ROMAIN's version */
+typedef plugin_store_t plugins_store;
+#define plugin_load(store, path, name, api) plugin_store_load(api, name, path, store)
+#define plugin_load(store, name)            plugin_store_unload(store, name)
+#define plugin_get_cb(api, store, name)     plugin_get_object(store, name)
+#define get_plugin_by_name(store, name)     plugin_store_get_plugin(store, name)
+#define plugin_seek_cb_by_plugin_name(api, store, name, function) plugin_store_get_object(store, name, function)
+#define plugin_seek_cb_in_all(api, store, name)  plugin_store_all_objects(store, name, function)
+#endif
 
 #ifdef __cplusplus
 }
