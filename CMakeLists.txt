@@ -108,7 +108,6 @@ if(${AFB_HELPERS_V4})
 
     add_library(afb-helpers4 SHARED
         afb-data-utils.c
-        afb-data-utils.cpp
         plugin-store.c
     )  
     target_include_directories(afb-helpers4 PRIVATE ${DEPv4_INCLUDE_DIRS})
@@ -122,12 +121,31 @@ if(${AFB_HELPERS_V4})
             afb-helpers-utils.h
             afb-data-utils
             afb-data-utils.h
-            afb-data-utils.hpp
             plugin-store.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/afb-helpers4)
 
     CONFIGURE_FILE(afb-helpers4.pc.in afb-helpers4.pc @ONLY)
     INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers4.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
+    add_library(afb-helpers++4 SHARED
+        afb-data-utils.cpp
+    )
+    target_include_directories(afb-helpers++4 PRIVATE ${DEPv4_INCLUDE_DIRS})
+    target_compile_options(afb-helpers++4 PRIVATE ${DEPv4_CFLAGS})
+    target_compile_definitions(afb-helpers++4 PUBLIC -DAFB_BINDING_VERSION=4)
+    target_link_options(afb-helpers++4 PRIVATE ${DEPv4_LDFLAGS})
+    target_link_libraries(afb-helpers++4 PUBLIC ${DEPv4_LINK_LIBRARIES} afb-helpers4)
+    set_target_properties(afb-helpers++4 PROPERTIES SOVERSION 4)
+    INSTALL(TARGETS afb-helpers++4 DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    INSTALL(FILES
+            afb-data-utils
+            afb-data-utils.hpp
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/afb-helpers4)
+
+    CONFIGURE_FILE(afb-helpers++4.pc.in afb-helpers++4.pc @ONLY)
+    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers++4.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
+
 endif()
 
 

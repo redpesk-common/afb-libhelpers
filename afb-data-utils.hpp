@@ -22,9 +22,11 @@
 #if AFB_BINDING_VERSION > 3
 
 #include <afb/afb-binding>
+#include <json.hpp>
 
+extern "C" {
 #include "afb-data-utils.h"
-#include "json.hpp"
+}
 
 // still in afb namespace (at least needed for nlohmann's convertions)
 namespace afb {
@@ -37,7 +39,6 @@ namespace afb {
 
 	// conversion from nlohmann::json to afb::data
 	void from_json(const nlohmann::json& jin, afb::data &dout);
-
 
 	/**
 	 * Creates a data of type AFB_PREDEFINED_TYPE_STRINGZ encapsulating

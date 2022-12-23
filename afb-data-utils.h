@@ -19,9 +19,6 @@
 #pragma once
 
 #if AFB_BINDING_VERSION > 3
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #include <afb/afb-binding.h>
 #include <json-c/json.h>
@@ -168,8 +165,5 @@ afb_data_t afb_data_json(const char *jsonstr);
  */
 afb_data_t afb_data_json_c_hold(json_object *jobject);
 
-#ifdef __cplusplus
-}
-#endif
 #endif /* AFB_BINDING_VERSION > 3 */
 
