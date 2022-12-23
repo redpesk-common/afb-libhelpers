@@ -103,17 +103,10 @@ endif()
 
 if(${AFB_HELPERS_V4})
 
-    set(AFB_HELPERS_HEADERS_V4
-    )
-
     # Define targets
-
-    pkg_check_modules(DEPv4 REQUIRED json-c)
+    pkg_check_modules(DEPv4 REQUIRED json-c librp-utils)
 
     add_library(afb-helpers4 SHARED
-        curl-wrap.c
-        escape.c
-        filescan-utils.c
         afb-data-utils.c
         afb-data-utils.cpp
         plugin-store.c
@@ -122,7 +115,7 @@ if(${AFB_HELPERS_V4})
     target_compile_options(afb-helpers4 PRIVATE ${DEPv4_CFLAGS})
     target_compile_definitions(afb-helpers4 PUBLIC -DAFB_BINDING_VERSION=4)
     target_link_options(afb-helpers4 PRIVATE ${DEPv4_LDFLAGS})
-    target_link_libraries(afb-helpers4 PUBLIC ${DEPv4_LINK_LIBRARIES} curl ${CMAKE_DL_LIBS})
+    target_link_libraries(afb-helpers4 PUBLIC ${DEPv4_LINK_LIBRARIES} ${CMAKE_DL_LIBS})
     set_target_properties(afb-helpers4 PROPERTIES SOVERSION 4)
     INSTALL(TARGETS afb-helpers4 DESTINATION ${CMAKE_INSTALL_LIBDIR})
     INSTALL(FILES 
