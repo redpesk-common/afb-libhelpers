@@ -21,8 +21,6 @@
 
 #include <limits.h>
 
-#define xstr(s) str(s)
-#define str(s) #s
 
 /* with gcc >= 7.2.0, this macro is useful when printing an int with snprintf:
  *
@@ -30,7 +28,9 @@
  * snprintf(targetS, sizeof (targetS), "%d", target);
  * */
 
-#define INT_STR_MAX sizeof(xstr(INT_MIN))
-#define UINT_STR_MAX sizeof(xstr(UINT_MAX))
+#define __str__(s) #s
+#define __xstr__(s) __str__(s)
+#define INT_STR_MAX sizeof(__xstr__(INT_MIN))
+#define UINT_STR_MAX sizeof(__xstr__(UINT_MAX))
 
 #endif /* AFB_HELPERS_UTILS_H */
