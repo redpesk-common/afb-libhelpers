@@ -116,7 +116,7 @@ if(${AFB_HELPERS_V4})
         filescan-utils.c
         afb-data-utils.c
         afb-data-utils.cpp
-        afb-plugin-helpers.c
+        plugin-store.c
     )  
     target_include_directories(afb-helpers4 PRIVATE ${DEPv4_INCLUDE_DIRS})
     target_compile_options(afb-helpers4 PRIVATE ${DEPv4_CFLAGS})
@@ -130,7 +130,7 @@ if(${AFB_HELPERS_V4})
             afb-data-utils
             afb-data-utils.h
             afb-data-utils.hpp
-            afb-plugin-helpers.h
+            plugin-store.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/afb-helpers4)
 
     CONFIGURE_FILE(afb-helpers4.pc.in afb-helpers4.pc @ONLY)

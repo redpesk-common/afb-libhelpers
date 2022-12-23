@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2021 "IoT.bzh"
- * Author: Romain Forlot <romain.forlot@iot.bzh>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +14,8 @@
  * limitations under
  *
  */
-#ifndef AFB_PLUGINS_HELPERS_H
-#define AFB_PLUGINS_HELPERS_H
-#define _GNU_SOURCE
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef PLUGINS_HELPERS_H
+#define PLUGINS_HELPERS_H
 
 #include <afb/afb-binding.h>
 
@@ -115,8 +109,4 @@ typedef plugin_store_t plugins_store;
 #define plugin_seek_cb_in_all(api, store, name)  plugin_store_all_objects(store, name, function)
 #endif
 
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* AFB_PLUGINS_HELPERS_H */
+#endif /* PLUGINS_HELPERS_H */

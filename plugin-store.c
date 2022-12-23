@@ -19,7 +19,7 @@
 #include <dlfcn.h>
 #include <string.h>
 
-#include "afb-plugin-helpers.h"
+#include "plugin-store.h"
 
 
 struct plugin_store_s
