@@ -96,6 +96,7 @@ if(${AFB_HELPERS_V3})
     CONFIGURE_FILE(afb-helpers3.pc.in afb-helpers3.pc @ONLY)
     INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers3.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
     INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers3.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig RENAME afb-helpers.pc)
+    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers3.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig RENAME afb-libhelpers.pc)
 endif()
 
 if(${AFB_HELPERS_V4})
