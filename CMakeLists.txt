@@ -17,14 +17,10 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 project(afb-libhelpers
     VERSION 10.0.0
-    DESCRIPTION "Library providing some helpful functions for apps using Application Framework Binder"
+    DESCRIPTION "Library providing some helpful functions for bindings of Application Framework Binder"
     HOMEPAGE_URL "https://github.com/redpesk-common/afb-libhelpers"
     LANGUAGES C CXX)
 
-set(PROJECT_PRETTY_NAME "AFB Helpers")
-set(PROJECT_AUTHOR "IoT.bzh")
-set(PROJECT_AUTHOR_MAIL "fulup@iot.bzh")
-set(PROJECT_LICENSE "APL2.0")
 set(CMAKE_CXX_STANDARD 14)
 
 include(GNUInstallDirs)
@@ -47,10 +43,8 @@ add_link_options(
 
 option(AFB_HELPERS_V3 "Enable the basics helpers functions for the Application Framework Binders V3" ON)
 option(AFB_HELPERS_V4 "Enable the basics helpers functions for the Application Framework Binders V4" ON)
-option(AFB_HELPERS_QT "Enable the Qt helpers functions for the Application Framework Binders" OFF)
 
 INCLUDE(FindPkgConfig)
-find_package(CURL REQUIRED)
 
 
 pkg_check_modules(AFB REQUIRED afb-binding)
@@ -64,6 +58,7 @@ link_libraries(${AFB_LINK_LIBRARIES})
 add_compile_options(${AFB_CFLAGS})
 
 if(${AFB_HELPERS_V3})
+
     set(AFB_HELPERS_SRCS_V3
         curl-wrap.c
         escape.c
@@ -83,6 +78,8 @@ if(${AFB_HELPERS_V3})
         wrap-json.h
         afb-timer.h
     )
+
+    find_package(CURL REQUIRED)
 
     pkg_check_modules(DEPv3 REQUIRED json-c libsystemd)
 
@@ -148,36 +145,3 @@ if(${AFB_HELPERS_V4})
 
 endif()
 
-
-if(${AFB_HELPERS_QT})
-    message(STATUS "Qt's support enabled!")
-    # Add target to project dependency list
-    set(CMAKE_AUTOMOC ON)
-    set(CMAKE_AUTORCC ON)
-
-    find_package(Qt5WebSockets REQUIRED)
-
-    # Define Qt targets
-    ADD_LIBRARY(afb-helpers-qt SHARED qafbwebsocketclient.cpp)
-
-    include_directories(${Qt5WebSockets_INCLUDE_DIRS})
-    target_link_libraries(afb-helpers-qt Qt5::WebSockets)
-
-    # Define Qt target includes
-    TARGET_INCLUDE_DIRECTORIES(afb-helpers-qt
-            PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}
-        )
-
-    CONFIGURE_FILE(afb-libhelpers-qt.pc.in afb-helpers-qt.pc @ONLY)
-    INSTALL(FILES
-            ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers-qt.pc
-            DESTINATION
-            ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-           )
-    INSTALL(TARGETS afb-helpers-qt
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}
-           )
-    INSTALL(FILES qafbwebsocketclient.h
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-           )
-endif()
