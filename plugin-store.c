@@ -22,18 +22,18 @@
 #include "plugin-store.h"
 
 
-struct plugin_store_s
+struct plugin_s
 {
-	plugin_store_t *prev;
+	plugin_t *prev;
 	void *dl_handle;
 	char name[];
 };
 
-int plugin_store_load(plugin_store_t **store, const char *path, const char *name, afb_api_t api)
+int plugin_store_load(plugin_store_t *store, const char *path, const char *name, afb_api_t api)
 {
 	void *dl_handle;
 	size_t name_length;
-	plugin_store_t *item;
+	plugin_t *item;
 
 	/* check args */
 	if (!store || !name || !path) {
@@ -66,7 +66,7 @@ int plugin_store_load(plugin_store_t **store, const char *path, const char *name
 	return 0;
 }
 
-size_t plugin_store_length(plugin_store_t *store) {
+size_t plugin_store_length(plugin_store_t store) {
 	int s = 0;
 	while(store) {
 		s++;
@@ -75,10 +75,10 @@ size_t plugin_store_length(plugin_store_t *store) {
 	return s;
 }
 
-static plugin_store_t** search(plugin_store_t **store, const char *name)
+static plugin_store_t* search(plugin_store_t *store, const char *name)
 {
 	for (;;) {
-		plugin_store_t *item = *store;
+		plugin_t *item = *store;
 		if (! item)
 			return NULL;
 		if(! strcasecmp(item->name, name))
@@ -87,26 +87,26 @@ static plugin_store_t** search(plugin_store_t **store, const char *name)
 	}
 }
 
-void plugin_store_unload(plugin_store_t **store, const char *name)
+void plugin_store_unload(plugin_store_t *store, const char *name)
 {
-	plugin_store_t **ref = store && name ? search(store, name) : NULL;
+	plugin_store_t *ref = store && name ? search(store, name) : NULL;
 	if (ref) {
-		plugin_store_t *item = *ref;
+		plugin_t *item = *ref;
 		*ref = item->prev;
 		dlclose(item->dl_handle);
 		free(item);
 	}
 }
 
-plugin_t *plugin_store_get_plugin(plugin_store_t *store, const char *name)
+plugin_t *plugin_store_get_plugin(plugin_store_t store, const char *name)
 {
-	plugin_store_t **ref = store && name ? search(&store, name) : NULL;
+	plugin_store_t *ref = store && name ? search(&store, name) : NULL;
 	return ref ? *ref : NULL;
 }
 
-void *plugin_store_get_object(plugin_store_t *store, const char *plugname, const char *objname)
+void *plugin_store_get_object(plugin_store_t store, const char *plugname, const char *objname)
 {
-	plugin_store_t **ref = store && plugname && objname ? search(&store, plugname) : NULL;
+	plugin_store_t *ref = store && plugname && objname ? search(&store, plugname) : NULL;
 	return ref ? dlsym((*ref)->dl_handle, objname) : NULL;
 }
 
@@ -115,7 +115,17 @@ void* plugin_get_object(const plugin_t *plugin, const char *name)
 	return plugin && name ? dlsym(plugin->dl_handle, name) : NULL;
 }
 
-static void **getall(plugin_store_t *store, const char *name, void **link)
+int plugin_store_iter(plugin_store_t store, int (*callback)(void*,const plugin_t*), void *closure)
+{
+	int rc = 0;
+	while (rc == 0 && store) {
+		rc = callback(closure, store);
+		store = store->prev;
+	}
+	return rc;
+}
+
+static void **getall(plugin_store_t store, const char *name, void **link)
 {
 	void *pair[2];
 	for (;;) {
@@ -149,7 +159,7 @@ static void **getall(plugin_store_t *store, const char *name, void **link)
 	}
 }
 
-void** plugin_store_all_objects(plugin_store_t *store, const char *name)
+void** plugin_store_all_objects(plugin_store_t store, const char *name)
 {
 	return getall(store, name, NULL);
 }
