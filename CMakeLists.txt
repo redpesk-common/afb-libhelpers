@@ -106,6 +106,7 @@ if(${AFB_HELPERS_V4})
 
     add_library(afb-helpers4 SHARED
         afb-data-utils.c
+        afb-req-utils.c
         plugin-store.c
     )  
     target_include_directories(afb-helpers4 PRIVATE ${DEPv4_INCLUDE_DIRS})
@@ -119,6 +120,7 @@ if(${AFB_HELPERS_V4})
             afb-helpers-utils.h
             afb-data-utils
             afb-data-utils.h
+            afb-req-utils.h
             plugin-store.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/afb-helpers4)
 

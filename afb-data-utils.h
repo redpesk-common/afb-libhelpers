@@ -20,6 +20,7 @@
 
 #if AFB_BINDING_VERSION > 3
 
+#include <stddef.h>
 #include <afb/afb-binding.h>
 #include <json-c/json.h>
 
