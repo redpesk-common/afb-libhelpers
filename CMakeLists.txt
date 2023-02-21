@@ -16,7 +16,7 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 project(afb-libhelpers
-    VERSION 10.0.1
+    VERSION 10.0.2
     DESCRIPTION "Library providing some helpful functions for bindings of Application Framework Binder"
     HOMEPAGE_URL "https://github.com/redpesk-common/afb-libhelpers"
     LANGUAGES C CXX)
