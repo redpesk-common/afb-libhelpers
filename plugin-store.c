@@ -35,9 +35,19 @@ int plugin_store_load(plugin_store_t *store, const char *path, const char *name,
 	size_t name_length;
 	plugin_t *item;
 
+	if (api == NULL)
+		api = afbBindingRoot;
+
 	/* check args */
 	if (!store || !name || !path) {
 		AFB_API_ERROR(api, "Plugin load bad args");
+		return -1;
+	}
+
+	/* open lib */
+	dl_handle = dlopen(path, RTLD_NOW);
+	if (!dl_handle) {
+		AFB_API_INFO(api, "Plugin load fails plugin_path=%s err= %s", path, dlerror());
 		return -1;
 	}
 
@@ -46,16 +56,10 @@ int plugin_store_load(plugin_store_t *store, const char *path, const char *name,
 	item = malloc(name_length + 1 + sizeof *item);
 	if(! item) {
 		AFB_API_ERROR(api, "alloc error");
+		dlclose(item);
 		return -1;
 	}
 
-	/* open lib */
-	dl_handle = dlopen(path, RTLD_NOW);
-	if (!dl_handle) {
-		AFB_API_ERROR(api, "Plugin load fails plugin_path=%s err= %s", path, dlerror());
-		free(item);
-		return -1;
-	}
 	afb_setup_shared_object(api, dl_handle);
 
 	memcpy(item->name, name, 1 + name_length);
