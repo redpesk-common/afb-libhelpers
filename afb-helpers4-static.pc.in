@@ -1,0 +1,17 @@
+##
+## This file is part of afb-libhelpers project
+##
+
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+
+Name: afb-helpers4-static
+Description: @PROJECT_DESCRIPTION@
+Version: @PROJECT_VERSION@
+URL: @PROJECT_URL@
+Libs: -L${libdir} -l:libafb-helpers4.a
+Cflags: -I${includedir} -I${includedir}/afb-helpers4
+
+Provides: afb-helpers4
+Requires: librp-utils-static json-c
+

@@ -35,8 +35,7 @@ ADD_COMPILE_OPTIONS(
     -Werror=maybe-uninitialized
     $<$<COMPILE_LANGUAGE:C>:-Werror=implicit-function-declaration>
     -ffunction-sections
-    -fdata-sections
-    -fPIC)
+    -fdata-sections)
 
 add_link_options(
     -Wl,--no-undefined)
@@ -85,7 +84,7 @@ if(${AFB_HELPERS_V3})
 
     ADD_LIBRARY(afb-helpers3 SHARED ${AFB_HELPERS_SRCS_V3})
     target_include_directories(afb-helpers3 PRIVATE ${DEPv3_INCLUDE_DIRS})
-    target_compile_options(afb-helpers3 PRIVATE ${DEPv3_CFLAGS})
+    target_compile_options(afb-helpers3 PRIVATE ${DEPv3_CFLAGS} -fPIC)
     target_compile_definitions(afb-helpers3 PUBLIC -DAFB_BINDING_VERSION=3)
     target_link_options(afb-helpers3 PRIVATE ${DEPv3_LDFLAGS})
     target_link_libraries(afb-helpers3 PUBLIC ${DEPv3_LINK_LIBRARIES} curl)
@@ -110,7 +109,7 @@ if(${AFB_HELPERS_V4})
         plugin-store.c
     )  
     target_include_directories(afb-helpers4 PRIVATE ${DEPv4_INCLUDE_DIRS})
-    target_compile_options(afb-helpers4 PRIVATE ${DEPv4_CFLAGS})
+    target_compile_options(afb-helpers4 PRIVATE ${DEPv4_CFLAGS} -fPIC)
     target_compile_definitions(afb-helpers4 PUBLIC -DAFB_BINDING_VERSION=4)
     target_link_options(afb-helpers4 PRIVATE ${DEPv4_LDFLAGS})
     target_link_libraries(afb-helpers4 PUBLIC ${DEPv4_LINK_LIBRARIES} ${CMAKE_DL_LIBS})
@@ -127,11 +126,27 @@ if(${AFB_HELPERS_V4})
     CONFIGURE_FILE(afb-helpers4.pc.in afb-helpers4.pc @ONLY)
     INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers4.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
+    add_library(afb-helpers4-static STATIC
+        afb-data-utils.c
+        afb-req-utils.c
+        plugin-store.c
+    )  
+    target_include_directories(afb-helpers4-static PRIVATE ${DEPv4_INCLUDE_DIRS})
+    target_compile_options(afb-helpers4-static PRIVATE ${DEPv4_CFLAGS} -fPIC)
+    target_compile_definitions(afb-helpers4-static PUBLIC -DAFB_BINDING_VERSION=4)
+    target_link_options(afb-helpers4-static PRIVATE ${DEPv4_LDFLAGS})
+    target_link_libraries(afb-helpers4-static PUBLIC ${DEPv4_LINK_LIBRARIES} ${CMAKE_DL_LIBS})
+    set_target_properties(afb-helpers4-static PROPERTIES VERSION 4 OUTPUT_NAME afb-helpers4)
+    INSTALL(TARGETS afb-helpers4-static DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+    CONFIGURE_FILE(afb-helpers4-static.pc.in afb-helpers4-static.pc @ONLY)
+    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers4-static.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
     add_library(afb-helpers++4 SHARED
         afb-data-utils.cpp
     )
     target_include_directories(afb-helpers++4 PRIVATE ${DEPv4_INCLUDE_DIRS})
-    target_compile_options(afb-helpers++4 PRIVATE ${DEPv4_CFLAGS})
+    target_compile_options(afb-helpers++4 PRIVATE ${DEPv4_CFLAGS} -fPIC)
     target_compile_definitions(afb-helpers++4 PUBLIC -DAFB_BINDING_VERSION=4)
     target_link_options(afb-helpers++4 PRIVATE ${DEPv4_LDFLAGS})
     target_link_libraries(afb-helpers++4 PUBLIC ${DEPv4_LINK_LIBRARIES} afb-helpers4)
