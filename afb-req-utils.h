@@ -38,12 +38,55 @@ afb_req_reply_objstr_v(
 		const char *info,
 		va_list args);
 
+__attribute__((format(printf, 4, 5)))
 extern void
 afb_req_reply_objstr_f(
 		afb_req_t req,
 		struct json_object *obj,
 		const char *error,
 		const char *info,
+		...);
+
+extern void
+afb_req_reply_string_copy(
+		afb_req_t req,
+		int code,
+		const char *string,
+		size_t length);
+
+extern void
+afb_req_reply_string_hold(
+		afb_req_t req,
+		int code,
+		char *string,
+		size_t length);
+
+extern void
+afb_req_reply_string_wrap(
+		afb_req_t req,
+		int code,
+		const char *string,
+		size_t length);
+
+extern void
+afb_req_reply_string(
+		afb_req_t req,
+		int code,
+		const char *string);
+
+extern void
+afb_req_reply_string_v(
+		afb_req_t req,
+		int code,
+		const char *fmt,
+		va_list args);
+
+__attribute__((format(printf, 3, 4)))
+extern void
+afb_req_reply_string_f(
+		afb_req_t req,
+		int code,
+		const char *fmt,
 		...);
 
 #define afb_req_success(req,obj,info)           afb_req_reply_objstr(req,obj,NULL,info)
