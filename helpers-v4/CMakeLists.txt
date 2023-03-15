@@ -29,6 +29,7 @@ pkg_check_modules(DEPv4 REQUIRED json-c librp-utils)
 add_library(afb-helpers4 SHARED
     afb-data-utils.c
     afb-req-utils.c
+    ctl-lib.c
     plugin-store.c
 )  
 
@@ -44,6 +45,9 @@ INSTALL(FILES
         afb-data-utils
         afb-data-utils.h
         afb-req-utils.h
+        ctl-lib.h
+        ctl-lib-plugin.h
+        ctlplug.h
         plugin-store.h
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/afb-helpers4)
 
@@ -52,6 +56,7 @@ INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers4.pc DESTINATION ${CMAKE_IN
 add_library(afb-helpers4-static STATIC
     afb-data-utils.c
     afb-req-utils.c
+    ctl-lib.c
     plugin-store.c
 )  
 
