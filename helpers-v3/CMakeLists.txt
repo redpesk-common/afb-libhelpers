@@ -31,7 +31,6 @@ set(AFB_HELPERS_SRCS_V3
     afb-timer.c
 )
 set(AFB_HELPERS_HEADERS_V3
-    afb-helpers-utils.h
     curl-wrap.h
     escape.h
     filescan-utils.h

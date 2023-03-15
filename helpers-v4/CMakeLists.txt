@@ -41,7 +41,6 @@ set_target_properties(afb-helpers4 PROPERTIES SOVERSION 4)
 
 INSTALL(TARGETS afb-helpers4 DESTINATION ${CMAKE_INSTALL_LIBDIR})
 INSTALL(FILES 
-        afb-helpers-utils.h
         afb-data-utils
         afb-data-utils.h
         afb-req-utils.h
