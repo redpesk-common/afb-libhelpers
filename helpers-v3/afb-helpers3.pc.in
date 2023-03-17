@@ -28,6 +28,6 @@ Name: afb-helpers3
 Description: @PROJECT_DESCRIPTION@
 Version: @PROJECT_VERSION@
 URL: @PROJECT_URL@
-Libs: -L${libdir} -lafb-helpers
+Libs: -L${libdir} -lafb-helpers3
 Cflags: -I${includedir} -I${includedir}/afb-helpers
 

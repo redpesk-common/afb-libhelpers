@@ -14,6 +14,9 @@
 # limitations under the License.
 ###########################################################################
 
+set(V4VERSION   4.0)
+set(V4SOVERSION 4)
+
 # Define target includes
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -38,9 +41,9 @@ target_compile_options(afb-helpers4 PRIVATE ${DEPv4_CFLAGS} -fPIC)
 target_compile_definitions(afb-helpers4 PUBLIC -DAFB_BINDING_VERSION=4)
 target_link_options(afb-helpers4 PRIVATE ${DEPv4_LDFLAGS})
 target_link_libraries(afb-helpers4 PUBLIC ${DEPv4_LINK_LIBRARIES} ${CMAKE_DL_LIBS})
-set_target_properties(afb-helpers4 PROPERTIES SOVERSION 4)
+set_target_properties(afb-helpers4 PROPERTIES OUTPUT_NAME afb-helpers VERSION ${V4VERSION} SOVERSION ${V4SOVERSION})
 
-INSTALL(TARGETS afb-helpers4 DESTINATION ${CMAKE_INSTALL_LIBDIR})
+INSTALL(TARGETS afb-helpers4 LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 INSTALL(FILES 
         afb-data-utils
         afb-data-utils.h
@@ -65,9 +68,9 @@ target_compile_options(afb-helpers4-static PRIVATE ${DEPv4_CFLAGS} -fPIC)
 target_compile_definitions(afb-helpers4-static PUBLIC -DAFB_BINDING_VERSION=4)
 target_link_options(afb-helpers4-static PRIVATE ${DEPv4_LDFLAGS})
 target_link_libraries(afb-helpers4-static PUBLIC ${DEPv4_LINK_LIBRARIES} ${CMAKE_DL_LIBS})
-set_target_properties(afb-helpers4-static PROPERTIES VERSION 4 OUTPUT_NAME afb-helpers4)
+set_target_properties(afb-helpers4-static PROPERTIES OUTPUT_NAME afb-helpers4)
 
-INSTALL(TARGETS afb-helpers4-static DESTINATION ${CMAKE_INSTALL_LIBDIR})
+INSTALL(TARGETS afb-helpers4-static LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 CONFIGURE_FILE(afb-helpers4-static.pc.in afb-helpers4-static.pc @ONLY)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers4-static.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
@@ -79,9 +82,9 @@ target_compile_options(afb-helpers++4 PRIVATE ${DEPv4_CFLAGS} -fPIC)
 target_compile_definitions(afb-helpers++4 PUBLIC -DAFB_BINDING_VERSION=4)
 target_link_options(afb-helpers++4 PRIVATE ${DEPv4_LDFLAGS})
 target_link_libraries(afb-helpers++4 PUBLIC ${DEPv4_LINK_LIBRARIES} afb-helpers4)
-set_target_properties(afb-helpers++4 PROPERTIES SOVERSION 4)
+set_target_properties(afb-helpers++4 PROPERTIES OUTPUT_NAME afb-helpers++ VERSION ${V4VERSION} SOVERSION ${V4SOVERSION})
 
-INSTALL(TARGETS afb-helpers++4 DESTINATION ${CMAKE_INSTALL_LIBDIR})
+INSTALL(TARGETS afb-helpers++4 LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 INSTALL(FILES
         afb-data-utils
         afb-data-utils.hpp

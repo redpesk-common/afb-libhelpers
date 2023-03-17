@@ -15,6 +15,7 @@
 ###########################################################################
 
 # Define target includes
+
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 INCLUDE_DIRECTORIES(${AFB_INCLUDE_DIRS})
@@ -43,18 +44,20 @@ set(AFB_HELPERS_HEADERS_V3
 find_package(CURL REQUIRED)
 pkg_check_modules(DEPv3 REQUIRED json-c libsystemd)
 
-ADD_LIBRARY(afb-helpers3 SHARED ${AFB_HELPERS_SRCS_V3})
+ADD_LIBRARY(afb-helpers3 STATIC ${AFB_HELPERS_SRCS_V3})
 target_include_directories(afb-helpers3 PRIVATE ${DEPv3_INCLUDE_DIRS})
 target_compile_options(afb-helpers3 PRIVATE ${DEPv3_CFLAGS} -fPIC)
 target_compile_definitions(afb-helpers3 PUBLIC -DAFB_BINDING_VERSION=3)
 target_link_options(afb-helpers3 PRIVATE ${DEPv3_LDFLAGS})
 target_link_libraries(afb-helpers3 PUBLIC ${DEPv3_LINK_LIBRARIES} curl)
-set_target_properties(afb-helpers3 PROPERTIES OUTPUT_NAME afb-helpers SOVERSION 3)
 
-INSTALL(TARGETS afb-helpers3 DESTINATION ${CMAKE_INSTALL_LIBDIR})
+INSTALL(TARGETS afb-helpers3 LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 INSTALL(FILES ${AFB_HELPERS_HEADERS_V3} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/afb-helpers)
 
 CONFIGURE_FILE(afb-helpers3.pc.in afb-helpers3.pc @ONLY)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers3.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers3.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig RENAME afb-helpers.pc)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers3.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig RENAME afb-libhelpers.pc)
+INSTALL(FILES
+		${CMAKE_CURRENT_BINARY_DIR}/afb-helpers3.pc
+		${CMAKE_CURRENT_SOURCE_DIR}/afb-helpers.pc
+		${CMAKE_CURRENT_SOURCE_DIR}/afb-libhelpers.pc
+	DESTINATION
+		${CMAKE_INSTALL_LIBDIR}/pkgconfig)
