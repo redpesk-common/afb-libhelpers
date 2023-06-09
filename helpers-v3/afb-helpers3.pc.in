@@ -23,7 +23,7 @@
 libdir=@CMAKE_INSTALL_FULL_LIBDIR@
 includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
 
-Provides: afb-helpers
+Provides: afb-helpers afb-helpers3 afb-libhelpers
 Name: afb-helpers3
 Description: @PROJECT_DESCRIPTION@
 Version: @PROJECT_VERSION@
