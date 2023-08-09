@@ -39,7 +39,7 @@
 #define CTL_PLUGIN_ID            _CTL_PLUGIN_ID_
 #define CTL_PLUGIN_TAG           CTLPLUG_TAG(CTL_PLUGIN_ID)
 
-/* the plugins are embedding an UID and an infirmative text */
+/* the plugins are embedding an UID and an informative text */
 typedef struct { const char *uid, *info; } _ctl_lib_plugin_desc_t_;
 CTLPLUG_DEFINE(CTL_PLUGIN_ID,_ctl_lib_plugin_desc_t_)
 
