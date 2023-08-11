@@ -70,6 +70,11 @@ int plugin_store_load(plugin_store_t *store, const char *path, const char *name,
 	return 0;
 }
 
+plugin_t *plugin_store_get_load(plugin_store_t *store, const char *path, const char *name, afb_api_t api)
+{
+	return plugin_store_load(store, path, name, api) ? NULL : *store;
+}
+
 size_t plugin_store_length(plugin_store_t store) {
 	int s = 0;
 	while(store) {
@@ -91,14 +96,28 @@ static plugin_store_t* search(plugin_store_t *store, const char *name)
 	}
 }
 
-void plugin_store_unload(plugin_store_t *store, const char *name)
+static void unload(plugin_t **ref)
 {
-	plugin_store_t *ref = store && name ? search(store, name) : NULL;
-	if (ref) {
+	if (ref && *ref) {
 		plugin_t *item = *ref;
 		*ref = item->prev;
 		dlclose(item->dl_handle);
 		free(item);
+	}
+}
+
+void plugin_store_unload(plugin_store_t *store, const char *name)
+{
+	if (store && name)
+		unload(search(store, name));
+}
+
+void plugin_store_drop(plugin_store_t *store, plugin_t *plugin)
+{
+	if (store && plugin) {
+		while(*store != NULL && *store != plugin)
+			store = &(*store)->prev;
+		unload(store);
 	}
 }
 
@@ -123,8 +142,9 @@ int plugin_store_iter(plugin_store_t store, int (*callback)(void*,const plugin_t
 {
 	int rc = 0;
 	while (rc == 0 && store) {
-		rc = callback(closure, store);
+		plugin_t *plugin = store;
 		store = store->prev;
+		rc = callback(closure, plugin);
 	}
 	return rc;
 }

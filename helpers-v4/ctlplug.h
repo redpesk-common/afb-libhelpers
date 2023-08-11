@@ -170,7 +170,7 @@ static inline bool ctlplug_check(const void *ptr, const char *tag)
 
 /**
 * Macro that defines the type for a a plugin header
-* of the given type and and holding the given data
+* of the given type and holding the given data
 * the given datatype.
 */
 #define CTLPLUG_DEFINE(type,datatype) \

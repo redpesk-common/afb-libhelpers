@@ -45,6 +45,18 @@ typedef plugin_t *plugin_store_t;
 int plugin_store_load(plugin_store_t *store, const char *path, const char *name, afb_api_t api);
 
 /**
+ * @brief Load a binding plugin and store it
+ *
+ * @param store the store address
+ * @param path path of the plugin to load
+ * @param path name for storing the plugin
+ * @param api The binding api handle
+ *
+ * @return the loaded plugin or NULL on error
+ */
+plugin_t *plugin_store_get_load(plugin_store_t *store, const char *path, const char *name, afb_api_t api);
+
+/**
  * @brief Return the length of the plugin's linked list
  *
  * @param store the store
@@ -60,6 +72,15 @@ size_t plugin_store_length(plugin_store_t store);
  * @param plugname the name of the plugin to unload
  */
 void plugin_store_unload(plugin_store_t *store, const char *plugname);
+
+/**
+ * @brief Unload a plugin from the plugins store. Free the memory and close the
+ * dynamic library handle.
+ *
+ * @param store the store address
+ * @param plugin the plugin to unload
+ */
+void plugin_store_drop(plugin_store_t *store, plugin_t *plugin);
 
 /**
  * @iterate over plugins of the store until it returns a value not null
