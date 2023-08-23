@@ -41,7 +41,7 @@ target_compile_options(afb-helpers4 PRIVATE ${DEPv4_CFLAGS} -fPIC)
 target_compile_definitions(afb-helpers4 PUBLIC -DAFB_BINDING_VERSION=4)
 target_link_options(afb-helpers4 PRIVATE ${DEPv4_LDFLAGS})
 target_link_libraries(afb-helpers4 PUBLIC ${DEPv4_LINK_LIBRARIES} ${CMAKE_DL_LIBS})
-set_target_properties(afb-helpers4 PROPERTIES OUTPUT_NAME afb-helpers VERSION ${V4VERSION} SOVERSION ${V4SOVERSION})
+set_target_properties(afb-helpers4 PROPERTIES VERSION ${V4VERSION} SOVERSION ${V4SOVERSION})
 
 INSTALL(TARGETS afb-helpers4 LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 INSTALL(FILES 
@@ -82,7 +82,7 @@ target_compile_options(afb-helpers++4 PRIVATE ${DEPv4_CFLAGS} -fPIC)
 target_compile_definitions(afb-helpers++4 PUBLIC -DAFB_BINDING_VERSION=4)
 target_link_options(afb-helpers++4 PRIVATE ${DEPv4_LDFLAGS})
 target_link_libraries(afb-helpers++4 PUBLIC ${DEPv4_LINK_LIBRARIES} afb-helpers4)
-set_target_properties(afb-helpers++4 PROPERTIES OUTPUT_NAME afb-helpers++ VERSION ${V4VERSION} SOVERSION ${V4SOVERSION})
+set_target_properties(afb-helpers++4 PROPERTIES VERSION ${V4VERSION} SOVERSION ${V4SOVERSION})
 
 INSTALL(TARGETS afb-helpers++4 LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 INSTALL(FILES
