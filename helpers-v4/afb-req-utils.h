@@ -24,6 +24,18 @@
 #include <stdarg.h>
 
 extern void
+afb_req_reply_data(
+		afb_req_t req,
+		int code,
+		afb_data_t data);
+
+extern void
+afb_req_reply_json_c_hold(
+		afb_req_t req,
+		int code,
+		json_object *jobject);
+
+extern void
 afb_req_reply_string_copy(
 		afb_req_t req,
 		int code,

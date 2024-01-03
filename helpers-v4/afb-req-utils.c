@@ -24,6 +24,25 @@
 #include "afb-req-utils.h"
 
 void
+afb_req_reply_data(
+		afb_req_t req,
+		int code,
+		afb_data_t data
+) {
+	afb_req_reply(req, code, 1, &data);
+}
+
+void
+afb_req_reply_json_c_hold(
+		afb_req_t req,
+		int code,
+		json_object *jobject
+) {
+	afb_data_t data = afb_data_json_c_hold(jobject);
+	afb_req_reply(req, code, 1, &data);
+}
+
+void
 afb_req_reply_string_f(
 		afb_req_t req,
 		int code,
