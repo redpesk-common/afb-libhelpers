@@ -111,16 +111,10 @@ afb_data_t afb_data_json(const char *jsonstr)
 	return afb_data_json_generic(jsonstr, 0, NULL, NULL);
 }
 
-static void dispose_json_c(void *closure)
-{
-	json_object *jobject = closure;
-	json_object_put(jobject);
-}
-
 afb_data_t afb_data_json_c_hold(json_object *jobject)
 {
 	afb_data_t result;
-	afb_create_data_raw(&result, AFB_PREDEFINED_TYPE_JSON_C, jobject, 0, dispose_json_c, jobject);
+	afb_create_data_raw(&result, AFB_PREDEFINED_TYPE_JSON_C, jobject, 0, (void*)json_object_put, jobject);
 	return result;
 }
 
