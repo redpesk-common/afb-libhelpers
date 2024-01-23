@@ -281,7 +281,7 @@ extern int ctl_read_plugins_extend(plugin_store_t *plugins, json_object *plugins
 * @param plugins  the plugin store to extend
 * @param config   description of the plugins to add
 * @param path     the search path (or NULL for the default one)
-* @param key      key of the subobject in config haloding the plugin description
+* @param key      key of the subobject in config holding the plugin description
 *
 * @return 0 on success or a negative error code
 */

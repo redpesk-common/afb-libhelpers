@@ -133,9 +133,14 @@ void *plugin_store_get_object(plugin_store_t store, const char *plugname, const 
 	return ref ? dlsym((*ref)->dl_handle, objname) : NULL;
 }
 
-void* plugin_get_object(const plugin_t *plugin, const char *name)
+void *plugin_get_object(const plugin_t *plugin, const char *name)
 {
 	return plugin && name ? dlsym(plugin->dl_handle, name) : NULL;
+}
+
+const char *plugin_name(const plugin_t *plugin)
+{
+	return plugin != NULL ? plugin->name : NULL;
 }
 
 int plugin_store_iter(plugin_store_t store, int (*callback)(void*,const plugin_t*), void *closure)
