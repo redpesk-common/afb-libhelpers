@@ -1,0 +1,13 @@
+Version 10.0.5
+--------------
+
+- Added functions
+  - plugin_name in plugin-store
+  - afb_req_reply_data in afb-req-utils
+  - afb_req_reply_json_c_hold in afb-req-utils
+
+- Removed legacy wrappers
+  - afb_req_reply_objstr_v
+  - afb_req_reply_objstr_f
+  - afb_req_reply_objstr
+
