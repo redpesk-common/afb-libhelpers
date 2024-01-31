@@ -121,6 +121,12 @@ void plugin_store_drop(plugin_store_t *store, plugin_t *plugin)
 	}
 }
 
+void plugin_store_drop_all(plugin_store_t *store)
+{
+	while(store != NULL && *store != NULL)
+		unload(store);
+ }
+
 plugin_t *plugin_store_get_plugin(plugin_store_t store, const char *name)
 {
 	plugin_store_t *ref = store && name ? search(&store, name) : NULL;

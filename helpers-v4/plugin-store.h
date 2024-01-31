@@ -92,6 +92,15 @@ extern
 void plugin_store_drop(plugin_store_t *store, plugin_t *plugin);
 
 /**
+ * @brief Drop all plugins from the plugins store. Free the memory and close the
+ * dynamic library handles.
+ *
+ * @param store the store address
+ */
+extern
+void plugin_store_drop_all(plugin_store_t *store);
+
+/**
  * @iterate over plugins of the store until it returns a value not null
  *
  * @param store the store
