@@ -17,6 +17,10 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if AFB_BINDING_VERSION > 3
 
 #include <afb/afb-binding.h>
@@ -77,4 +81,8 @@ afb_req_reply_string_f(
 		const char *fmt,
 		...);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif

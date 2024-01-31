@@ -22,7 +22,7 @@
 #if AFB_BINDING_VERSION > 3
 
 #include <afb/afb-binding>
-#include <json.hpp>
+#include "json.hpp"
 
 extern "C" {
 #include "afb-data-utils.h"

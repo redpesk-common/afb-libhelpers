@@ -88,6 +88,7 @@ INSTALL(TARGETS afb-helpers++4 LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 INSTALL(FILES
         afb-data-utils
         afb-data-utils.hpp
+        json.hpp
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/afb-helpers4)
 CONFIGURE_FILE(afb-helpers++4.pc.in afb-helpers++4.pc @ONLY)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/afb-helpers++4.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)

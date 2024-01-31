@@ -23,6 +23,10 @@
 #ifndef _CTL_LIB_PLUGIN_H_INCLUDED_
 #define _CTL_LIB_PLUGIN_H_INCLUDED_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
 * defines the entry points for plugins of ctl-lib
 */
@@ -74,5 +78,9 @@ CTLPLUG_DEFINE_FUNC(plugin_call, void, afb_api_t, unsigned, afb_data_t const[], 
 /**
 */
 CTLPLUG_DEFINE_FUNC(plugin_subcall, void, afb_req_t, unsigned, afb_data_t const[], json_object *, void *)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _CTL_LIB_PLUGIN_H_INCLUDED_ */

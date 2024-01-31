@@ -22,6 +22,7 @@
 
 #ifndef _CTL_COMPAT_INCLUDED_
 #define _CTL_COMPAT_INCLUDED_
+
 #ifdef __cplusplus
 extern "C" {
 #endif

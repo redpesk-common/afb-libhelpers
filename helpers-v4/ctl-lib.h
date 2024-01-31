@@ -23,6 +23,10 @@
 #ifndef CTL_LIB_H
 #define CTL_LIB_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
 * includes
 */
@@ -296,5 +300,9 @@ extern int ctl_subread_plugins(plugin_store_t *plugins, json_object *config, rp_
 * @return 0 and *ps on success or a negative error code
 */
 extern int ctl_default_path_search(rp_path_search_t **ps, const char *subdir);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif  /* CTL_LIB_H */

@@ -23,6 +23,10 @@
 #ifndef _CTLPLUG_H_INCLUDED_
 #define _CTLPLUG_H_INCLUDED_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
 * Definition of feature for strong identification
 * of plugin modules.
@@ -246,5 +250,9 @@ static inline bool ctlplug_check(const void *ptr, const char *tag)
 		static ret name##_impl(__VA_ARGS__); \
 		CTLPLUG_DECLARE(type,name,name##_impl); \
 		static ret name##_impl(__VA_ARGS__)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _CTLPLUG_H_INCLUDED_ */

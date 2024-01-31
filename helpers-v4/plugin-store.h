@@ -17,6 +17,10 @@
 #ifndef PLUGINS_HELPERS_H
 #define PLUGINS_HELPERS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <afb/afb-binding.h>
 
 /* Make plugins CB signatures dynamic and chosen by developper.
@@ -150,5 +154,9 @@ void* plugin_get_object(const plugin_t *plugin, const char *objname);
  */
 extern
 const char *plugin_name(const plugin_t *plugin);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* PLUGINS_HELPERS_H */
