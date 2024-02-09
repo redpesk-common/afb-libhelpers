@@ -45,7 +45,7 @@ typedef struct ctl_actionset_s ctl_actionset_t;
 
 /***************************************************************************/
 /***************************************************************************/
-/**** METADATA                                                          ****/
+/**** METADATA							  ****/
 /***************************************************************************/
 /***************************************************************************/
 /**
@@ -53,28 +53,28 @@ typedef struct ctl_actionset_s ctl_actionset_t;
 */
 struct ctl_metadata_s
 {
-        /** uid */
+	/** uid */
 	const char *uid;
 
-        /** name of the api */
+	/** name of the api */
 	const char *api;
 
-        /** optional info */
+	/** optional info */
 	const char *info;
 
-        /** optional version */
+	/** optional version */
 	const char *version;
 
-        /** optional author */
+	/** optional author */
 	const char *author;
 
-        /** option date */
+	/** option date */
 	const char *date;
 
-        /** holds the config, allowing reference to strings of subobjects */
+	/** holds the config, allowing reference to strings of subobjects */
 	json_object *configJ;
 
-        /** object holding requirements of the api */
+	/** object holding requirements of the api */
 	json_object *requireJ;
 };
 
@@ -115,7 +115,7 @@ extern int ctl_set_requires(ctl_metadata_t *meta, afb_api_t api);
 
 /***************************************************************************/
 /***************************************************************************/
-/**** ACTIONSETS                                                        ****/
+/**** ACTIONSETS							****/
 /***************************************************************************/
 /***************************************************************************/
 /**
@@ -207,7 +207,7 @@ extern int ctl_actionset_exec(ctl_actionset_t *actionset, afb_api_t api, plugin_
 
 /***************************************************************************/
 /***************************************************************************/
-/**** ACTIONS                                                           ****/
+/**** ACTIONS							   ****/
 /***************************************************************************/
 /***************************************************************************/
 
@@ -262,7 +262,7 @@ extern int ctl_action_exec(ctl_action_t *action, afb_api_t api, plugin_store_t p
 
 /***************************************************************************/
 /***************************************************************************/
-/**** PLUGINS                                                           ****/
+/**** PLUGINS							   ****/
 /***************************************************************************/
 /***************************************************************************/
 

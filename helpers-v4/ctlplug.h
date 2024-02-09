@@ -239,9 +239,9 @@ static inline bool ctlplug_check(const void *ptr, const char *tag)
 *
 *     CTLPLUG_EXPORT_FUNC(type,
 *     int, istrue,
-*              char* name
+*	      char* name
 *     ) {
-*        return !strcmp(name,"true");
+*	return !strcmp(name,"true");
 *     }
 *
 * Exports the function istrue and declares it.

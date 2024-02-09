@@ -50,14 +50,14 @@ struct ctl_action_s
 
 /***************************************************************************/
 /***************************************************************************/
-/**** METADATA                                                          ****/
+/**** METADATA							  ****/
 /***************************************************************************/
 /***************************************************************************/
 
 /* find in the metadata in the root JSON-C description search for the key "metadata" */
 int ctl_read_metadata(ctl_metadata_t *meta, json_object *metaobj)
 {
-        int rc = rp_jsonc_unpack(metaobj, "{ss,ss,s?s,s?s,s?o,s?s,s?s !}",
+	int rc = rp_jsonc_unpack(metaobj, "{ss,ss,s?s,s?s,s?o,s?s,s?s !}",
 					"uid", &meta->uid,
 					"api", &meta->api,
 					"version", &meta->version,
@@ -77,7 +77,7 @@ int ctl_read_metadata(ctl_metadata_t *meta, json_object *metaobj)
 /* read the meta from main config */
 int ctl_subread_metadata(ctl_metadata_t *meta, json_object *rootdesc, bool optional)
 {
-        int rc;
+	int rc;
 	json_object *metaobj;
 	if (json_object_is_type(rootdesc, json_type_object)
 	 && json_object_object_get_ex(rootdesc, "metadata", &metaobj))
@@ -109,17 +109,17 @@ int ctl_set_requires(ctl_metadata_t *meta, afb_api_t api)
 
 /***************************************************************************/
 /***************************************************************************/
-/**** ACTION AND ACTIONSET                                              ****/
+/**** ACTION AND ACTIONSET					      ****/
 /***************************************************************************/
 /***************************************************************************/
 
 /* search the action of uid in aset */
 ctl_action_t *ctl_actionset_search(ctl_actionset_t *aset, const char *uid)
 {
-        ctl_action_t *iter = aset->actions, *end = &iter[aset->count];
-        for ( ; iter != end ; iter++)
-                if (0 == strcasecmp(uid, iter->uid))
-                        return iter;
+	ctl_action_t *iter = aset->actions, *end = &iter[aset->count];
+	for ( ; iter != end ; iter++)
+		if (0 == strcasecmp(uid, iter->uid))
+			return iter;
 	return NULL;
 }
 
@@ -133,21 +133,21 @@ void ctl_actionset_free(ctl_actionset_t *actionset)
 
 /***************************************************************************/
 /***************************************************************************/
-/**** SCAN OF ACTIONS                                                   ****/
+/**** SCAN OF ACTIONS						   ****/
 /***************************************************************************/
 /***************************************************************************/
 
 /* scanning result */
 typedef struct
 	{
-                /* type of entry */
+		/* type of entry */
 		enum { SUR_UNKNOWN, SUR_API, SUR_PLUGIN } type;
 		struct
 			{
 				const char *string; /* base adress */
 				unsigned length;    /* length in chars */
 			}
-                        /* the extracted segments */
+			/* the extracted segments */
 			prefix, base, fragment;
 	}
 		scan_uri_result_t;
@@ -237,7 +237,7 @@ static int scan_object_privileges(json_object *obj, afb_auth_t **auth)
 /* record the action described by actionJ in the actionset of closure */
 static int add_action_cb(void *closure, json_object *actionJ)
 {
-        const char *uri, *uid, *info, *privilege;
+	const char *uri, *uid, *info, *privilege;
 	json_object *argsJ;
 	scan_uri_result_t sur;
 	ctl_actionset_t *actionset = closure;
@@ -245,21 +245,21 @@ static int add_action_cb(void *closure, json_object *actionJ)
 
 	/* scan if action is conform ? */
 	int rc = rp_jsonc_unpack(actionJ, "{ss,ss,s?s,s?s,s?o}",
-                        "uid", &uid,
-                        "action", &uri,
-                        "info", &info,
-                        "privileges", &privilege,
-                        "args", &argsJ);
-        if (rc != 0) {
+			"uid", &uid,
+			"action", &uri,
+			"info", &info,
+			"privileges", &privilege,
+			"args", &argsJ);
+	if (rc != 0) {
 		/* no?! report the error */
-                AFB_ERROR("Invalid action: %s; in: %s", rp_jsonc_get_error_string(rc), json_object_to_json_string(actionJ));
-                rc = -1;
-        }
-	else if (argsJ != NULL && !json_object_is_type(argsJ, json_type_array) && !json_object_is_type(argsJ, json_type_object)) {
-                AFB_ERROR("Invalid arguments for action: %s; in: %s", rp_jsonc_get_error_string(rc), json_object_to_json_string(actionJ));
-                rc = -1;
+		AFB_ERROR("Invalid action: %s; in: %s", rp_jsonc_get_error_string(rc), json_object_to_json_string(actionJ));
+		rc = -1;
 	}
-        else {
+	else if (argsJ != NULL && !json_object_is_type(argsJ, json_type_array) && !json_object_is_type(argsJ, json_type_object)) {
+		AFB_ERROR("Invalid arguments for action: %s; in: %s", rp_jsonc_get_error_string(rc), json_object_to_json_string(actionJ));
+		rc = -1;
+	}
+	else {
 		rc = scan_action_uri(uri, &sur);
 		if (rc == 0) {
 			/* valid, then record it */
@@ -267,8 +267,8 @@ static int add_action_cb(void *closure, json_object *actionJ)
 			action->desc = actionJ;
 			actionset->count++;
 		}
-        }
-        return rc;
+	}
+	return rc;
 }
 
 /* add actions of actionsJ in actionset */
@@ -295,8 +295,8 @@ int ctl_read_actionset_extend(ctl_actionset_t *actionset, json_object *actionsJ)
 int ctl_subread_actionset(ctl_actionset_t *actionset, json_object *config, const char *key)
 {
 	json_object *entries = !key ? config
-	                            : json_object_is_type(config, json_type_object) ? json_object_object_get(config, key)
-				                                                    : NULL;
+				    : json_object_is_type(config, json_type_object) ? json_object_object_get(config, key)
+										    : NULL;
 	if (entries == NULL)
 		return 0;
 	return ctl_read_actionset_extend(actionset, entries);
@@ -304,63 +304,63 @@ int ctl_subread_actionset(ctl_actionset_t *actionset, json_object *config, const
 
 /***************************************************************************/
 /***************************************************************************/
-/**** DEFAULT PATH                                                      ****/
+/**** DEFAULT PATH						      ****/
 /***************************************************************************/
 /***************************************************************************/
 
 int ctl_default_path_search(rp_path_search_t **ps, const char *subdir)
 {
-        char buffer[200];
+	char buffer[200];
 
-        *ps = NULL; /* ensure NULL on error */
-        if (subdir == NULL)
-	        return rp_path_search_make_dirs(ps, "${AFB_ROOTDIR}:${AFB_WORKDIR}");
+	*ps = NULL; /* ensure NULL on error */
+	if (subdir == NULL)
+		return rp_path_search_make_dirs(ps, "${AFB_ROOTDIR}:${AFB_WORKDIR}");
 
-        snprintf(buffer, sizeof buffer, "${AFB_ROOTDIR}/%s:${AFB_WORKDIR}/%s", subdir, subdir);
-        return rp_path_search_make_dirs(ps, buffer);
+	snprintf(buffer, sizeof buffer, "${AFB_ROOTDIR}/%s:${AFB_WORKDIR}/%s", subdir, subdir);
+	return rp_path_search_make_dirs(ps, buffer);
 }
 
 /***************************************************************************/
 /***************************************************************************/
-/**** SCAN OF PLUGINS                                                   ****/
+/**** SCAN OF PLUGINS						   ****/
 /***************************************************************************/
 /***************************************************************************/
 
 /* structure for callback in searching plugins */
 typedef struct {
-        /* searched uid */
-        const char *uid;
-        /* base name of the search */
-        const char *basename;
-        /* the plugin store */
-        plugin_store_t *plugins;
+	/* searched uid */
+	const char *uid;
+	/* base name of the search */
+	const char *basename;
+	/* the plugin store */
+	plugin_store_t *plugins;
 } search_plugin_data_t;
 
 static int search_plugin(void *closure, const char *path, size_t length)
 {
-        static const char *patterns[] = {
-                        "%s/%s",
-                        "%s/%s.so",
-                        "%s/%s.ctlso",
-                        NULL
-                };
+	static const char *patterns[] = {
+			"%s/%s",
+			"%s/%s.so",
+			"%s/%s.ctlso",
+			NULL
+		};
 
-        search_plugin_data_t *spd = closure;
-        char buffer[PATH_MAX+1];
-        const char **iter = patterns;
+	search_plugin_data_t *spd = closure;
+	char buffer[PATH_MAX+1];
+	const char **iter = patterns;
 
-        /* for each pattern */
-        for ( ; *iter != NULL ; iter++) {
-                /* makes the path for the name */
-                snprintf(buffer, sizeof buffer - 1, *iter, path, spd->basename);
-                buffer[sizeof buffer - 1] = 0;
-                /* try loading it */
-                if (plugin_store_load(spd->plugins, buffer, spd->uid, NULL) == 0) {
-                        /* loaded, check an exported symbol for the UID */
+	/* for each pattern */
+	for ( ; *iter != NULL ; iter++) {
+		/* makes the path for the name */
+		snprintf(buffer, sizeof buffer - 1, *iter, path, spd->basename);
+		buffer[sizeof buffer - 1] = 0;
+		/* try loading it */
+		if (plugin_store_load(spd->plugins, buffer, spd->uid, NULL) == 0) {
+			/* loaded, check an exported symbol for the UID */
 			void *ptr = plugin_store_get_object(*spd->plugins, spd->uid, CTL_PLUGIN_TAG);
-                        /* check that the eventually found symbol matches the plugin heading */
+			/* check that the eventually found symbol matches the plugin heading */
 			if (CTL_PLUGIN_CHECK(ptr)) {
-                                /* yes, we are done */
+				/* yes, we are done */
 				AFB_INFO("loaded plugin uid %s path %s (uid=%s - info=%s)",
 						spd->uid, buffer,
 						CTL_PLUGIN_UID(ptr) ?: "",
@@ -370,27 +370,27 @@ static int search_plugin(void *closure, const char *path, size_t length)
 			AFB_WARNING("presumed and loaded plugin doesn't fit check cretiria path %s", buffer);
 		}
 	}
-        return 0;
+	return 0;
 }
 
 /* structure for adding plugins */
 typedef struct {
-        /* the plugin store */
-        plugin_store_t *plugins;
-        /* the search path to use */
-        rp_path_search_t *paths;
+	/* the plugin store */
+	plugin_store_t *plugins;
+	/* the search path to use */
+	rp_path_search_t *paths;
 } add_plugin_data_t;
 
 /* add one plugin */
 static int add_plugin_cb(void *closure, json_object *pluginJ)
 {
-        search_plugin_data_t spd;
-        add_plugin_data_t *apd = closure;
+	search_plugin_data_t spd;
+	add_plugin_data_t *apd = closure;
 	const char *sPath = NULL;
 	json_object *fileJ = NULL;
-        rp_path_search_t *paths;
+	rp_path_search_t *paths;
 
-        /* extract plugin's data */
+	/* extract plugin's data */
 	int rc = rp_jsonc_unpack(pluginJ, "{ss,s?s,s?o}",
 				"uid", &spd.uid,
 				"spath", &sPath,
@@ -402,59 +402,61 @@ static int add_plugin_cb(void *closure, json_object *pluginJ)
 	}
 
 	/* if search path not in Json config file, then try default */
-        paths = rp_path_search_addref(apd->paths);
-        if (sPath != NULL)
-                rp_path_search_extend_dirs(&paths, sPath, 1);
+	paths = rp_path_search_addref(apd->paths);
+	if (sPath != NULL)
+		rp_path_search_extend_dirs(&paths, sPath, 1);
 
 	/* get first name */
 	spd.basename = spd.uid;
-        if (fileJ != NULL) {
-                if (!json_object_is_type(fileJ, json_type_array))
-                        spd.basename = json_object_get_string(fileJ);
-                else if (json_object_array_length(fileJ) > 0)
-                        spd.basename = json_object_get_string(json_object_array_get_idx(fileJ, 0));
-        }
+	if (fileJ != NULL) {
+		if (!json_object_is_type(fileJ, json_type_array))
+			spd.basename = json_object_get_string(fileJ);
+		else if (json_object_array_length(fileJ) > 0)
+			spd.basename = json_object_get_string(json_object_array_get_idx(fileJ, 0));
+	}
 
-        /* search the first name */
-        spd.plugins = apd->plugins;
-        rc = rp_path_search_list(paths, search_plugin, &spd);
-        if (rc <= 0 && json_object_is_type(fileJ, json_type_array)) {
-                /* search the next names */
-                unsigned i = 1, n = (unsigned)json_object_array_length(fileJ);
-                for (; i < n && rc <= 0 ; i++) {
-                        spd.basename = json_object_get_string(json_object_array_get_idx(fileJ, i));
-                        rc = rp_path_search_list(paths, search_plugin, &spd);
-                }
-        }
-        if (rc <= 0) {
-                AFB_ERROR("not able to locate plugin %s", json_object_to_json_string(pluginJ));
-                rc = -1;
-        }
+	/* search the first name */
+	spd.plugins = apd->plugins;
+	rc = rp_path_search_list(paths, search_plugin, &spd);
+	if (rc <= 0 && json_object_is_type(fileJ, json_type_array)) {
+		/* search the next names */
+		unsigned i = 1, n = (unsigned)json_object_array_length(fileJ);
+		for (; i < n && rc <= 0 ; i++) {
+			spd.basename = json_object_get_string(json_object_array_get_idx(fileJ, i));
+			rc = rp_path_search_list(paths, search_plugin, &spd);
+		}
+	}
+	if (rc > 0)
+		rc = 0;
+	else {
+		AFB_ERROR("not able to locate plugin %s", json_object_to_json_string(pluginJ));
+		rc = -1;
+	}
 
-        rp_path_search_unref(paths);
-        return rc;
+	rp_path_search_unref(paths);
+	return rc;
 }
 
 /* extend plugin store with plugin described by pluginsJ */
 int ctl_read_plugins_extend(plugin_store_t *plugins, json_object *pluginsJ, rp_path_search_t *paths)
 {
-        int rc;
-        add_plugin_data_t apd;
+	int rc;
+	add_plugin_data_t apd;
 
-        apd.plugins = plugins;
-        if (paths == NULL)
-                ctl_default_path_search(&apd.paths, "lib");
-        else
-                apd.paths = rp_path_search_addref(paths);
-        if (apd.paths == NULL) {
-                AFB_ERROR("out of memory");
-                rc = -1;
-        }
+	apd.plugins = plugins;
+	if (paths == NULL)
+		ctl_default_path_search(&apd.paths, "lib");
+	else
+		apd.paths = rp_path_search_addref(paths);
+	if (apd.paths == NULL) {
+		AFB_ERROR("out of memory");
+		rc = -1;
+	}
 	else {
-                rc = rp_jsonc_optarray_until(pluginsJ, add_plugin_cb, &apd);
-                rp_path_search_unref(apd.paths);
-        }
-        return rc;
+		rc = rp_jsonc_optarray_until(pluginsJ, add_plugin_cb, &apd);
+		rp_path_search_unref(apd.paths);
+	}
+	return rc;
 }
 
 /* extend plugin store with plugin described by item of object config at the given key */
@@ -462,12 +464,12 @@ int ctl_subread_plugins(plugin_store_t *plugins, json_object *config, rp_path_se
 {
 	json_object *entries;
 
-        if (key == NULL)
-                entries = config;
-        else if (json_object_is_type(config, json_type_object))
-                entries = json_object_object_get(config, key);
-        else
-	        entries = NULL;
+	if (key == NULL)
+		entries = config;
+	else if (json_object_is_type(config, json_type_object))
+		entries = json_object_object_get(config, key);
+	else
+		entries = NULL;
 	if (entries == NULL)
 		return 0;
 	return ctl_read_plugins_extend(plugins, entries, paths);
@@ -475,7 +477,7 @@ int ctl_subread_plugins(plugin_store_t *plugins, json_object *config, rp_path_se
 
 /***************************************************************************/
 /***************************************************************************/
-/**** PREPARING ARGUMENTS FOR CALLS AND SUBCALLS                        ****/
+/**** PREPARING ARGUMENTS FOR CALLS AND SUBCALLS			****/
 /***************************************************************************/
 /***************************************************************************/
 
@@ -499,7 +501,7 @@ typedef struct {
  */
 typedef int (prepare_call_func_t)(
 		json_object      *argsJ,
-		unsigned          nparams,
+		unsigned	  nparams,
 		afb_data_t const  params[],
 		prepared_args_t  *prep);
 
@@ -513,7 +515,7 @@ static int meld_data_object(afb_data_t from, json_object *and, afb_data_t *to)
 	if (rc == 0) {
 		json_object *fromJ = rp_jsonc_clone(afb_data_ro_pointer(from));
 		afb_data_unref(from);
-                rp_jsonc_object_add(fromJ, and);
+		rp_jsonc_object_add(fromJ, and);
 		*to = afb_data_json_c_hold(fromJ);
 	}
 	return rc;
@@ -594,7 +596,7 @@ static int prepare_call_meld_all(json_object *argsJ, unsigned nparams, afb_data_
 
 /***************************************************************************/
 /***************************************************************************/
-/**** IMPLEMENT ACTIONS AS VERBS                                        ****/
+/**** IMPLEMENT ACTIONS AS VERBS					****/
 /***************************************************************************/
 /***************************************************************************/
 
@@ -869,7 +871,7 @@ int ctl_actionset_add_verbs(ctl_actionset_t *actionset, afb_api_t api, plugin_st
 
 /***************************************************************************/
 /***************************************************************************/
-/**** IMPLEMENT ACTIONS AS EVENT HANDLERS                               ****/
+/**** IMPLEMENT ACTIONS AS EVENT HANDLERS			       ****/
 /***************************************************************************/
 /***************************************************************************/
 
@@ -1014,7 +1016,7 @@ int ctl_actionset_add_events(ctl_actionset_t *actionset, afb_api_t api, plugin_s
 
 /***************************************************************************/
 /***************************************************************************/
-/**** EXECUTE ACTIONS                                                   ****/
+/**** EXECUTE ACTIONS						   ****/
 /***************************************************************************/
 /***************************************************************************/
 

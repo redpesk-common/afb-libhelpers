@@ -40,8 +40,8 @@ extern "C" {
 #ifndef _CTL_PLUGIN_ID_
 #define _CTL_PLUGIN_ID_ ctl_lib_plugin_magic
 #endif
-#define CTL_PLUGIN_ID            _CTL_PLUGIN_ID_
-#define CTL_PLUGIN_TAG           CTLPLUG_TAG(CTL_PLUGIN_ID)
+#define CTL_PLUGIN_ID	    _CTL_PLUGIN_ID_
+#define CTL_PLUGIN_TAG	   CTLPLUG_TAG(CTL_PLUGIN_ID)
 
 /* the plugins are embedding an UID and an informative text */
 typedef struct { const char *uid, *info; } _ctl_lib_plugin_desc_t_;
@@ -57,19 +57,19 @@ CTLPLUG_DEFINE(CTL_PLUGIN_ID,_ctl_lib_plugin_desc_t_)
 * That macro check if the given pointer identifies a plugin declaration
 * Return true if it is the case or else returns false
 */
-#define CTL_PLUGIN_CHECK(ptr)         CTLPLUG_CHECK(ptr,CTL_PLUGIN_ID)
+#define CTL_PLUGIN_CHECK(ptr)	 CTLPLUG_CHECK(ptr,CTL_PLUGIN_ID)
 
 /**
 * Macro returning the uid of the plugin header under ptr.
 * Only valid if CTL_PLUGIN_CHECK(ptr) returned true
 */
-#define CTL_PLUGIN_UID(ptr)           (CTL_PLUGIN_CHECK(ptr) ? CTLPLUG_DATA(ptr,CTL_PLUGIN_ID).uid : NULL)
+#define CTL_PLUGIN_UID(ptr)	   (CTL_PLUGIN_CHECK(ptr) ? CTLPLUG_DATA(ptr,CTL_PLUGIN_ID).uid : NULL)
 
 /**
 * Macro returning the info text of the plugin header under ptr.
 * Only valid if CTL_PLUGIN_CHECK(ptr) returned true
 */
-#define CTL_PLUGIN_INFO(ptr)          (CTL_PLUGIN_CHECK(ptr) ? CTLPLUG_DATA(ptr,CTL_PLUGIN_ID).info : NULL)
+#define CTL_PLUGIN_INFO(ptr)	  (CTL_PLUGIN_CHECK(ptr) ? CTLPLUG_DATA(ptr,CTL_PLUGIN_ID).info : NULL)
 
 /**
 */
