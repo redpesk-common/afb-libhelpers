@@ -1,3 +1,8 @@
+Version 10.0.6
+--------------
+
+- Fix bug in afb_req_reply_string_v and afb_req_reply_string_f
+
 Version 10.0.5
 --------------
 

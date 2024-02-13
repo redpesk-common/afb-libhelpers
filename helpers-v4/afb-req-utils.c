@@ -65,7 +65,7 @@ afb_req_reply_string_v(
 	char *str;
 	int len;
 
-	if (fmt != NULL && (len = asprintf(&str, fmt, args)) >= 0)
+	if (fmt != NULL && (len = vasprintf(&str, fmt, args)) >= 0)
 		afb_req_reply_string_hold(req, code, str, (size_t)len);
 	else
 		afb_req_reply(req, code, 0, NULL);
