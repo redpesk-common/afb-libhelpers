@@ -2,6 +2,9 @@ Version 10.0.6
 --------------
 
 - Fix bug in afb_req_reply_string_v and afb_req_reply_string_f
+- Improve compatibility with C++
+- Cleaning function for plugin store: plugin_store_drop_all
+- Load all plugins not only the first (ctl_subread_plugins & ctl_read_plugins_extend)
 
 Version 10.0.5
 --------------
