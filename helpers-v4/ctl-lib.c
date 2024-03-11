@@ -367,7 +367,7 @@ static int search_plugin(void *closure, const char *path, size_t length)
 						CTL_PLUGIN_INFO(ptr) ?: "");
 				return 1;
 			}
-			AFB_WARNING("presumed and loaded plugin doesn't fit check cretiria path %s", buffer);
+			AFB_WARNING("presumed and loaded plugin doesn't fit check criteria, path %s", buffer);
 		}
 	}
 	return 0;
