@@ -9,9 +9,7 @@ Name: afb-helpers4-static
 Description: @PROJECT_DESCRIPTION@
 Version: @PROJECT_VERSION@
 URL: @PROJECT_URL@
-Libs: -L${libdir} -l:libafb-helpers4.a
+Libs: -L${libdir} -l:libafb-helpers4.a -ldl
 Cflags: -I${includedir} -I${includedir}/afb-helpers4
 
-Provides: afb-helpers4
 Requires: librp-utils-static json-c
-
