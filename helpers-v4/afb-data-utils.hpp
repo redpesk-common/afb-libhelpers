@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2024 IoT.bzh Company
+ * Copyright (C) 2021-2025 IoT.bzh Company
  * Author: Romain Forlot <romain.forlot@iot.bzh>
  * Author: José Bollo <jose.bollo@iot.bzh>
  *
