@@ -46,4 +46,3 @@ set(PKG_REQUIRED_LIST
 ```
 
 Or you can also use the [FIND_PACKAGE](https://cmake.org/cmake/help/v3.19/command/find_package.html?highlight=find_package)
-CMake command to add it if you don't use the [afb-cmake-modules](cmakeafbtemplates/dev_guide/cmake-overview.html)
