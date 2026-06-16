@@ -2,35 +2,10 @@
 
 ## Installation
 
-The afb-helpers library is available as a package for the redpesk supported linux
-distributions.
-
-
-To install the native package please refer to [this chapter]({% chapter_link host-configuration-doc.setup-your-build-host %})
-in the redpesk documentation to install the redpesk repository for your distribution.
-
-
-Then use your package manager to install the library.
-
-### OpenSuse
+You can run the same command on a target runing a redpesk OS or in the [SDK container]({% chapter_link sdk-container-doc.overview %}) (development mode).
 
 ```bash
-sudo zypper ref
-sudo zypper install afb-libhelpers-devel
-```
-
-### Fedora
-
-```bash
-sudo dnf ref
-sudo dnf install afb-libhelpers-devel
-```
-
-### Ubuntu/Debian
-
-```bash
-sudo apt-get update
-sudo apt-get install afb-libhelpers-dev
+dnf install afb-libhelpers-devel
 ```
 
 ## Add the afb-helpers as a static library to your binding
